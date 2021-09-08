@@ -1,0 +1,61 @@
+spring:
+  application:
+    name: locations-consumer
+KAFKA_BOOTSTRAP_SERVERS: "localhost:9092"
+#KAFKA_BOOTSTRAP_SERVERS: "pkc-lq8gm.westeurope.azure.confluent.cloud:9092"
+KAFKA_TOPIC: MSK.geography.gda.topic.internal.any.v1
+KAFKA_USERNAME:
+KAFKA_PASSWORD:
+KAFKA_CONSUMER_GROUP: MSK.referenceData.referenceDataReader.consumerGroup.v1
+KAFKA_SCHEMA_REGISTRY_URL: "http://localhost:8081"
+#KAFKA_SCHEMA_REGISTRY_URL: "https://psrc-4kk0p.westeurope.azure.confluent.cloud/"
+KAFKA_SCHEMA_REGISTRY_USERNAME:
+KAFKA_SCHEMA_REGISTRY_PASSWORD:
+
+kafka:
+  bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+  login-module: org.apache.kafka.common.security.plain.PlainLoginModule
+  security-protocol: SASL_SSL
+  sasl-mechanism: PLAIN
+  client-id: subscription-response-consumer
+  topic: ${KAFKA_TOPIC}
+  consumer-group: ${KAFKA_CONSUMER_GROUP}
+  username: ${KAFKA_USERNAME}
+  password: ${KAFKA_PASSWORD}
+  schemaRegistry:
+    url: ${KAFKA_SCHEMA_REGISTRY_URL}
+    username: ${KAFKA_SCHEMA_REGISTRY_USERNAME}
+    password: ${KAFKA_SCHEMA_REGISTRY_PASSWORD}
+  consumer:
+    offset-auto-reset: latest
+    concurrency: 1
+    max-poll-records: 5
+    max-poll-timeout: 5000
+    max-fetch-size-bytes: 2097164
+    retry:
+      max-attempts: 3
+      initial-interval-secs: 2
+management:
+  health:
+    kafka:
+      enabled: true
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  endpoint:
+    prometheus:
+      enabled: true
+    health:
+      show-details: always
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: "readinessState,diskSpace,ping,kafka"
+          show-details: always
+
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus

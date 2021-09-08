@@ -1,0 +1,113 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    k8s-app: locations-geo-consumer
+    app: locations-geo-consumer
+    env: "#{spring.profiles.active}#"
+    version: "#{Build.BuildNumber}#"
+    product: synergy-reference-data
+  name: locations-geo-consumer
+spec:
+  replicas: #{replica.count}#
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      k8s-app: locations-geo-consumer
+  template:
+    metadata:
+      labels:
+        k8s-app: locations-geo-consumer
+        app: locations-geo-consumer
+        env: "#{spring.profiles.active}#"
+        version: "#{Build.BuildNumber}#"
+        product: synergy-reference-data
+      annotations:
+        prometheus.io/port: "8080"
+        prometheus.io/scrape: "true"
+        ad.datadoghq.com/locations-geo-consumer.check_names: '["openmetrics"]'
+        ad.datadoghq.com/locations-geo-consumer.init_configs: '[{}]'
+        ad.datadoghq.com/locations-geo-consumer.instances: '[{"prometheus_url": "http://%%host%%:8080/actuator/prometheus",
+            "namespace": "#{datadog.namespace}#", "metrics": ["*"]}]'
+        vault.security.banzaicloud.io/vault-role: "#{namespace}#"
+    spec:
+      imagePullSecrets:
+        - name: bol-registry-acr-secret
+      containers:
+        - image: mskbolregistry.azurecr.io/locations-geo-consumer:#{Build.BuildNumber}#
+          imagePullPolicy: Always
+          name: locations-geo-consumer
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+              scheme: HTTP
+            failureThreshold: 5
+            periodSeconds: 10
+            initialDelaySeconds: 30
+
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+              scheme: HTTP
+            failureThreshold: 5
+            periodSeconds: 10
+            initialDelaySeconds: 30
+
+          env:
+            - name: DD_AGENT_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: DD_SERVICE_NAME
+              value: locations-geo-consumer
+            - name: DD_LOG_LEVEL
+              value: "#{datadog.debug.level}#"
+            - name: DD_ENV
+              value: "#{datadog.env}#"
+            - name: DD_APM_ENABLED
+              value: "#{datadog.enabled}#"
+            - name: OTEL_COLLECTOR_ADDRESS
+              value: "#{otel.collector.url}#"
+            - name: BOOTSTRAP_SERVERS
+              value: vault:shipmentmanagement-kv/data/readable/#{spring.profiles.active}#/services/bol-summary-consumer/kafka/bootstrap-servers#bootstrap-servers
+            - name: SHIPMENT_KAFKA_USERNAME
+              value: vault:shipmentmanagement-kv/data/readable/#{spring.profiles.active}#/services/bol-summary-consumer/kafka/shipment/username#username
+            - name: SHIPMENT_KAFKA_PASSWORD
+              value: vault:shipmentmanagement-kv/data/#{spring.profiles.active}#/services/bol-summary-consumer/kafka/shipment/password#password
+            - name: SHIPMENT_CONSUMER_GROUP
+              value: vault:shipmentmanagement-kv/data/readable/#{spring.profiles.active}#/services/bol-summary-consumer/kafka/shipment/consumer-group#consumer-group
+            - name: TPDOC_KAFKA_USERNAME
+              value: vault:shipmentmanagement-kv/data/readable/#{spring.profiles.active}#/services/bol-summary-consumer/kafka/tpdoc/username#username
+            - name: TPDOC_KAFKA_PASSWORD
+              value: vault:shipmentmanagement-kv/data/#{spring.profiles.active}#/services/bol-summary-consumer/kafka/tpdoc/password#password
+            - name: TPDOC_CONSUMER_GROUP
+              value: vault:shipmentmanagement-kv/data/readable/#{spring.profiles.active}#/services/bol-summary-consumer/kafka/tpdoc/consumer-group#consumer-group
+            - name: ELASTICSEARCH_HOST
+              value: vault:shipmentmanagement-kv/data/readable/#{spring.profiles.active}#/services/bol-summary-consumer/elasticsearch/host#host
+            - name: ELASTICSEARCH_API_KEY
+              value: vault:shipmentmanagement-kv/data/#{spring.profiles.active}#/services/bol-summary-consumer/elasticsearch/api-key#api-key
+            - name: API_HOST
+              value: vault:shipmentmanagement-kv/data/readable/#{spring.profiles.active}#/services/bol-summary-consumer/apigee-api-host#apigee-api-host
+            - name: PROFILE
+              value: vault:shipmentmanagement-kv/data/readable/#{spring.profiles.active}#/services/bol-summary-consumer/profile#profile
+            - name: SCHEMA_REGISTRY_URL
+              value: vault:shipmentmanagement-kv/data/readable/#{spring.profiles.active}#/services/bol-summary-consumer/kafka/schema-registry/url#url
+            - name: SCHEMA_REGISTRY_API_KEY
+              value: vault:shipmentmanagement-kv/data/readable/#{spring.profiles.active}#/services/bol-summary-consumer/kafka/schema-registry/api-key#api-key
+            - name: SCHEMA_REGISTRY_PASSWORD
+              value: vault:shipmentmanagement-kv/data/#{spring.profiles.active}#/services/bol-summary-consumer/kafka/schema-registry/password#password
+
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi

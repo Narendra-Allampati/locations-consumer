@@ -1,0 +1,326 @@
+{
+   "namespace": "com.maersk.Geography.smds.operations.MSK",
+   "type": "record",
+   "name": "GeographyMessage",
+   "doc":"The generic avro schema used by publishers to publish events to the enterprise streaming service for Geography interface",
+   "fields":[
+
+				{ "name": "GeographyEntity",
+	   	    "doc":"wrapper tag to hold Geography information",
+				  "type":
+					{
+
+						   "name": "GeographyEntity",
+						   "type":"record",
+	   		               "fields":[
+										{"name": "Geography",
+										"type":[
+										"null",
+										{
+												 "type":"record",
+												 "doc":"Geography Entity Information Which includes AltNm,AltCd,fence,Country,Parent,BDA and BDALoc ",
+												 "name":"Geography",
+												 "fields":[
+                               {"name":"GeoRowID",  "type":["null","string"]},
+                               {"name":"GeoType",  "type":["null","string"]},
+                               {"name":"Name",  "type":["null","string"]},
+                               {"name":"Status", "type":["null","string"]},
+                               {"name":"ValidFrom", "type":["null","string"]},
+                               {"name":"ValidTo", "type":["null","string"]},
+                               {"name":"Longitude", "type":["null","string"]},
+                               {"name":"Latitude", "type":["null","string"]},
+                               {"name":"TimeZone", "type":["null","string"]},
+                               {"name":"DaylightSavingTime", "type":["null","string"]},
+                               {"name":"UTCOffsetMinutes", "type":["null","string"]},
+                               {"name":"DaylightSavingStart", "type":["null","string"]},
+                               {"name":"DaylightSavingEnd", "type":["null","string"]},
+                               {"name":"DaylightSavingShiftMinutes", "type":["null","string"]},
+                               {"name":"Description", "type":["null","string"]},
+                               {"name":"WorkaroundReason", "type":["null","string"]},
+                               {"name":"Restricted", "type":["null","string"]},
+                               {"name":"SiteType", "type":["null","string"]},
+                               {"name":"GPSFlag",  "type":["null","string"]},
+                               {"name":"GSMFlag",  "type":["null","string"]},
+                               {"name":"StreetNumber",  "type":["null","string"]},
+                               {"name":"AddressLine1",  "type":["null","string"]},
+                               {"name":"AddressLine2",  "type":["null","string"]},
+                               {"name":"AddressLine3",  "type":["null","string"]},
+                               {"name":"PostalCode",  "type":["null","string"]},
+                               {"name":"PostalCodeMandatoryFlag",  "type":["null","string"]},
+                               {"name":"StateProvienceMandatory",  "type":["null","string"]},
+                               {"name":"DialingCode",  "type":["null","string"]},
+                               {"name":"DialingCodedescription",  "type":["null","string"]},
+                               {"name":"PortFlag", "type":["null","string"]},
+                               {"name":"OlsonTimezone",  "type":["null","string"]},
+                               {"name":"BDAType", "type":["null","string"]},
+                               {"name":"GeographyAlternateNames",
+																		"type":[
+																		"null",																		
+																		{
+																					"type":"array",
+																					"items":
+																					{
+																					"name":"GeographyAlternateNames",
+																					"doc":"Geography AlternateNames details",
+																				   "type": "record",
+																					"fields":[ 
+																							   {"name":"Name",       "type":["null","string"]},
+																							   {"name":"Description", "type":["null","string"]},
+																							   {"name":"Status",      "type":["null","string"]}
+																							  ]
+																				    }
+																				  }
+																				 	
+																				]
+															 },
+															{"name":"GeographyAlternateCodes",
+																		"type":																	
+																		{
+																					"type":"array",
+																					"items":
+																					{
+																					"name":"GeographyAlternateCodes",
+																					"doc":"Geography AlternateCodes details",
+																				   "type": "record",
+																					"fields":[ 
+																							   {"name":"CodeType",  "type":["null","string"]},
+																							   {"name":"Code",     "type":["null","string"]}
+																							  ]
+																				    }
+																				  }
+																				 	
+																				
+															 },
+															 {"name":"GeographyFence",
+																		"type":[
+																		"null",																		
+																		{
+																					"type":"array",
+																					"items":
+																					{
+																					"name":"GeographyFence",
+																					"doc":"Geography Fence details",
+																				   "type": "record",
+																					"fields":[ 
+																							   {"name":"Name",       "type":["null","string"]},
+																							   {"name":"GeoFenceType", "type":["null","string"]}
+																							  ]
+																				    }
+																				  }
+																				 	
+																				]
+															 },
+															 {"name":"GeographyCountryDetails",
+																		"type":[
+																		"null",																		
+																		{
+																					"type":"array",
+																					"items":
+																					{
+																					"name":"GeographyCountryDetails",
+																					"doc":"Geography Country details",
+																				   "type": "record",
+																					"fields":[ 
+																					       {"name":"countryRowid",  "type":["null","string"]},
+																							   {"name":"Name",       "type":["null","string"]},
+																							   {"name":"Type",  "type":["null","string"]},
+																							   {"name":"GeographyCountryAlternateCodeDetails",
+																		"type":[
+																		"null",																		
+																		{
+																					"type":"array",
+																					"items":
+																					{
+																					"name":"GeographyCountryAlternateCode",
+																					"doc":"Geography Country AlternateCode details",
+																				   "type": "record",
+																					"fields":[ 
+																							   {"name":"CodeType",       "type":["null","string"]},
+																							   {"name":"Code", "type":["null","string"]}
+																							  
+																							  ]
+																				    }
+																				  }
+																				 	
+																				]
+															 }																					 
+																							  ]
+																				    }
+																				  }
+																				 	
+																				]
+															 },
+															  {"name":"GeographyParentDetails",
+																		"type":[
+																		"null",																		
+																		{
+																					"type":"array",
+																					"items":
+																					{
+																					"name":"GeographyParentDetails",
+																					"doc":"Geography Parent details",
+																				   "type": "record",
+																					"fields":[
+																					           {"name":"getParentRowId",  "type":["null","string"]},
+																							   {"name":"Name",       "type":["null","string"]},
+																							   {"name":"Type",  "type":["null","string"]},
+																							   {"name":"GeographyParentAlternateCodeDetails",
+																		"type":[
+																		"null",																		
+																		{
+																					"type":"array",
+																					"items":
+																					{
+																					"name":"GeographyParentAlternateCode",
+																					"doc":"Geography Parent AlternateCode details",
+																				   "type": "record",
+																					"fields":[ 
+																							   {"name":"CodeType",       "type":["null","string"]},
+																							   {"name":"Code", "type":["null","string"]}
+																							  
+																							  ]
+																				    }
+																				  }
+																				 	
+																				]
+															 }																					 
+																							  ]
+																				    }
+																				  }
+																				 	
+																				]
+															 },
+															 {"name":"GeographySubCityParentDetails",
+																		"type":[
+																		"null",																		
+																		{
+																					"type":"array",
+																					"items":
+																					{
+																					"name":"GeographySubCityParentDetails",
+																					"doc":"Geography SubCityParent details",
+																				   "type": "record",
+																					"fields":[
+																					           {"name":"getSubCityParentRowId",  "type":["null","string"]},
+																							   {"name":"Name",       "type":["null","string"]},
+																							   {"name":"Type",  "type":["null","string"]},
+																							   {"name":"GeographySubCityParentAlternateCodeDetails",
+																		"type":[
+																		"null",																		
+																		{
+																					"type":"array",
+																					"items":
+																					{
+																					"name":"GeographySubCityParentAlternateCode",
+																					"doc":"Geography SubCityParent AlternateCode details",
+																				   "type": "record",
+																					"fields":[ 
+																							   {"name":"CodeType",       "type":["null","string"]},
+																							   {"name":"Code", "type":["null","string"]}
+																							  
+																							  ]
+																				    }
+																				  }
+																				 	
+																				]
+															 }																					 
+																							  ]
+																				    }
+																				  }
+																				 	
+																				]
+															 },
+															 {"name":"GeographyBDADetails",
+																		"type":[
+																		"null",																		
+																		{
+																					"type":"array",
+																					"items":
+																					{
+																					"name":"GeographyBDADetails",
+																					"doc":"Geography BDA details",
+																				   "type": "record",
+																					"fields":[ 
+																					       {"name":"bdaRowid","type":["null","string"]},
+																							   {"name":"Name", "type":["null","string"]},
+																							   {"name":"Type", "type":["null","string"]},
+																							    {"name":"BDAType", "type":["null","string"]},
+																							   {"name":"GeographyBDAAlternateCodeDetails",
+																		"type":[
+																		"null",																		
+																		{
+																					"type":"array",
+																					"items":
+																					{
+																					"name":"GeographyBDAAlternateCode",
+																					"doc":"Geography BDA AlternateCode details",
+																				   "type": "record",
+																					"fields":[ 
+																							   {"name":"CodeType",       "type":["null","string"]},
+																							   {"name":"Code", "type":["null","string"]}
+																							  
+																							  ]
+																				    }
+																				  }
+																				 	
+																				]
+															 }
+																							  ]
+																				    }
+																				  }
+																				 	
+																				]
+															 },
+															  {"name":"GeographyBDALocationsDetails",
+																		"type":[
+																		"null",																		
+																		{
+																					"type":"array",
+																					"items":
+																					{
+																					"name":"GeographyBDALocationDetails",
+																					"doc":"Geography BDA Location details",
+																				   "type": "record",
+																					"fields":[ 
+																					      {"name":"bdaLocRowid","type":["null","string"]},
+																							   {"name":"Name","type":["null","string"]},
+																							   {"name":"Type", "type":["null","string"]},
+																							   {"name":"GeographyBDALocationAlternateCodeDetails",
+																		"type":[
+																		"null",																		
+																		{
+																					"type":"array",
+																					"items":
+																					{
+																					"name":"GeographyBDALocationAlternateCode",
+																					"doc":"Geography BDALocation AlternateCode details",
+																				   "type": "record",
+																					"fields":[ 
+																							   {"name":"CodeType",   "type":["null","string"]},
+																							   {"name":"Code", "type":["null","string"]}
+																							  
+																							  ]
+																				    }
+																				  }
+																				 	
+																				]
+																				}
+																				]
+															 }
+																							
+																							  
+																				    }
+																				    ]
+																				  }
+																				 	
+																				]
+															 }
+                                                                ]
+															 }                              
+														   ]             
+										        		    
+									  
+									  }
+                }
+            ]   
+}
