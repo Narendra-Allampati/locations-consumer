@@ -50,7 +50,7 @@ public class KafkaConfig {
     @Value("${kafka.security-protocol:SASL_SSL}")
     private String securityProtocol;
 
-    @Value("${kafka.consumer.offset-auto-reset:latest}")
+    @Value("${kafka.consumer.offset-auto-reset:earliest}")
     private String consumerOffsetAutoReset;
     @Value("${kafka.consumer.max-poll-records:20}")
     private String consumerMaxPollRecords;
