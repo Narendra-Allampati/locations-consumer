@@ -100,6 +100,8 @@ jobs:
         run: |
           echo Setting image and version ${{ env.IMAGE_NAME }}:${{ steps.projectversion.outputs.version }}
           cat <<EOF >>k8s/kustomization.yaml
+          commonAnnotations:
+            vault.security.banzaicloud.io/vault-role: ${{ env.NAMESPACE }}
           images:
             - name: application-container-image
               newName: ${{ env.IMAGE_NAME }}
