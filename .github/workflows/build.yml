@@ -87,7 +87,7 @@ jobs:
           host: ${{ secrets.MDN_SONARQUBE_HOST }}
           login: ${{ secrets.MDN_SONARQUBE_TOKEN }}
           extra_sonar_args: >
-            -Dsonar.projectKey=tradelens-events-producer-key1
+            -Dsonar.projectKey=locations-consumer-key1
             -Dsonar.projectName="${{ env.REPOSITORY_NAME }}"
             -Dsonar.java.source=11.0.4
             -Dsonar.sources=src/main/java
