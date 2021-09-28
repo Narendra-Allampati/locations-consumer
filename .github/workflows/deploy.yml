@@ -120,4 +120,4 @@ jobs:
 
       - name: Check k8s rollout status
         run: |
-          kubectl rollout status deployment/locations-consumer
+          kubectl rollout status deployment/locations-geo-consumer
