@@ -5,12 +5,12 @@ metadata:
   labels:
     k8s-app: locations-geo-consumer
     app: locations-geo-consumer
-    env: "#{spring.profiles.active}#"
-    version: "#{Build.BuildNumber}#"
+    env: dev
+    version: will-be-dynamically-updated
     product: synergy-reference-data
   name: locations-geo-consumer
 spec:
-  replicas: #{replica.count}#
+  replicas: 1
   revisionHistoryLimit: 3
   selector:
     matchLabels:
@@ -20,8 +20,7 @@ spec:
       labels:
         k8s-app: locations-geo-consumer
         app: locations-geo-consumer
-        env: "#{spring.profiles.active}#"
-        version: "#{Build.BuildNumber}#"
+        env: dev
         product: synergy-reference-data
       annotations:
         prometheus.io/port: "8080"
@@ -30,12 +29,12 @@ spec:
         ad.datadoghq.com/locations-geo-consumer.init_configs: '[{}]'
         ad.datadoghq.com/locations-geo-consumer.instances: '[{"prometheus_url": "http://%%host%%:8080/actuator/prometheus",
             "namespace": "#{datadog.namespace}#", "metrics": ["*"]}]'
-        vault.security.banzaicloud.io/vault-role: "#{namespace}#"
+        vault.security.banzaicloud.io/vault-role: will-be-dynamically-updated
     spec:
       imagePullSecrets:
-        - name: bol-registry-acr-secret
+        - name: reference-data-github-packages-pull
       containers:
-        - image: mskbolregistry.azurecr.io/locations-geo-consumer:#{Build.BuildNumber}#
+        - image: will-be-dynamically-updated
           imagePullPolicy: Always
           name: locations-geo-consumer
           ports:
@@ -76,33 +75,33 @@ spec:
             - name: OTEL_COLLECTOR_ADDRESS
               value: "#{otel.collector.url}#"
             - name: BOOTSTRAP_SERVERS
-              value: vault:shipmentmanagement-kv/data/readable/#{spring.profiles.active}#/services/bol-summary-consumer/kafka/bootstrap-servers#bootstrap-servers
+              value: vault:shipmentmanagement-kv/data/readable/dev/services/bol-summary-consumer/kafka/bootstrap-servers#bootstrap-servers
             - name: SHIPMENT_KAFKA_USERNAME
-              value: vault:shipmentmanagement-kv/data/readable/#{spring.profiles.active}#/services/bol-summary-consumer/kafka/shipment/username#username
+              value: vault:shipmentmanagement-kv/data/readable/dev/services/bol-summary-consumer/kafka/shipment/username#username
             - name: SHIPMENT_KAFKA_PASSWORD
-              value: vault:shipmentmanagement-kv/data/#{spring.profiles.active}#/services/bol-summary-consumer/kafka/shipment/password#password
+              value: vault:shipmentmanagement-kv/data/dev/services/bol-summary-consumer/kafka/shipment/password#password
             - name: SHIPMENT_CONSUMER_GROUP
-              value: vault:shipmentmanagement-kv/data/readable/#{spring.profiles.active}#/services/bol-summary-consumer/kafka/shipment/consumer-group#consumer-group
+              value: vault:shipmentmanagement-kv/data/readable/dev/services/bol-summary-consumer/kafka/shipment/consumer-group#consumer-group
             - name: TPDOC_KAFKA_USERNAME
-              value: vault:shipmentmanagement-kv/data/readable/#{spring.profiles.active}#/services/bol-summary-consumer/kafka/tpdoc/username#username
+              value: vault:shipmentmanagement-kv/data/readable/dev/services/bol-summary-consumer/kafka/tpdoc/username#username
             - name: TPDOC_KAFKA_PASSWORD
-              value: vault:shipmentmanagement-kv/data/#{spring.profiles.active}#/services/bol-summary-consumer/kafka/tpdoc/password#password
+              value: vault:shipmentmanagement-kv/data/dev/services/bol-summary-consumer/kafka/tpdoc/password#password
             - name: TPDOC_CONSUMER_GROUP
-              value: vault:shipmentmanagement-kv/data/readable/#{spring.profiles.active}#/services/bol-summary-consumer/kafka/tpdoc/consumer-group#consumer-group
+              value: vault:shipmentmanagement-kv/data/readable/dev/services/bol-summary-consumer/kafka/tpdoc/consumer-group#consumer-group
             - name: ELASTICSEARCH_HOST
-              value: vault:shipmentmanagement-kv/data/readable/#{spring.profiles.active}#/services/bol-summary-consumer/elasticsearch/host#host
+              value: vault:shipmentmanagement-kv/data/readable/dev/services/bol-summary-consumer/elasticsearch/host#host
             - name: ELASTICSEARCH_API_KEY
-              value: vault:shipmentmanagement-kv/data/#{spring.profiles.active}#/services/bol-summary-consumer/elasticsearch/api-key#api-key
+              value: vault:shipmentmanagement-kv/data/dev/services/bol-summary-consumer/elasticsearch/api-key#api-key
             - name: API_HOST
-              value: vault:shipmentmanagement-kv/data/readable/#{spring.profiles.active}#/services/bol-summary-consumer/apigee-api-host#apigee-api-host
+              value: vault:shipmentmanagement-kv/data/readable/dev/services/bol-summary-consumer/apigee-api-host#apigee-api-host
             - name: PROFILE
-              value: vault:shipmentmanagement-kv/data/readable/#{spring.profiles.active}#/services/bol-summary-consumer/profile#profile
+              value: vault:shipmentmanagement-kv/data/readable/dev/services/bol-summary-consumer/profile#profile
             - name: SCHEMA_REGISTRY_URL
-              value: vault:shipmentmanagement-kv/data/readable/#{spring.profiles.active}#/services/bol-summary-consumer/kafka/schema-registry/url#url
+              value: vault:shipmentmanagement-kv/data/readable/dev/services/bol-summary-consumer/kafka/schema-registry/url#url
             - name: SCHEMA_REGISTRY_API_KEY
-              value: vault:shipmentmanagement-kv/data/readable/#{spring.profiles.active}#/services/bol-summary-consumer/kafka/schema-registry/api-key#api-key
+              value: vault:shipmentmanagement-kv/data/readable/dev/services/bol-summary-consumer/kafka/schema-registry/api-key#api-key
             - name: SCHEMA_REGISTRY_PASSWORD
-              value: vault:shipmentmanagement-kv/data/#{spring.profiles.active}#/services/bol-summary-consumer/kafka/schema-registry/password#password
+              value: vault:shipmentmanagement-kv/data/dev/services/bol-summary-consumer/kafka/schema-registry/password#password
 
           resources:
             requests:
