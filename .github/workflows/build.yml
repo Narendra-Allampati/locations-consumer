@@ -32,6 +32,7 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
+          cache: 'maven'
 
       - name: Print the repo name and github sha tag
         run: echo $GITHUB_WORKSPACE ${{ github.sha }}
@@ -39,13 +40,6 @@ jobs:
         #- name: Set projects Maven version to GitHub Action GUI set version
       - name: Print the env variable $GITHUB_RUN_ID
         run: echo $GITHUB_RUN_ID
-
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
 
       # Checks-out our Internal github actions repository under $GITHUB_WORKSPACE, so your job can access it
       - name: 'Checkout local github actions repository'
