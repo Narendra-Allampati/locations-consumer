@@ -34,7 +34,7 @@ spec:
       imagePullSecrets:
         - name: reference-data-github-packages-pull
       containers:
-        - image: will-be-dynamically-updated
+        - image: application-container-image
           imagePullPolicy: Always
           name: locations-geo-consumer
           ports:
