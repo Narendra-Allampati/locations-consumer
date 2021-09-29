@@ -22,8 +22,6 @@ kafka:
   security-protocol: SASL_SSL
   sasl-mechanism: PLAIN
   client-id: subscription-response-consumer
-  topic: ${KAFKA_TOPIC}
-  consumer-group: ${KAFKA_CONSUMER_GROUP}
   username: ${KAFKA_USERNAME}
   password: ${KAFKA_PASSWORD}
   schemaRegistry:
@@ -31,6 +29,8 @@ kafka:
     username: ${KAFKA_SCHEMA_REGISTRY_USERNAME}
     password: ${KAFKA_SCHEMA_REGISTRY_PASSWORD}
   consumer:
+    topic: ${KAFKA_TOPIC}
+    consumer-group: ${KAFKA_CONSUMER_GROUP}
     offset-auto-reset: earliest
     concurrency: 1
     max-poll-records: 5
