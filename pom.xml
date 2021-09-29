@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.maersk.referencedata</groupId>
 	<artifactId>locations-consumer</artifactId>
-	<version>0.0.5</version>
+	<version>0.0.6</version>
 	<name>locations-consumer</name>
 	<description>Consuming locations data from Kafka</description>
 	<properties>
