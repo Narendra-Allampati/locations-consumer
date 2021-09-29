@@ -79,7 +79,7 @@ spec:
             - name: KAFKA_BOOTSTRAP_SERVERS
               value: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/bootstrap-servers#bootstrap-servers
             - name: KAFKA_USERNAME
-              value: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/shipment/username#username
+              value: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/username#username
             - name: KAFKA_PASSWORD
               value: vault:synergyreferencedata-kv/data/dev/services/locations-consumer/kafka/password#password
             - name: KAFKA_CONSUMER_GROUP
