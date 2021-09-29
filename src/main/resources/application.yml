@@ -1,17 +1,20 @@
-spring:
-  application:
-    name: locations-consumer
-  elasticsearch:
-    host: localhost:9200
 #KAFKA_BOOTSTRAP_SERVERS: "localhost:9092"
 KAFKA_BOOTSTRAP_SERVERS: "pkc-lq8gm.westeurope.azure.confluent.cloud:9092"
 KAFKA_TOPIC: MSK.geography.gda.topic.internal.any.v1
 KAFKA_USERNAME:
 KAFKA_PASSWORD:
 KAFKA_CONSUMER_GROUP: MSK.referenceData.referenceDataReader.consumerGroup.v1
+
 KAFKA_SCHEMA_REGISTRY_URL: "https://psrc-4kk0p.westeurope.azure.confluent.cloud/"
 KAFKA_SCHEMA_REGISTRY_USERNAME:
 KAFKA_SCHEMA_REGISTRY_PASSWORD:
+
+ELASTICSEARCH_HOST: localhost:9200
+ELASTICSEARCH_API_KEY:
+
+PROFILE: local
+
+OTEL_COLLECTOR_ADDRESS: "http://localhost:4317"
 
 kafka:
   bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
@@ -36,6 +39,21 @@ kafka:
     retry:
       max-attempts: 3
       initial-interval-secs: 2
+
+spring:
+  application:
+    name: locations-consumer
+  elasticsearch:
+    host: ${ELASTICSEARCH_HOST}
+    api-key: ${ELASTICSEARCH_API_KEY}
+  profiles:
+    active: ${PROFILE}
+  sleuth:
+    otel:
+      exporter:
+        otlp:
+          endpoint: ${OTEL_COLLECTOR_ADDRESS}
+
 management:
   health:
     kafka:

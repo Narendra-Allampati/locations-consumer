@@ -73,35 +73,27 @@ spec:
             - name: DD_APM_ENABLED
               value: "#{datadog.enabled}#"
             - name: OTEL_COLLECTOR_ADDRESS
-              value: "#{otel.collector.url}#"
-            - name: BOOTSTRAP_SERVERS
-              value: vault:shipmentmanagement-kv/data/readable/dev/services/bol-summary-consumer/kafka/bootstrap-servers#bootstrap-servers
-            - name: SHIPMENT_KAFKA_USERNAME
-              value: vault:shipmentmanagement-kv/data/readable/dev/services/bol-summary-consumer/kafka/shipment/username#username
-            - name: SHIPMENT_KAFKA_PASSWORD
-              value: vault:shipmentmanagement-kv/data/dev/services/bol-summary-consumer/kafka/shipment/password#password
-            - name: SHIPMENT_CONSUMER_GROUP
-              value: vault:shipmentmanagement-kv/data/readable/dev/services/bol-summary-consumer/kafka/shipment/consumer-group#consumer-group
-            - name: TPDOC_KAFKA_USERNAME
-              value: vault:shipmentmanagement-kv/data/readable/dev/services/bol-summary-consumer/kafka/tpdoc/username#username
-            - name: TPDOC_KAFKA_PASSWORD
-              value: vault:shipmentmanagement-kv/data/dev/services/bol-summary-consumer/kafka/tpdoc/password#password
-            - name: TPDOC_CONSUMER_GROUP
-              value: vault:shipmentmanagement-kv/data/readable/dev/services/bol-summary-consumer/kafka/tpdoc/consumer-group#consumer-group
-            - name: ELASTICSEARCH_HOST
-              value: vault:shipmentmanagement-kv/data/readable/dev/services/bol-summary-consumer/elasticsearch/host#host
-            - name: ELASTICSEARCH_API_KEY
-              value: vault:shipmentmanagement-kv/data/dev/services/bol-summary-consumer/elasticsearch/api-key#api-key
-            - name: API_HOST
-              value: vault:shipmentmanagement-kv/data/readable/dev/services/bol-summary-consumer/apigee-api-host#apigee-api-host
+              value: vault:synergyreferencedata-kv/data/readable/dev/services/otel-collector/address#address
             - name: PROFILE
-              value: vault:shipmentmanagement-kv/data/readable/dev/services/bol-summary-consumer/profile#profile
-            - name: SCHEMA_REGISTRY_URL
-              value: vault:shipmentmanagement-kv/data/readable/dev/services/bol-summary-consumer/kafka/schema-registry/url#url
-            - name: SCHEMA_REGISTRY_API_KEY
-              value: vault:shipmentmanagement-kv/data/readable/dev/services/bol-summary-consumer/kafka/schema-registry/api-key#api-key
-            - name: SCHEMA_REGISTRY_PASSWORD
-              value: vault:shipmentmanagement-kv/data/dev/services/bol-summary-consumer/kafka/schema-registry/password#password
+              value: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/profile#profile
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/bootstrap-servers#bootstrap-servers
+            - name: KAFKA_USERNAME
+              value: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/shipment/username#username
+            - name: KAFKA_PASSWORD
+              value: vault:synergyreferencedata-kv/data/dev/services/locations-consumer/kafka/password#password
+            - name: KAFKA_CONSUMER_GROUP
+              value: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/consumer-group#consumer-group
+            - name: KAFKA_SCHEMA_REGISTRY_URL
+              value: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/schema-registry/url#url
+            - name: KAFKA_SCHEMA_REGISTRY_API_KEY
+              value: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/schema-registry/api-key#api-key
+            - name: KAFKA_SCHEMA_REGISTRY_PASSWORD
+              value: vault:synergyreferencedata-kv/data/dev/services/locations-consumer/kafka/schema-registry/password#password
+            - name: ELASTICSEARCH_HOST
+              value: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/elasticsearch/host#host
+            - name: ELASTICSEARCH_API_KEY
+              value: vault:synergyreferencedata-kv/data/dev/services/locations-consumer/elasticsearch/api-key#api-key
 
           resources:
             requests:
