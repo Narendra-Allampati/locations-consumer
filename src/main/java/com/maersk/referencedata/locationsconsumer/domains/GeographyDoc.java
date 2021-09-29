@@ -9,7 +9,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
  * @author Anders Clausen on 10/09/2021.
  */
 @Builder
-@Document(indexName = "geography1")
+@Document(indexName = "geography1", createIndex = false)
 public class GeographyDoc {
     String operationType;
     @Id
