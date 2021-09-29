@@ -19,7 +19,7 @@
 		<jacoco.version>0.8.7</jacoco.version>
 		<java.version>11</java.version>
 		<testcontainers.version>1.16.0</testcontainers.version>
-		<sonar.coverage.exclusions>**/com/maersk/referencedata/locationsconsumer/*</sonar.coverage.exclusions>
+		<sonar.coverage.exclusions>**/com/maersk/referencedata/locationsconsumer/**/*</sonar.coverage.exclusions>
 		<spring-cloud-sleuth-otel.version>1.0.0-M11</spring-cloud-sleuth-otel.version>
 		<spring-cloud-sleuth.version>3.1.0-SNAPSHOT</spring-cloud-sleuth.version>
 		<spring-cloud.version>2020.0.4</spring-cloud.version>
