@@ -16,7 +16,7 @@ import org.apache.avro.message.SchemaStore;
 @org.apache.avro.specific.AvroGenerated
 public class GeographySubCityParentAlternateCode extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
   private static final long serialVersionUID = -9012449322741151702L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"GeographySubCityParentAlternateCode\",\"namespace\":\"com.maersk.Geography.smds.operations.MSK\",\"doc\":\"Geography SubCityParent AlternateCode details\",\"fields\":[{\"name\":\"CodeType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"Code\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"GeographySubCityParentAlternateCode\",\"namespace\":\"com.maersk.Geography.smds.operations.MSK\",\"doc\":\"Geography SubCityParent AlternateCode details\",\"fields\":[{\"name\":\"CodeType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null},{\"name\":\"Code\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null}],\"connect.name\":\"com.maersk.Geography.smds.operations.MSK.GeographySubCityParentAlternateCode\",\"connect.parameters\":{\"io.confluent.connect.avro.record.doc\":\"Geography SubCityParent AlternateCode details\"}}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
