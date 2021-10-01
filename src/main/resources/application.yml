@@ -24,7 +24,7 @@ kafka:
   client-id: subscription-response-consumer
   username: ${KAFKA_USERNAME}
   password: ${KAFKA_PASSWORD}
-  schemaRegistry:
+  schema-registry:
     url: ${KAFKA_SCHEMA_REGISTRY_URL}
     username: ${KAFKA_SCHEMA_REGISTRY_USERNAME}
     password: ${KAFKA_SCHEMA_REGISTRY_PASSWORD}
