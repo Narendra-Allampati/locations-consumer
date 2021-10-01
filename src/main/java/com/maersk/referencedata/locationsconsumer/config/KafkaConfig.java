@@ -5,6 +5,8 @@ import com.maersk.shared.kafka.configuration.KafkaReceiverBaseConfiguration;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
+import reactor.kafka.receiver.ReceiverOptions;
+import reactor.kafka.receiver.ReceiverPartition;
 
 /**
  * @author Anders Clausen on 06/09/2021.
@@ -13,4 +15,10 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Slf4j
 public class KafkaConfig extends KafkaReceiverBaseConfiguration<String, GeographyMessage> {
+
+    @Override
+    protected ReceiverOptions<String, GeographyMessage> kafkaReceiverOptions() {
+        ReceiverOptions<String, GeographyMessage> options = super.kafkaReceiverOptions();
+        return options.addAssignListener(receiverPartitions -> receiverPartitions.forEach(ReceiverPartition::seekToBeginning));
+    }
 }
