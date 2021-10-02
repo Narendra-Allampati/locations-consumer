@@ -6,7 +6,7 @@ KAFKA_PASSWORD:
 KAFKA_CONSUMER_GROUP: MSK.referenceData.referenceDataReader.consumerGroup.v1
 
 KAFKA_SCHEMA_REGISTRY_URL: "https://psrc-4kk0p.westeurope.azure.confluent.cloud/"
-KAFKA_SCHEMA_REGISTRY_USERNAME:
+KAFKA_SCHEMA_REGISTRY_API_KEY:
 KAFKA_SCHEMA_REGISTRY_PASSWORD:
 
 ELASTICSEARCH_HOST: localhost:9200
@@ -26,7 +26,7 @@ kafka:
   password: ${KAFKA_PASSWORD}
   schema-registry:
     url: ${KAFKA_SCHEMA_REGISTRY_URL}
-    username: ${KAFKA_SCHEMA_REGISTRY_USERNAME}
+    username: ${KAFKA_SCHEMA_REGISTRY_API_KEY}
     password: ${KAFKA_SCHEMA_REGISTRY_PASSWORD}
   consumer:
     topic: ${KAFKA_TOPIC}
