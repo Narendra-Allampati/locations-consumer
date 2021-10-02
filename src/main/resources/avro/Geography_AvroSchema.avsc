@@ -1,4 +1,3 @@
-
 {
 
 	"connect.name": "com.maersk.Geography.smds.operations.MSK.GeographyMessage",
@@ -11,7 +10,7 @@
 
 	},
 
-	"connect.version": 4,
+	"connect.version": 12,
 
 	"doc": "The generic avro schema used by publishers to publish events to the enterprise streaming service for Geography interface",
 
@@ -569,6 +568,22 @@
 
 										"default": null,
 
+										"name": "HSUDName",
+
+										"type": [
+
+											"null",
+
+											"string"
+
+										]
+
+									},
+
+									{
+
+										"default": null,
+
 										"name": "GeographyAlternateNames",
 
 										"type": [
@@ -1037,6 +1052,22 @@
 
 															"default": null,
 
+															"name": "BDAType",
+
+															"type": [
+
+																"null",
+
+																"string"
+
+															]
+
+														},
+
+														{
+
+															"default": null,
+
 															"name": "GeographyParentAlternateCodeDetails",
 
 															"type": [
@@ -1186,6 +1217,22 @@
 															"default": null,
 
 															"name": "Type",
+
+															"type": [
+
+																"null",
+
+																"string"
+
+															]
+
+														},
+
+														{
+
+															"default": null,
+
+															"name": "BDAType",
 
 															"type": [
 
@@ -1530,6 +1577,22 @@
 															"default": null,
 
 															"name": "Type",
+
+															"type": [
+
+																"null",
+
+																"string"
+
+															]
+
+														},
+
+														{
+
+															"default": null,
+
+															"name": "Status",
 
 															"type": [
 
