@@ -44,6 +44,8 @@ public class ElasticsearchConfig extends AbstractReactiveElasticsearchConfigurat
         if (LOCAL.equals(activeProfile)) {
             return ClientConfiguration.builder()
                     .connectedTo(elasticSearchHostname)
+                    .withConnectTimeout(Duration.ofDays(3))
+                    .withSocketTimeout(Duration.ofDays(3))
                     .withWebClientConfigurer(webClient -> {
                         ExchangeStrategies exchangeStrategies = ExchangeStrategies.builder()
                                 .codecs(configurer -> configurer.defaultCodecs()

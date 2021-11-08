@@ -1,6 +1,6 @@
 package com.maersk.referencedata.locationsconsumer.domains;
 
-import com.maersk.Geography.smds.operations.MSK.GeographyMessage;
+import com.maersk.Geography.smds.operations.MSK.geographyMessage;
 import lombok.Builder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -18,5 +18,5 @@ public class GeographyDoc {
     String status;
     String validFrom;
     String validTo;
-    GeographyMessage payload;
+    geographyMessage payload;
 }

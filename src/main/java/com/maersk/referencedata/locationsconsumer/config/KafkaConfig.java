@@ -1,6 +1,6 @@
 package com.maersk.referencedata.locationsconsumer.config;
 
-import com.maersk.Geography.smds.operations.MSK.GeographyMessage;
+import com.maersk.Geography.smds.operations.MSK.geographyMessage;
 import com.maersk.shared.kafka.configuration.KafkaReceiverBaseConfiguration;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -14,11 +14,11 @@ import reactor.kafka.receiver.ReceiverPartition;
 @Configuration
 @Getter
 @Slf4j
-public class KafkaConfig extends KafkaReceiverBaseConfiguration<String, GeographyMessage> {
+public class KafkaConfig extends KafkaReceiverBaseConfiguration<String, geographyMessage> {
 
     @Override
-    protected ReceiverOptions<String, GeographyMessage> kafkaReceiverOptions() {
-        ReceiverOptions<String, GeographyMessage> options = super.kafkaReceiverOptions();
+    protected ReceiverOptions<String, geographyMessage> kafkaReceiverOptions() {
+        ReceiverOptions<String, geographyMessage> options = super.kafkaReceiverOptions();
         return options.addAssignListener(receiverPartitions -> receiverPartitions.forEach(ReceiverPartition::seekToBeginning));
     }
 }
