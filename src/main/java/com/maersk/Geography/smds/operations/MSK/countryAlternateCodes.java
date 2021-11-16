@@ -16,10 +16,12 @@ import org.apache.avro.message.SchemaStore;
 @org.apache.avro.specific.AvroGenerated
 public class countryAlternateCodes extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
   private static final long serialVersionUID = 6459421113908797377L;
+
+
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"countryAlternateCodes\",\"namespace\":\"com.maersk.Geography.smds.operations.MSK\",\"doc\":\"Country AlternateCode Details\",\"fields\":[{\"name\":\"codeType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"code\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
-  private static SpecificData MODEL$ = new SpecificData();
+  private static final SpecificData MODEL$ = new SpecificData();
 
   private static final BinaryMessageEncoder<countryAlternateCodes> ENCODER =
       new BinaryMessageEncoder<countryAlternateCodes>(MODEL$, SCHEMA$);
@@ -72,8 +74,8 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
     return DECODER.decode(b);
   }
 
-   private java.lang.String codeType;
-   private java.lang.String code;
+  private java.lang.String codeType;
+  private java.lang.String code;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -193,7 +195,7 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
 
     /** Creates a new Builder */
     private Builder() {
-      super(SCHEMA$);
+      super(SCHEMA$, MODEL$);
     }
 
     /**
@@ -217,7 +219,7 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
      * @param other The existing instance to copy.
      */
     private Builder(com.maersk.Geography.smds.operations.MSK.countryAlternateCodes other) {
-      super(SCHEMA$);
+      super(SCHEMA$, MODEL$);
       if (isValidValue(fields()[0], other.codeType)) {
         this.codeType = data().deepCopy(fields()[0].schema(), other.codeType);
         fieldSetFlags()[0] = true;

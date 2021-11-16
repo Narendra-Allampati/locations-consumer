@@ -16,10 +16,12 @@ import org.apache.avro.message.SchemaStore;
 @org.apache.avro.specific.AvroGenerated
 public class subCityParent extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
   private static final long serialVersionUID = -7500401795335351634L;
+
+
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"subCityParent\",\"namespace\":\"com.maersk.Geography.smds.operations.MSK\",\"doc\":\"SubCityParent details\",\"fields\":[{\"name\":\"name\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"type\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"bdaType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"alternateCodes\",\"type\":[\"null\",{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"subCityParentAlternateCode\",\"doc\":\"SubCityParent AlternateCode details\",\"fields\":[{\"name\":\"codeType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"code\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]}]}}]}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
-  private static SpecificData MODEL$ = new SpecificData();
+  private static final SpecificData MODEL$ = new SpecificData();
 
   private static final BinaryMessageEncoder<subCityParent> ENCODER =
       new BinaryMessageEncoder<subCityParent>(MODEL$, SCHEMA$);
@@ -72,10 +74,10 @@ public class subCityParent extends org.apache.avro.specific.SpecificRecordBase i
     return DECODER.decode(b);
   }
 
-   private java.lang.String name;
-   private java.lang.String type;
-   private java.lang.String bdaType;
-   private java.util.List<com.maersk.Geography.smds.operations.MSK.subCityParentAlternateCode> alternateCodes;
+  private java.lang.String name;
+  private java.lang.String type;
+  private java.lang.String bdaType;
+  private java.util.List<com.maersk.Geography.smds.operations.MSK.subCityParentAlternateCode> alternateCodes;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -239,7 +241,7 @@ public class subCityParent extends org.apache.avro.specific.SpecificRecordBase i
 
     /** Creates a new Builder */
     private Builder() {
-      super(SCHEMA$);
+      super(SCHEMA$, MODEL$);
     }
 
     /**
@@ -271,7 +273,7 @@ public class subCityParent extends org.apache.avro.specific.SpecificRecordBase i
      * @param other The existing instance to copy.
      */
     private Builder(com.maersk.Geography.smds.operations.MSK.subCityParent other) {
-      super(SCHEMA$);
+      super(SCHEMA$, MODEL$);
       if (isValidValue(fields()[0], other.name)) {
         this.name = data().deepCopy(fields()[0].schema(), other.name);
         fieldSetFlags()[0] = true;
