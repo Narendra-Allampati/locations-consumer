@@ -1,6 +1,6 @@
 package com.maersk.referencedata.locationsconsumer.repositories;
 
-import com.maersk.referencedata.locationsconsumer.domains.GeographyDoc;
+import com.maersk.referencedata.locationsconsumer.domains.elasticsearch.GeographyDoc;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 
 /**

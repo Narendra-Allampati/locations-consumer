@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Anders Clausen on 12/10/2021.
@@ -25,25 +26,18 @@ public class GeographyMapper {
                 .status(geography.getStatus())
                 .validFrom(ZonedDateTime.ofInstant(Instant.ofEpochMilli(geography.getValidFrom()), ZoneId.of(TIME_ZONE_UTC)))
                 .validTo(ZonedDateTime.ofInstant(Instant.ofEpochMilli(geography.getValidTo()), ZoneId.of(TIME_ZONE_UTC)))
-                .longitude(Double.parseDouble(geography.getLongitude()))
-                .latitude(Double.parseDouble(geography.getLatitude()))
+                .longitude(geography.getLongitude())
+                .latitude(geography.getLatitude())
                 .timeZone(geography.getTimeZone())
                 .daylightSavingTime(geography.getDaylightSavingTime())
                 .utcOffsetMinutes(geography.getUtcOffsetMinutes())
-                .daylightSavingStart(geography.getDaylightSavingStart())
-                .daylightSavingEnd(geography.getDaylightSavingEnd())
+                .daylightSavingStart(ZonedDateTime.ofInstant(Instant.ofEpochMilli(geography.getDaylightSavingStart()), ZoneId.of(TIME_ZONE_UTC)))
+                .daylightSavingEnd(ZonedDateTime.ofInstant(Instant.ofEpochMilli(geography.getDaylightSavingEnd()), ZoneId.of(TIME_ZONE_UTC)))
                 .daylightSavingShiftMinutes(geography.getDaylightSavingShiftMinutes())
                 .description(geography.getDescription())
                 .workaroundReason(geography.getWorkaroundReason())
                 .restricted(geography.getRestricted())
-//                .siteType(geography.getSiteType())
-//                .gpsFlag(geography.getGPSFlag())
-//                .gsmFlag(geography.getGSMFlag())
-//                .streetNumber(geography.getStreetNumber())
-//                .addressLine1(geography.getAddressLine1())
-//                .addressLine2(geography.getAddressLine2())
-//                .addressLine3(geography.getAddressLine3())
-//                .postalCode(geography.getPostalCode())
+
                 .postalCodeMandatoryFlag(geography.getPostalCodeMandatoryFlag())
                 .stateProvinceMandatory(geography.getStateProvienceMandatory())
                 .dialingCode(geography.getDialingCode())
@@ -51,50 +45,13 @@ public class GeographyMapper {
                 .portFlag(geography.getPortFlag())
                 .olsonTimezone(geography.getOlsonTimezone())
                 .bdaType(geography.getBdaType())
-                .countryRowid(geography.getCountry())
-                // TODO We're getting a list for the elements below!!!
-                .parentRowId(geography.getParent().get(0).getAlternateCodes())
-                .subCityParentRowId(geography.getSubCityParent().get(0).getAlternateCodes())
-                .bdaRowId(geography.getBda().get(0).getAlternateCodes())
-                .bdaLocRowId(geography.getBdaLocations().get(0).getAlternateCodes())
                 .build();
-
-/*      geoType
-        name
-        status
-        validFrom
-        validTo
-        longitude
-        latitude
-        timeZone
-        daylightSavingTime
-        utcOffsetMinutes
-        daylightSavingStart
-        daylightSavingEnd
-        daylightSavingShiftMinutes
-        description
-        workaroundReason
-        restricted
-        postalCodeMandatoryFlag
-        stateProvidenceMandatory
-        dialingCode
-        dialingCodeDescription
-        portFlag
-        olsonTimeZone
-        bdaType
-        hsudName
-        alternateNames
-        alternateCodes
-        country
-        parent
-        subCityParent
-        bda
-        bdaLocations
-                 */
     }
 
     private static String findCode(List<alternateCodes> alternateCodes, String type) {
-        return alternateCodes.stream().filter(value -> type.equals(value.getCodeType())
-        ).findFirst().map(alternateCodes::getCode).toString();
+        final var alternateCode = alternateCodes.stream().filter(value -> type.equals(value.getCodeType())
+        ).findFirst().orElse(null);
+
+        return (null == alternateCode) ? null : alternateCode.getCode();
     }
 }

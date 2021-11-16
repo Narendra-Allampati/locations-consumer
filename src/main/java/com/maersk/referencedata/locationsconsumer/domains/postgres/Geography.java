@@ -5,12 +5,13 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 /**
  * @author Anders Clausen on 12/10/2021.
  */
 @Builder
-@Table
+@Table(value = "GEOGRAPHY")
 public class Geography {
 
     @Id
@@ -20,25 +21,17 @@ public class Geography {
     private String status;
     private ZonedDateTime validFrom;
     private ZonedDateTime validTo;
-    private Double longitude;
-    private Double latitude;
+    private String longitude;
+    private String latitude;
     private String timeZone;
     private String daylightSavingTime;
     private String utcOffsetMinutes;
-    private String daylightSavingStart;
-    private String daylightSavingEnd;
+    private ZonedDateTime daylightSavingStart;
+    private ZonedDateTime daylightSavingEnd;
     private String daylightSavingShiftMinutes;
     private String description;
     private String workaroundReason;
     private String restricted;
-    private String siteType;
-    private String gpsFlag;
-    private String gsmFlag;
-    private String streetNumber;
-    private String addressLine1;
-    private String addressLine2;
-    private String addressLine3;
-    private String postalCode;
     private String postalCodeMandatoryFlag;
     private String stateProvinceMandatory;
     private String dialingCode;
@@ -46,13 +39,13 @@ public class Geography {
     private String portFlag;
     private String olsonTimezone;
     private String bdaType;
-    private String countryRowid;
-    private String parentRowId;
-    private String subCityParentRowId;
-    private String bdaRowId;
-    private String bdaLocRowId;
-//    private String geographyAlternateNames     text     [],
-//    private String geographyAlternateCodes      text     [],
-//    private String geographyFence                        text     []);
+    private String hsudName;
+    private List<AlternateName> alternateNames;
+    private List<AlternateCode> alternateCodes;
+    private List<Country> countries;
+    private List<Parent> parents;
+    private List<SubCityParent> subCityParents;
+    private List<BusinessDefinedArea> businessDefinedAreas;
+    private List<BusinessDefinedAreaLocation> businessDefinedAreaLocations;
 }
 
