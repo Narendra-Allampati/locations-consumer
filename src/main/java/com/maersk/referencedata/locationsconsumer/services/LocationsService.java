@@ -23,8 +23,9 @@ import com.maersk.referencedata.locationsconsumer.domains.postgres.Geography;
 import com.maersk.referencedata.locationsconsumer.domains.postgres.Parent;
 import com.maersk.referencedata.locationsconsumer.domains.postgres.SubCityParent;
 import com.maersk.referencedata.locationsconsumer.mappers.GeographyMapper;
+import com.maersk.referencedata.locationsconsumer.repositories.AlternateCodeRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.AlternateNameRepository;
 import com.maersk.referencedata.locationsconsumer.repositories.GeographyRepository;
-import com.maersk.referencedata.locationsconsumer.repositories.LocationsRepository;
 import com.maersk.shared.kafka.serialization.KafkaDeserializerUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,12 +40,10 @@ import reactor.kafka.receiver.ReceiverRecord;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.SignStyle;
-import java.time.temporal.ChronoField;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -57,17 +56,11 @@ import java.util.stream.Collectors;
 public class LocationsService {
 
     private final KafkaReceiver<String, geographyMessage> kafkaReceiver;
-    private final LocationsRepository locationsRepository;
     private final GeographyRepository geographyRepository;
+    private final AlternateCodeRepository alternateCodeRepository;
+    private final AlternateNameRepository alternateNameRepository;
 
     private static final String TIME_ZONE_UTC = "UTC";
-    private static final DateTimeFormatter epochFormatter = new DateTimeFormatterBuilder()
-            .appendValue(ChronoField.INSTANT_SECONDS, 1, 19, SignStyle.NEVER)
-            .optionalStart()
-            .appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true)
-            .optionalEnd()
-            .toFormatter()
-            .withZone(ZoneId.of(TIME_ZONE_UTC));
 
     @EventListener(ApplicationStartedEvent.class)
     public Disposable startKafkaConsumer() {
@@ -84,14 +77,14 @@ public class LocationsService {
         try {
             return Mono.just(geographyRecord)
                     .map(KafkaDeserializerUtils::extractDeserializerError)
-                    .<ReceiverRecord<String, geographyMessage>>handle((tuple, sink) -> {
+                    .<geographyMessage>handle((tuple, sink) -> {
                         if (tuple.getT2().isEmpty() && Objects.nonNull(tuple.getT1().value())) {
-                            sink.next(tuple.getT1());
+                            sink.next(tuple.getT1().value());
                         } else {
                             log.error("Error while processing geographyMessage " + tuple.getT2().get());
                         }
                     })
-                    .flatMap(this::storeEvent)
+                    .flatMap(geographyMessage -> mapAndSaveGeographyEvent(geographyMessage.getGeography()))
                     .doOnError(ex -> log.warn("Error processing event {}", geographyRecord.key(), ex))
                     .doOnError(ex -> log.error("Error processing event after all retries {}", geographyRecord.key(), ex))
                     .onErrorResume(ex -> Mono.empty())
@@ -103,44 +96,25 @@ public class LocationsService {
         }
     }
 
-    private Mono<Void> storeEvent(ReceiverRecord<String, geographyMessage> geographyRecord) {
-        getMappedObject(geographyRecord.value());
-        return Mono.empty();
+    private Mono<Void> mapAndSaveGeographyEvent(geography geography) {
+
+        final var geoID = findCode(geography.getAlternateCodes(), "GEOID");
+
+        Geography geo = mapGeographyEventToGeography(geography, geoID);
+
+        final var alternateNames = mapToAlternateName(geography.getAlternateNames(), geoID);
+
+        final var alternateCodes = mapToAlternateCode(geography.getAlternateCodes(), geoID);
+
+        return Mono.zip(geographyRepository.save(geo),
+                        alternateNameRepository.saveAll(alternateNames).collectList(),
+                        alternateCodeRepository.saveAll(alternateCodes).collectList())
+                .then();
     }
 
-    private Geography getMappedObject(geographyMessage geographyMessage) {
-        return GeographyMapper.mapAvroToDomainModel(geographyMessage);
-    }
-
-    private Mono<Geography> handleLocationsResponse(ReceiverRecord<String, geographyMessage> geographyRecord) {
-        geographyMessage geographyMessage = geographyRecord.value();
-        final var geography = geographyMessage.getGeography();
-        log.info("Type is: " + geography.getGeoType());
-        Geography geo = mapGeographyEventToGeography(geography);
-
-//        return geographyRepository.save(geo);
-        return Mono.empty();
-
-//        GeographyDoc geographyDoc = GeographyDoc.builder()
-//                .geoRowId("")
-//                .operationType(new String(geographyRecord.headers().lastHeader("EventType").value()))
-//                .geoType(geography.getGeoType())
-//                .status(geography.getStatus())
-//                .validFrom(geography.getValidFrom())
-//                .validTo(geography.getValidTo())
-//                .payload(geographyMessage)
-//                .build();
-//        log.info("Geography: " + geographyDoc);
-//        return locationsRepository.save(geographyDoc);
-
-    }
-
-    private Geography mapGeographyEventToGeography(geography geography) {
-
+    private Geography mapGeographyEventToGeography(geography geography, String geoID) {
         return Geography.builder()
-                // TODO need to extract GEOID from alternate codes
-//                .geoRowId(UUID.randomUUID().toString())
-                .geoRowId(findCode(geography.getAlternateCodes(), "GEOID"))
+                .geoRowId(geoID)
                 .geoType(geography.getGeoType())
                 .name(geography.getName())
                 .status(geography.getStatus())
@@ -162,29 +136,33 @@ public class LocationsService {
                 .dialingCode(geography.getDialingCode())
                 .dialingCodeDescription(geography.getDialingCodedescription())
                 .portFlag(geography.getPortFlag())
-                .olsonTimezone(geography.getOlsonTimezone())
+                .olsonTimeZone(geography.getOlsonTimezone())
                 .bdaType(geography.getBdaType())
                 .hsudName(geography.getHsudName())
-                .alternateNames(mapToAlternateName(geography.getAlternateNames()))
-                .alternateCodes(mapToAlternateCode(geography.getAlternateCodes()))
-                .countries(mapToCountry(geography.getCountry()))
-                .parents(mapToParent(geography.getParent()))
-                .subCityParents(mapToSubCityParent(geography.getSubCityParent()))
-                .businessDefinedAreas(mapToBusinessDefinedArea(geography.getBda()))
-                .businessDefinedAreaLocations(mapToBusinessDefinedAreaLocation(geography.getBdaLocations()))
+//                .alternateNames(mapToAlternateName(geography.getAlternateNames()))
+//                .alternateCodes(mapToAlternateCode(geography.getAlternateCodes()))
+//                .countries(mapToCountry(geography.getCountry()))
+//                .parents(mapToParent(geography.getParent()))
+//                .subCityParents(mapToSubCityParent(geography.getSubCityParent()))
+//                .businessDefinedAreas(mapToBusinessDefinedArea(geography.getBda()))
+//                .businessDefinedAreaLocations(mapToBusinessDefinedAreaLocation(geography.getBdaLocations()))
                 .build();
     }
 
     private String findCode(List<alternateCodes> alternateCodes, String type) {
-        final var alternateCode = alternateCodes.stream()
+        return alternateCodes.stream()
                 .filter(value -> type.equals(value.getCodeType()))
                 .findFirst()
-                .orElse(null);
-
-        return (null == alternateCode) ? UUID.randomUUID().toString() : alternateCode.getCode();
+                .map(com.maersk.Geography.smds.operations.MSK.alternateCodes::getCode)
+                .orElse(UUID.randomUUID().toString());
     }
 
     private List<BusinessDefinedAreaLocation> mapToBusinessDefinedAreaLocation(List<bdaLocation> bdaLocations) {
+        // TODO refactor to cleaner code
+        if (null == bdaLocations) {
+            return Collections.emptyList();
+        }
+
         return bdaLocations.stream().map(location ->
                         BusinessDefinedAreaLocation.builder()
                                 .name(location.getName())
@@ -197,7 +175,9 @@ public class LocationsService {
     }
 
     private List<BusinessDefinedArea> mapToBusinessDefinedArea(List<bda> bdas) {
-        return bdas.stream().map(bda ->
+
+        return Optional.ofNullable(bdas)
+                .orElse(Collections.emptyList()).stream().map(bda ->
                         BusinessDefinedArea.builder()
                                 .name(bda.getName())
                                 .bdaType(bda.getBdaType())
@@ -208,7 +188,8 @@ public class LocationsService {
     }
 
     private List<SubCityParent> mapToSubCityParent(List<subCityParent> subCityParents) {
-        return subCityParents.stream().map(subCityParent ->
+        return Optional.ofNullable(subCityParents)
+                .orElse(Collections.emptyList()).stream().map(subCityParent ->
                         SubCityParent.builder()
                                 .name(subCityParent.getName())
                                 .type(subCityParent.getType())
@@ -219,7 +200,8 @@ public class LocationsService {
     }
 
     private List<Parent> mapToParent(List<parent> parents) {
-        return parents.stream().map(parent ->
+        return Optional.ofNullable(parents)
+                .orElse(Collections.emptyList()).stream().map(parent ->
                         Parent.builder()
                                 .name(parent.getName())
                                 .bdaType(parent.getBdaType())
@@ -230,7 +212,8 @@ public class LocationsService {
     }
 
     private List<Country> mapToCountry(List<country> countries) {
-        return countries.stream().map(country ->
+        return Optional.ofNullable(countries)
+                .orElse(Collections.emptyList()).stream().map(country ->
                         Country.builder()
                                 .name(country.getName())
                                 .type(country.getType())
@@ -241,7 +224,8 @@ public class LocationsService {
     }
 
     private List<AlternateCode> mapToBDALocationAlternateCode(List<bdaLocationAlternateCode> alternateCodes) {
-        return alternateCodes.stream().map(alternateCode ->
+        return Optional.ofNullable(alternateCodes)
+                .orElse(Collections.emptyList()).stream().map(alternateCode ->
                         AlternateCode.builder()
                                 .codeType(alternateCode.getCodeType())
                                 .code(alternateCode.getCode())
@@ -251,7 +235,8 @@ public class LocationsService {
     }
 
     private List<AlternateCode> mapToBDAAlternateCode(List<bdaAlternateCode> alternateCodes) {
-        return alternateCodes.stream().map(alternateCode ->
+        return Optional.ofNullable(alternateCodes)
+                .orElse(Collections.emptyList()).stream().map(alternateCode ->
                         AlternateCode.builder()
                                 .codeType(alternateCode.getCodeType())
                                 .code(alternateCode.getCode())
@@ -261,7 +246,8 @@ public class LocationsService {
     }
 
     private List<AlternateCode> mapToSubCityParentAlternateCode(List<subCityParentAlternateCode> alternateCodes) {
-        return alternateCodes.stream().map(alternateCode ->
+        return Optional.ofNullable(alternateCodes)
+                .orElse(Collections.emptyList()).stream().map(alternateCode ->
                         AlternateCode.builder()
                                 .codeType(alternateCode.getCodeType())
                                 .code(alternateCode.getCode())
@@ -271,7 +257,8 @@ public class LocationsService {
     }
 
     private List<AlternateCode> mapToParentAlternateCode(List<parentAlternateCode> alternateCodes) {
-        return alternateCodes.stream().map(alternateCode ->
+        return Optional.ofNullable(alternateCodes)
+                .orElse(Collections.emptyList()).stream().map(alternateCode ->
                         AlternateCode.builder()
                                 .codeType(alternateCode.getCodeType())
                                 .code(alternateCode.getCode())
@@ -281,7 +268,8 @@ public class LocationsService {
     }
 
     private List<AlternateCode> mapToCountryAlternateCode(List<countryAlternateCodes> alternateCodes) {
-        return alternateCodes.stream().map(alternateCode ->
+        return Optional.ofNullable(alternateCodes)
+                .orElse(Collections.emptyList()).stream().map(alternateCode ->
                         AlternateCode.builder()
                                 .codeType(alternateCode.getCodeType())
                                 .code(alternateCode.getCode())
@@ -290,9 +278,11 @@ public class LocationsService {
                 .collect(Collectors.toList());
     }
 
-    private List<AlternateCode> mapToAlternateCode(List<alternateCodes> alternateCodes) {
-        return alternateCodes.stream().map(alternateCode ->
+    private List<AlternateCode> mapToAlternateCode(List<alternateCodes> alternateCodes, String geoID) {
+        return Optional.ofNullable(alternateCodes)
+                .orElse(Collections.emptyList()).stream().map(alternateCode ->
                         AlternateCode.builder()
+                                .rowId(geoID)
                                 .codeType(alternateCode.getCodeType())
                                 .code(alternateCode.getCode())
                                 .build()
@@ -300,9 +290,11 @@ public class LocationsService {
                 .collect(Collectors.toList());
     }
 
-    private List<AlternateName> mapToAlternateName(List<alternateNames> alternateNames) {
-        return alternateNames.stream().map(alternateName ->
+    private List<AlternateName> mapToAlternateName(List<alternateNames> alternateNames, String geoID) {
+        return Optional.ofNullable(alternateNames)
+                .orElse(Collections.emptyList()).stream().map(alternateName ->
                         AlternateName.builder()
+                                .rowId(geoID)
                                 .name(alternateName.getName())
                                 .status(alternateName.getStatus())
                                 .description(alternateName.getDescription())
@@ -316,4 +308,33 @@ public class LocationsService {
     private ZonedDateTime mapLongToZonedDateTime(Long epoch) {
         return ZonedDateTime.ofInstant(Instant.ofEpochMilli(epoch), ZoneId.of(TIME_ZONE_UTC));
     }
+
+    private Mono<Void> storeEvent(ReceiverRecord<String, geographyMessage> geographyRecord) {
+        getMappedObject(geographyRecord.value());
+        return Mono.empty();
+    }
+
+    private Geography getMappedObject(geographyMessage geographyMessage) {
+        return GeographyMapper.mapAvroToDomainModel(geographyMessage);
+    }
+
+
+//    private Mono<Geography> handleLocationsResponse(ReceiverRecord<String, geographyMessage> geographyRecord) {
+//
+//        Mono.just(geographyRecord)
+//                .map()
+//
+//        final var geography = geographyRecord.value().getGeography();
+//        log.info("Type is: " + geography.getGeoType());
+//        final var geoID = findCode(geography.getAlternateCodes(), "GEOID");
+//        Geography geo = mapAndSaveGeographyEvent(geography);
+//
+//        geographyRepository.save(geo);
+//
+//        saveAlternateCodes(geography, geoID);
+//
+//
+//        return Mono.empty();
+//
+//    }
 }

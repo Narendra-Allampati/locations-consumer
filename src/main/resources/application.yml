@@ -6,8 +6,8 @@ KAFKA_PASSWORD: ouDnEHcLMwtzYP0EsuXKSGanIz5znUc61Qry7xjyyTVphM0gOvabrPtT3817x1AR
 KAFKA_CONSUMER_GROUP: MSK.referenceData.referenceDataReader.consumerGroup.v1
 
 KAFKA_SCHEMA_REGISTRY_URL: "https://psrc-4kk0p.westeurope.azure.confluent.cloud/"
-KAFKA_SCHEMA_REGISTRY_API_KEY:
-KAFKA_SCHEMA_REGISTRY_PASSWORD:
+KAFKA_SCHEMA_REGISTRY_API_KEY: I2WOGC3S6UQMR3KT
+KAFKA_SCHEMA_REGISTRY_PASSWORD: vk4Th6eSdHoSVhdagDMtQVnqbkWAFCUdoNGcrylSmQMP9uYZwPVIKJy5zNFY5HDk
 
 ELASTICSEARCH_HOST: localhost:9200
 ELASTICSEARCH_API_KEY:
@@ -72,7 +72,8 @@ spring:
       exporter:
         otlp:
           endpoint: ${OTEL_COLLECTOR_ADDRESS}
-
+    propagation:
+      type: B3
 management:
   health:
     kafka:
@@ -97,3 +98,7 @@ management:
     web:
       exposure:
         include: health, info, prometheus
+logging:
+  level:
+    io.r2dbc.postgresql.QUERY: DEBUG
+    io.r2dbc.postgresql.PARAM: DEBUG

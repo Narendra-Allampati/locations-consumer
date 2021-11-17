@@ -43,7 +43,7 @@ public class GeographyMapper {
                 .dialingCode(geography.getDialingCode())
                 .dialingCodeDescription(geography.getDescription())
                 .portFlag(geography.getPortFlag())
-                .olsonTimezone(geography.getOlsonTimezone())
+                .olsonTimeZone(geography.getOlsonTimezone())
                 .bdaType(geography.getBdaType())
                 .build();
     }

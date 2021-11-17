@@ -2,10 +2,12 @@ package com.maersk.referencedata.locationsconsumer.domains.postgres;
 
 import lombok.Builder;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author Anders Clausen on 12/10/2021.
@@ -15,6 +17,7 @@ import java.util.List;
 public class Geography {
 
     @Id
+    private UUID id;
     private String geoRowId;
     private String geoType;
     private String name;
@@ -37,15 +40,15 @@ public class Geography {
     private String dialingCode;
     private String dialingCodeDescription;
     private String portFlag;
-    private String olsonTimezone;
+    private String olsonTimeZone;
     private String bdaType;
     private String hsudName;
-    private List<AlternateName> alternateNames;
-    private List<AlternateCode> alternateCodes;
-    private List<Country> countries;
-    private List<Parent> parents;
-    private List<SubCityParent> subCityParents;
-    private List<BusinessDefinedArea> businessDefinedAreas;
-    private List<BusinessDefinedAreaLocation> businessDefinedAreaLocations;
+//    private List<AlternateName> alternateNames;
+//    private List<AlternateCode> alternateCodes;
+//    private List<Country> countries;
+//    private List<Parent> parents;
+//    private List<SubCityParent> subCityParents;
+//    private List<BusinessDefinedArea> businessDefinedAreas;
+//    private List<BusinessDefinedAreaLocation> businessDefinedAreaLocations;
 }
 
