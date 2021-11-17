@@ -16,10 +16,12 @@ import org.apache.avro.message.SchemaStore;
 @org.apache.avro.specific.AvroGenerated
 public class geography extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
   private static final long serialVersionUID = 1566138591297374980L;
+
+
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"geography\",\"namespace\":\"com.maersk.Geography.smds.operations.MSK\",\"doc\":\"Geography Entity Information Which includes AltNm,AltCd,fence,Country,Parent,BDA and BDALoc \",\"fields\":[{\"name\":\"geoType\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"status\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"validFrom\",\"type\":\"long\",\"logicalType\":\"timestamp-millis\"},{\"name\":\"validTo\",\"type\":\"long\",\"logicalType\":\"timestamp-millis\"},{\"name\":\"longitude\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"latitude\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"timeZone\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"daylightSavingTime\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"utcOffsetMinutes\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"daylightSavingStart\",\"type\":[\"null\",\"long\"],\"logicalType\":\"timestamp-millis\"},{\"name\":\"daylightSavingEnd\",\"type\":[\"null\",\"long\"],\"logicalType\":\"timestamp-millis\"},{\"name\":\"daylightSavingShiftMinutes\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"description\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"workaroundReason\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"restricted\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"postalCodeMandatoryFlag\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"stateProvienceMandatory\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"dialingCode\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"dialingCodedescription\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"portFlag\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"olsonTimezone\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"bdaType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"hsudName\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"alternateNames\",\"type\":[\"null\",{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"alternateNames\",\"doc\":\"AlternateNames Details\",\"fields\":[{\"name\":\"name\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"description\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"status\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]}]}}]},{\"name\":\"alternateCodes\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"alternateCodes\",\"doc\":\"AlternateCodes Details\",\"fields\":[{\"name\":\"codeType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"code\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]}]}}},{\"name\":\"country\",\"type\":[\"null\",{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"country\",\"doc\":\"Country Details\",\"fields\":[{\"name\":\"name\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"type\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"alternateCodes\",\"type\":[\"null\",{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"countryAlternateCodes\",\"doc\":\"Country AlternateCode Details\",\"fields\":[{\"name\":\"codeType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"code\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]}]}}]}]}}]},{\"name\":\"parent\",\"type\":[\"null\",{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"parent\",\"doc\":\"Parent Details\",\"fields\":[{\"name\":\"name\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"type\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"bdaType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"alternateCodes\",\"type\":[\"null\",{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"parentAlternateCode\",\"doc\":\"Parent AlternateCode details\",\"fields\":[{\"name\":\"codeType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"code\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]}]}}]}]}}]},{\"name\":\"subCityParent\",\"type\":[\"null\",{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"subCityParent\",\"doc\":\"SubCityParent details\",\"fields\":[{\"name\":\"name\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"type\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"bdaType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"alternateCodes\",\"type\":[\"null\",{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"subCityParentAlternateCode\",\"doc\":\"SubCityParent AlternateCode details\",\"fields\":[{\"name\":\"codeType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"code\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]}]}}]}]}}]},{\"name\":\"bda\",\"type\":[\"null\",{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"bda\",\"doc\":\"BDA Details\",\"fields\":[{\"name\":\"name\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"type\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"bdaType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"alternateCodes\",\"type\":[\"null\",{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"bdaAlternateCode\",\"doc\":\"BDA AlternateCode details\",\"fields\":[{\"name\":\"codeType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"code\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]}]}}]}]}}]},{\"name\":\"bdaLocations\",\"type\":[\"null\",{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"bdaLocation\",\"doc\":\"BDA Location Details\",\"fields\":[{\"name\":\"name\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"type\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"status\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"alternateCodes\",\"type\":[\"null\",{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"bdaLocationAlternateCode\",\"doc\":\"BDALocation AlternateCode Details\",\"fields\":[{\"name\":\"codeType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"code\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]}]}}]}]}}]}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
-  private static SpecificData MODEL$ = new SpecificData();
+  private static final SpecificData MODEL$ = new SpecificData();
 
   private static final BinaryMessageEncoder<geography> ENCODER =
       new BinaryMessageEncoder<geography>(MODEL$, SCHEMA$);
@@ -72,37 +74,37 @@ public class geography extends org.apache.avro.specific.SpecificRecordBase imple
     return DECODER.decode(b);
   }
 
-   private java.lang.String geoType;
-   private java.lang.String name;
-   private java.lang.String status;
-   private long validFrom;
-   private long validTo;
-   private java.lang.String longitude;
-   private java.lang.String latitude;
-   private java.lang.String timeZone;
-   private java.lang.String daylightSavingTime;
-   private java.lang.String utcOffsetMinutes;
-   private java.lang.Long daylightSavingStart;
-   private java.lang.Long daylightSavingEnd;
-   private java.lang.String daylightSavingShiftMinutes;
-   private java.lang.String description;
-   private java.lang.String workaroundReason;
-   private java.lang.String restricted;
-   private java.lang.String postalCodeMandatoryFlag;
-   private java.lang.String stateProvienceMandatory;
-   private java.lang.String dialingCode;
-   private java.lang.String dialingCodedescription;
-   private java.lang.String portFlag;
-   private java.lang.String olsonTimezone;
-   private java.lang.String bdaType;
-   private java.lang.String hsudName;
-   private java.util.List<com.maersk.Geography.smds.operations.MSK.alternateNames> alternateNames;
-   private java.util.List<com.maersk.Geography.smds.operations.MSK.alternateCodes> alternateCodes;
-   private java.util.List<com.maersk.Geography.smds.operations.MSK.country> country;
-   private java.util.List<com.maersk.Geography.smds.operations.MSK.parent> parent;
-   private java.util.List<com.maersk.Geography.smds.operations.MSK.subCityParent> subCityParent;
-   private java.util.List<com.maersk.Geography.smds.operations.MSK.bda> bda;
-   private java.util.List<com.maersk.Geography.smds.operations.MSK.bdaLocation> bdaLocations;
+  private java.lang.String geoType;
+  private java.lang.String name;
+  private java.lang.String status;
+  private long validFrom;
+  private long validTo;
+  private java.lang.String longitude;
+  private java.lang.String latitude;
+  private java.lang.String timeZone;
+  private java.lang.String daylightSavingTime;
+  private java.lang.String utcOffsetMinutes;
+  private java.lang.Long daylightSavingStart;
+  private java.lang.Long daylightSavingEnd;
+  private java.lang.String daylightSavingShiftMinutes;
+  private java.lang.String description;
+  private java.lang.String workaroundReason;
+  private java.lang.String restricted;
+  private java.lang.String postalCodeMandatoryFlag;
+  private java.lang.String stateProvienceMandatory;
+  private java.lang.String dialingCode;
+  private java.lang.String dialingCodedescription;
+  private java.lang.String portFlag;
+  private java.lang.String olsonTimezone;
+  private java.lang.String bdaType;
+  private java.lang.String hsudName;
+  private java.util.List<com.maersk.Geography.smds.operations.MSK.alternateNames> alternateNames;
+  private java.util.List<com.maersk.Geography.smds.operations.MSK.alternateCodes> alternateCodes;
+  private java.util.List<com.maersk.Geography.smds.operations.MSK.country> country;
+  private java.util.List<com.maersk.Geography.smds.operations.MSK.parent> parent;
+  private java.util.List<com.maersk.Geography.smds.operations.MSK.subCityParent> subCityParent;
+  private java.util.List<com.maersk.Geography.smds.operations.MSK.bda> bda;
+  private java.util.List<com.maersk.Geography.smds.operations.MSK.bdaLocation> bdaLocations;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -860,7 +862,7 @@ public class geography extends org.apache.avro.specific.SpecificRecordBase imple
 
     /** Creates a new Builder */
     private Builder() {
-      super(SCHEMA$);
+      super(SCHEMA$, MODEL$);
     }
 
     /**
@@ -1000,7 +1002,7 @@ public class geography extends org.apache.avro.specific.SpecificRecordBase imple
      * @param other The existing instance to copy.
      */
     private Builder(com.maersk.Geography.smds.operations.MSK.geography other) {
-      super(SCHEMA$);
+      super(SCHEMA$, MODEL$);
       if (isValidValue(fields()[0], other.geoType)) {
         this.geoType = data().deepCopy(fields()[0].schema(), other.geoType);
         fieldSetFlags()[0] = true;

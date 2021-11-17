@@ -16,10 +16,12 @@ import org.apache.avro.message.SchemaStore;
 @org.apache.avro.specific.AvroGenerated
 public class alternateNames extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
   private static final long serialVersionUID = 6285871036519794586L;
+
+
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"alternateNames\",\"namespace\":\"com.maersk.Geography.smds.operations.MSK\",\"doc\":\"AlternateNames Details\",\"fields\":[{\"name\":\"name\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"description\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"status\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
-  private static SpecificData MODEL$ = new SpecificData();
+  private static final SpecificData MODEL$ = new SpecificData();
 
   private static final BinaryMessageEncoder<alternateNames> ENCODER =
       new BinaryMessageEncoder<alternateNames>(MODEL$, SCHEMA$);
@@ -72,9 +74,9 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
     return DECODER.decode(b);
   }
 
-   private java.lang.String name;
-   private java.lang.String description;
-   private java.lang.String status;
+  private java.lang.String name;
+  private java.lang.String description;
+  private java.lang.String status;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -216,7 +218,7 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
 
     /** Creates a new Builder */
     private Builder() {
-      super(SCHEMA$);
+      super(SCHEMA$, MODEL$);
     }
 
     /**
@@ -244,7 +246,7 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
      * @param other The existing instance to copy.
      */
     private Builder(com.maersk.Geography.smds.operations.MSK.alternateNames other) {
-      super(SCHEMA$);
+      super(SCHEMA$, MODEL$);
       if (isValidValue(fields()[0], other.name)) {
         this.name = data().deepCopy(fields()[0].schema(), other.name);
         fieldSetFlags()[0] = true;
