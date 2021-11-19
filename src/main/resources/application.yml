@@ -72,8 +72,6 @@ spring:
       exporter:
         otlp:
           endpoint: ${OTEL_COLLECTOR_ADDRESS}
-    propagation:
-      type: B3
 management:
   health:
     kafka:
