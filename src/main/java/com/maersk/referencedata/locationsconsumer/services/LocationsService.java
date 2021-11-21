@@ -102,9 +102,9 @@ public class LocationsService {
 
         Geography geo = mapGeographyEventToGeography(geography, geoID);
 
-        final var alternateNames = mapToAlternateName(geography.getAlternateNames(), geoID);
+        final var alternateNames = mapToAlternateNames(geography.getAlternateNames(), geoID);
 
-        final var alternateCodes = mapToAlternateCode(geography.getAlternateCodes(), geoID);
+        final var alternateCodes = mapToAlternateCodes(geography.getAlternateCodes(), geoID);
 
         return Mono.zip(geographyRepository.save(geo),
                         alternateNameRepository.saveAll(alternateNames).collectList(),
@@ -157,7 +157,7 @@ public class LocationsService {
                 .orElse(UUID.randomUUID().toString());
     }
 
-    private List<BusinessDefinedAreaLocation> mapToBusinessDefinedAreaLocation(List<bdaLocation> bdaLocations) {
+    private List<BusinessDefinedAreaLocation> mapToBusinessDefinedAreaLocations(List<bdaLocation> bdaLocations) {
         // TODO refactor to cleaner code
         if (null == bdaLocations) {
             return Collections.emptyList();
@@ -168,62 +168,62 @@ public class LocationsService {
                                 .name(location.getName())
                                 .status(location.getStatus())
                                 .type(location.getType())
-                                .alternateCodes(mapToBDALocationAlternateCode(location.getAlternateCodes()))
+                                .alternateCodes(mapToBDALocationAlternateCodes(location.getAlternateCodes()))
                                 .build()
                 )
                 .collect(Collectors.toList());
     }
 
-    private List<BusinessDefinedArea> mapToBusinessDefinedArea(List<bda> bdas) {
+    private List<BusinessDefinedArea> mapToBusinessDefinedAreas(List<bda> bdas) {
 
         return Optional.ofNullable(bdas)
                 .orElse(Collections.emptyList()).stream().map(bda ->
                         BusinessDefinedArea.builder()
                                 .name(bda.getName())
                                 .bdaType(bda.getBdaType())
-                                .alternateCodes(mapToBDAAlternateCode(bda.getAlternateCodes()))
+                                .alternateCodes(mapToBDAAlternateCodes(bda.getAlternateCodes()))
                                 .build()
                 )
                 .collect(Collectors.toList());
     }
 
-    private List<SubCityParent> mapToSubCityParent(List<subCityParent> subCityParents) {
+    private List<SubCityParent> mapToSubCityParents(List<subCityParent> subCityParents) {
         return Optional.ofNullable(subCityParents)
                 .orElse(Collections.emptyList()).stream().map(subCityParent ->
                         SubCityParent.builder()
                                 .name(subCityParent.getName())
                                 .type(subCityParent.getType())
-                                .alternateCodes(mapToSubCityParentAlternateCode(subCityParent.getAlternateCodes()))
+                                .alternateCodes(mapToSubCityParentAlternateCodes(subCityParent.getAlternateCodes()))
                                 .build()
                 )
                 .collect(Collectors.toList());
     }
 
-    private List<Parent> mapToParent(List<parent> parents) {
+    private List<Parent> mapToParents(List<parent> parents) {
         return Optional.ofNullable(parents)
                 .orElse(Collections.emptyList()).stream().map(parent ->
                         Parent.builder()
                                 .name(parent.getName())
                                 .bdaType(parent.getBdaType())
-                                .alternateCodeList(mapToParentAlternateCode(parent.getAlternateCodes()))
+                                .alternateCodeList(mapToParentAlternateCodes(parent.getAlternateCodes()))
                                 .build()
                 )
                 .collect(Collectors.toList());
     }
 
-    private List<Country> mapToCountry(List<country> countries) {
+    private List<Country> mapToCountrys(List<country> countries) {
         return Optional.ofNullable(countries)
                 .orElse(Collections.emptyList()).stream().map(country ->
                         Country.builder()
                                 .name(country.getName())
                                 .type(country.getType())
-                                .alternateCodes(mapToCountryAlternateCode(country.getAlternateCodes()))
+                                .alternateCodes(mapToCountryAlternateCodes(country.getAlternateCodes()))
                                 .build()
                 )
                 .collect(Collectors.toList());
     }
 
-    private List<AlternateCode> mapToBDALocationAlternateCode(List<bdaLocationAlternateCode> alternateCodes) {
+    private List<AlternateCode> mapToBDALocationAlternateCodes(List<bdaLocationAlternateCode> alternateCodes) {
         return Optional.ofNullable(alternateCodes)
                 .orElse(Collections.emptyList()).stream().map(alternateCode ->
                         AlternateCode.builder()
@@ -234,7 +234,7 @@ public class LocationsService {
                 .collect(Collectors.toList());
     }
 
-    private List<AlternateCode> mapToBDAAlternateCode(List<bdaAlternateCode> alternateCodes) {
+    private List<AlternateCode> mapToBDAAlternateCodes(List<bdaAlternateCode> alternateCodes) {
         return Optional.ofNullable(alternateCodes)
                 .orElse(Collections.emptyList()).stream().map(alternateCode ->
                         AlternateCode.builder()
@@ -245,7 +245,7 @@ public class LocationsService {
                 .collect(Collectors.toList());
     }
 
-    private List<AlternateCode> mapToSubCityParentAlternateCode(List<subCityParentAlternateCode> alternateCodes) {
+    private List<AlternateCode> mapToSubCityParentAlternateCodes(List<subCityParentAlternateCode> alternateCodes) {
         return Optional.ofNullable(alternateCodes)
                 .orElse(Collections.emptyList()).stream().map(alternateCode ->
                         AlternateCode.builder()
@@ -256,7 +256,7 @@ public class LocationsService {
                 .collect(Collectors.toList());
     }
 
-    private List<AlternateCode> mapToParentAlternateCode(List<parentAlternateCode> alternateCodes) {
+    private List<AlternateCode> mapToParentAlternateCodes(List<parentAlternateCode> alternateCodes) {
         return Optional.ofNullable(alternateCodes)
                 .orElse(Collections.emptyList()).stream().map(alternateCode ->
                         AlternateCode.builder()
@@ -267,7 +267,7 @@ public class LocationsService {
                 .collect(Collectors.toList());
     }
 
-    private List<AlternateCode> mapToCountryAlternateCode(List<countryAlternateCodes> alternateCodes) {
+    private List<AlternateCode> mapToCountryAlternateCodes(List<countryAlternateCodes> alternateCodes) {
         return Optional.ofNullable(alternateCodes)
                 .orElse(Collections.emptyList()).stream().map(alternateCode ->
                         AlternateCode.builder()
@@ -278,7 +278,7 @@ public class LocationsService {
                 .collect(Collectors.toList());
     }
 
-    private List<AlternateCode> mapToAlternateCode(List<alternateCodes> alternateCodes, String geoID) {
+    private List<AlternateCode> mapToAlternateCodes(List<alternateCodes> alternateCodes, String geoID) {
         return Optional.ofNullable(alternateCodes)
                 .orElse(Collections.emptyList()).stream().map(alternateCode ->
                         AlternateCode.builder()
@@ -290,7 +290,7 @@ public class LocationsService {
                 .collect(Collectors.toList());
     }
 
-    private List<AlternateName> mapToAlternateName(List<alternateNames> alternateNames, String geoID) {
+    private List<AlternateName> mapToAlternateNames(List<alternateNames> alternateNames, String geoID) {
         return Optional.ofNullable(alternateNames)
                 .orElse(Collections.emptyList()).stream().map(alternateName ->
                         AlternateName.builder()
