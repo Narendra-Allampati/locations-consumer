@@ -24,7 +24,6 @@
         <sonar.skip>true</sonar.skip>
         <sonar.coverage.exclusions>**/com/maersk/referencedata/locationsconsumer/**/*</sonar.coverage.exclusions>
         <spring-cloud-sleuth-otel.version>1.1.0-M3</spring-cloud-sleuth-otel.version>
-<!--        <spring-cloud-sleuth.version>3.1.0-SNAPSHOT</spring-cloud-sleuth.version>-->
         <spring-cloud.version>2021.0.0-RC1</spring-cloud.version>
         <testcontainers.version>1.16.2</testcontainers.version>
         <versions-plugin.version>2.8.1</versions-plugin.version>
@@ -116,39 +115,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.cloud</groupId>-->
-<!--            <artifactId>spring-cloud-sleuth-api</artifactId>-->
-<!--            <version>${spring-cloud-sleuth.version}</version>-->
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>org.springframework.cloud</groupId>-->
-<!--                    <artifactId>spring-cloud-sleuth-brave</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.cloud</groupId>-->
-<!--            <artifactId>spring-cloud-sleuth-autoconfigure</artifactId>-->
-<!--            <version>${spring-cloud-sleuth.version}</version>-->
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>org.springframework.cloud</groupId>-->
-<!--                    <artifactId>spring-cloud-sleuth-brave</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.cloud</groupId>-->
-<!--            <artifactId>spring-cloud-sleuth-instrumentation</artifactId>-->
-<!--            <version>${spring-cloud-sleuth.version}</version>-->
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>org.springframework.cloud</groupId>-->
-<!--                    <artifactId>spring-cloud-sleuth-brave</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-sleuth-otel-autoconfigure</artifactId>

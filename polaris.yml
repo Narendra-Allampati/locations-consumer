@@ -1,6 +1,6 @@
 version: "1"
 project:
-  name: LocationsConsumer
+  name: ReferenceData/locations-consumer
   branch: ${scm.git.branch}
   revision:
     name: ${scm.git.commit}
