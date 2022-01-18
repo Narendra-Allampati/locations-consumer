@@ -3,7 +3,7 @@
  *
  * DO NOT EDIT DIRECTLY
  */
-package com.maersk.Geography.smds.operations.MSK;
+package com.maersk.geography.smds.operations.msk;
 
 import org.apache.avro.generic.GenericArray;
 import org.apache.avro.specific.SpecificData;
@@ -12,28 +12,28 @@ import org.apache.avro.message.BinaryMessageEncoder;
 import org.apache.avro.message.BinaryMessageDecoder;
 import org.apache.avro.message.SchemaStore;
 
-/** Country AlternateCode Details */
+/** BDA AlternateCode details */
 @org.apache.avro.specific.AvroGenerated
-public class countryAlternateCodes extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 6459421113908797377L;
+public class bdaAlternateCode extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
+  private static final long serialVersionUID = -3153738442334055900L;
 
 
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"countryAlternateCodes\",\"namespace\":\"com.maersk.Geography.smds.operations.MSK\",\"doc\":\"Country AlternateCode Details\",\"fields\":[{\"name\":\"codeType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"code\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"bdaAlternateCode\",\"namespace\":\"com.maersk.geography.smds.operations.msk\",\"doc\":\"BDA AlternateCode details\",\"fields\":[{\"name\":\"codeType\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The  alternate code type of business defined area. Example: RKTS,RKST,GEOID\"},{\"name\":\"code\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The  alternate code value of business defined area. Example: INPNQ00\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static final SpecificData MODEL$ = new SpecificData();
 
-  private static final BinaryMessageEncoder<countryAlternateCodes> ENCODER =
-      new BinaryMessageEncoder<countryAlternateCodes>(MODEL$, SCHEMA$);
+  private static final BinaryMessageEncoder<bdaAlternateCode> ENCODER =
+      new BinaryMessageEncoder<bdaAlternateCode>(MODEL$, SCHEMA$);
 
-  private static final BinaryMessageDecoder<countryAlternateCodes> DECODER =
-      new BinaryMessageDecoder<countryAlternateCodes>(MODEL$, SCHEMA$);
+  private static final BinaryMessageDecoder<bdaAlternateCode> DECODER =
+      new BinaryMessageDecoder<bdaAlternateCode>(MODEL$, SCHEMA$);
 
   /**
    * Return the BinaryMessageEncoder instance used by this class.
    * @return the message encoder used by this class
    */
-  public static BinaryMessageEncoder<countryAlternateCodes> getEncoder() {
+  public static BinaryMessageEncoder<bdaAlternateCode> getEncoder() {
     return ENCODER;
   }
 
@@ -41,7 +41,7 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
    * Return the BinaryMessageDecoder instance used by this class.
    * @return the message decoder used by this class
    */
-  public static BinaryMessageDecoder<countryAlternateCodes> getDecoder() {
+  public static BinaryMessageDecoder<bdaAlternateCode> getDecoder() {
     return DECODER;
   }
 
@@ -50,12 +50,12 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
    * @param resolver a {@link SchemaStore} used to find schemas by fingerprint
    * @return a BinaryMessageDecoder instance for this class backed by the given SchemaStore
    */
-  public static BinaryMessageDecoder<countryAlternateCodes> createDecoder(SchemaStore resolver) {
-    return new BinaryMessageDecoder<countryAlternateCodes>(MODEL$, SCHEMA$, resolver);
+  public static BinaryMessageDecoder<bdaAlternateCode> createDecoder(SchemaStore resolver) {
+    return new BinaryMessageDecoder<bdaAlternateCode>(MODEL$, SCHEMA$, resolver);
   }
 
   /**
-   * Serializes this countryAlternateCodes to a ByteBuffer.
+   * Serializes this bdaAlternateCode to a ByteBuffer.
    * @return a buffer holding the serialized data for this instance
    * @throws java.io.IOException if this instance could not be serialized
    */
@@ -64,17 +64,19 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
   }
 
   /**
-   * Deserializes a countryAlternateCodes from a ByteBuffer.
+   * Deserializes a bdaAlternateCode from a ByteBuffer.
    * @param b a byte buffer holding serialized data for an instance of this class
-   * @return a countryAlternateCodes instance decoded from the given buffer
+   * @return a bdaAlternateCode instance decoded from the given buffer
    * @throws java.io.IOException if the given bytes could not be deserialized into an instance of this class
    */
-  public static countryAlternateCodes fromByteBuffer(
+  public static bdaAlternateCode fromByteBuffer(
       java.nio.ByteBuffer b) throws java.io.IOException {
     return DECODER.decode(b);
   }
 
+  /** The  alternate code type of business defined area. Example: RKTS,RKST,GEOID */
   private java.lang.String codeType;
+  /** The  alternate code value of business defined area. Example: INPNQ00 */
   private java.lang.String code;
 
   /**
@@ -82,14 +84,14 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
    * to their default values from the schema.  If that is desired then
    * one should use <code>newBuilder()</code>.
    */
-  public countryAlternateCodes() {}
+  public bdaAlternateCode() {}
 
   /**
    * All-args constructor.
-   * @param codeType The new value for codeType
-   * @param code The new value for code
+   * @param codeType The  alternate code type of business defined area. Example: RKTS,RKST,GEOID
+   * @param code The  alternate code value of business defined area. Example: INPNQ00
    */
-  public countryAlternateCodes(java.lang.String codeType, java.lang.String code) {
+  public bdaAlternateCode(java.lang.String codeType, java.lang.String code) {
     this.codeType = codeType;
     this.code = code;
   }
@@ -117,7 +119,7 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
 
   /**
    * Gets the value of the 'codeType' field.
-   * @return The value of the 'codeType' field.
+   * @return The  alternate code type of business defined area. Example: RKTS,RKST,GEOID
    */
   public java.lang.String getCodeType() {
     return codeType;
@@ -126,6 +128,7 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
 
   /**
    * Sets the value of the 'codeType' field.
+   * The  alternate code type of business defined area. Example: RKTS,RKST,GEOID
    * @param value the value to set.
    */
   public void setCodeType(java.lang.String value) {
@@ -134,7 +137,7 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
 
   /**
    * Gets the value of the 'code' field.
-   * @return The value of the 'code' field.
+   * @return The  alternate code value of business defined area. Example: INPNQ00
    */
   public java.lang.String getCode() {
     return code;
@@ -143,6 +146,7 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
 
   /**
    * Sets the value of the 'code' field.
+   * The  alternate code value of business defined area. Example: INPNQ00
    * @param value the value to set.
    */
   public void setCode(java.lang.String value) {
@@ -150,47 +154,49 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
   }
 
   /**
-   * Creates a new countryAlternateCodes RecordBuilder.
-   * @return A new countryAlternateCodes RecordBuilder
+   * Creates a new bdaAlternateCode RecordBuilder.
+   * @return A new bdaAlternateCode RecordBuilder
    */
-  public static com.maersk.Geography.smds.operations.MSK.countryAlternateCodes.Builder newBuilder() {
-    return new com.maersk.Geography.smds.operations.MSK.countryAlternateCodes.Builder();
+  public static com.maersk.geography.smds.operations.msk.bdaAlternateCode.Builder newBuilder() {
+    return new com.maersk.geography.smds.operations.msk.bdaAlternateCode.Builder();
   }
 
   /**
-   * Creates a new countryAlternateCodes RecordBuilder by copying an existing Builder.
+   * Creates a new bdaAlternateCode RecordBuilder by copying an existing Builder.
    * @param other The existing builder to copy.
-   * @return A new countryAlternateCodes RecordBuilder
+   * @return A new bdaAlternateCode RecordBuilder
    */
-  public static com.maersk.Geography.smds.operations.MSK.countryAlternateCodes.Builder newBuilder(com.maersk.Geography.smds.operations.MSK.countryAlternateCodes.Builder other) {
+  public static com.maersk.geography.smds.operations.msk.bdaAlternateCode.Builder newBuilder(com.maersk.geography.smds.operations.msk.bdaAlternateCode.Builder other) {
     if (other == null) {
-      return new com.maersk.Geography.smds.operations.MSK.countryAlternateCodes.Builder();
+      return new com.maersk.geography.smds.operations.msk.bdaAlternateCode.Builder();
     } else {
-      return new com.maersk.Geography.smds.operations.MSK.countryAlternateCodes.Builder(other);
+      return new com.maersk.geography.smds.operations.msk.bdaAlternateCode.Builder(other);
     }
   }
 
   /**
-   * Creates a new countryAlternateCodes RecordBuilder by copying an existing countryAlternateCodes instance.
+   * Creates a new bdaAlternateCode RecordBuilder by copying an existing bdaAlternateCode instance.
    * @param other The existing instance to copy.
-   * @return A new countryAlternateCodes RecordBuilder
+   * @return A new bdaAlternateCode RecordBuilder
    */
-  public static com.maersk.Geography.smds.operations.MSK.countryAlternateCodes.Builder newBuilder(com.maersk.Geography.smds.operations.MSK.countryAlternateCodes other) {
+  public static com.maersk.geography.smds.operations.msk.bdaAlternateCode.Builder newBuilder(com.maersk.geography.smds.operations.msk.bdaAlternateCode other) {
     if (other == null) {
-      return new com.maersk.Geography.smds.operations.MSK.countryAlternateCodes.Builder();
+      return new com.maersk.geography.smds.operations.msk.bdaAlternateCode.Builder();
     } else {
-      return new com.maersk.Geography.smds.operations.MSK.countryAlternateCodes.Builder(other);
+      return new com.maersk.geography.smds.operations.msk.bdaAlternateCode.Builder(other);
     }
   }
 
   /**
-   * RecordBuilder for countryAlternateCodes instances.
+   * RecordBuilder for bdaAlternateCode instances.
    */
   @org.apache.avro.specific.AvroGenerated
-  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<countryAlternateCodes>
-    implements org.apache.avro.data.RecordBuilder<countryAlternateCodes> {
+  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<bdaAlternateCode>
+    implements org.apache.avro.data.RecordBuilder<bdaAlternateCode> {
 
+    /** The  alternate code type of business defined area. Example: RKTS,RKST,GEOID */
     private java.lang.String codeType;
+    /** The  alternate code value of business defined area. Example: INPNQ00 */
     private java.lang.String code;
 
     /** Creates a new Builder */
@@ -202,7 +208,7 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
      * Creates a Builder by copying an existing Builder.
      * @param other The existing Builder to copy.
      */
-    private Builder(com.maersk.Geography.smds.operations.MSK.countryAlternateCodes.Builder other) {
+    private Builder(com.maersk.geography.smds.operations.msk.bdaAlternateCode.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.codeType)) {
         this.codeType = data().deepCopy(fields()[0].schema(), other.codeType);
@@ -215,10 +221,10 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
     }
 
     /**
-     * Creates a Builder by copying an existing countryAlternateCodes instance
+     * Creates a Builder by copying an existing bdaAlternateCode instance
      * @param other The existing instance to copy.
      */
-    private Builder(com.maersk.Geography.smds.operations.MSK.countryAlternateCodes other) {
+    private Builder(com.maersk.geography.smds.operations.msk.bdaAlternateCode other) {
       super(SCHEMA$, MODEL$);
       if (isValidValue(fields()[0], other.codeType)) {
         this.codeType = data().deepCopy(fields()[0].schema(), other.codeType);
@@ -232,6 +238,7 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
 
     /**
       * Gets the value of the 'codeType' field.
+      * The  alternate code type of business defined area. Example: RKTS,RKST,GEOID
       * @return The value.
       */
     public java.lang.String getCodeType() {
@@ -241,10 +248,11 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
 
     /**
       * Sets the value of the 'codeType' field.
+      * The  alternate code type of business defined area. Example: RKTS,RKST,GEOID
       * @param value The value of 'codeType'.
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.countryAlternateCodes.Builder setCodeType(java.lang.String value) {
+    public com.maersk.geography.smds.operations.msk.bdaAlternateCode.Builder setCodeType(java.lang.String value) {
       validate(fields()[0], value);
       this.codeType = value;
       fieldSetFlags()[0] = true;
@@ -253,6 +261,7 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
 
     /**
       * Checks whether the 'codeType' field has been set.
+      * The  alternate code type of business defined area. Example: RKTS,RKST,GEOID
       * @return True if the 'codeType' field has been set, false otherwise.
       */
     public boolean hasCodeType() {
@@ -262,9 +271,10 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
 
     /**
       * Clears the value of the 'codeType' field.
+      * The  alternate code type of business defined area. Example: RKTS,RKST,GEOID
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.countryAlternateCodes.Builder clearCodeType() {
+    public com.maersk.geography.smds.operations.msk.bdaAlternateCode.Builder clearCodeType() {
       codeType = null;
       fieldSetFlags()[0] = false;
       return this;
@@ -272,6 +282,7 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
 
     /**
       * Gets the value of the 'code' field.
+      * The  alternate code value of business defined area. Example: INPNQ00
       * @return The value.
       */
     public java.lang.String getCode() {
@@ -281,10 +292,11 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
 
     /**
       * Sets the value of the 'code' field.
+      * The  alternate code value of business defined area. Example: INPNQ00
       * @param value The value of 'code'.
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.countryAlternateCodes.Builder setCode(java.lang.String value) {
+    public com.maersk.geography.smds.operations.msk.bdaAlternateCode.Builder setCode(java.lang.String value) {
       validate(fields()[1], value);
       this.code = value;
       fieldSetFlags()[1] = true;
@@ -293,6 +305,7 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
 
     /**
       * Checks whether the 'code' field has been set.
+      * The  alternate code value of business defined area. Example: INPNQ00
       * @return True if the 'code' field has been set, false otherwise.
       */
     public boolean hasCode() {
@@ -302,9 +315,10 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
 
     /**
       * Clears the value of the 'code' field.
+      * The  alternate code value of business defined area. Example: INPNQ00
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.countryAlternateCodes.Builder clearCode() {
+    public com.maersk.geography.smds.operations.msk.bdaAlternateCode.Builder clearCode() {
       code = null;
       fieldSetFlags()[1] = false;
       return this;
@@ -312,9 +326,9 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
 
     @Override
     @SuppressWarnings("unchecked")
-    public countryAlternateCodes build() {
+    public bdaAlternateCode build() {
       try {
-        countryAlternateCodes record = new countryAlternateCodes();
+        bdaAlternateCode record = new bdaAlternateCode();
         record.codeType = fieldSetFlags()[0] ? this.codeType : (java.lang.String) defaultValue(fields()[0]);
         record.code = fieldSetFlags()[1] ? this.code : (java.lang.String) defaultValue(fields()[1]);
         return record;
@@ -327,8 +341,8 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
   }
 
   @SuppressWarnings("unchecked")
-  private static final org.apache.avro.io.DatumWriter<countryAlternateCodes>
-    WRITER$ = (org.apache.avro.io.DatumWriter<countryAlternateCodes>)MODEL$.createDatumWriter(SCHEMA$);
+  private static final org.apache.avro.io.DatumWriter<bdaAlternateCode>
+    WRITER$ = (org.apache.avro.io.DatumWriter<bdaAlternateCode>)MODEL$.createDatumWriter(SCHEMA$);
 
   @Override public void writeExternal(java.io.ObjectOutput out)
     throws java.io.IOException {
@@ -336,8 +350,8 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
   }
 
   @SuppressWarnings("unchecked")
-  private static final org.apache.avro.io.DatumReader<countryAlternateCodes>
-    READER$ = (org.apache.avro.io.DatumReader<countryAlternateCodes>)MODEL$.createDatumReader(SCHEMA$);
+  private static final org.apache.avro.io.DatumReader<bdaAlternateCode>
+    READER$ = (org.apache.avro.io.DatumReader<bdaAlternateCode>)MODEL$.createDatumReader(SCHEMA$);
 
   @Override public void readExternal(java.io.ObjectInput in)
     throws java.io.IOException {
@@ -349,21 +363,9 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
   @Override public void customEncode(org.apache.avro.io.Encoder out)
     throws java.io.IOException
   {
-    if (this.codeType == null) {
-      out.writeIndex(0);
-      out.writeNull();
-    } else {
-      out.writeIndex(1);
-      out.writeString(this.codeType);
-    }
+    out.writeString(this.codeType);
 
-    if (this.code == null) {
-      out.writeIndex(0);
-      out.writeNull();
-    } else {
-      out.writeIndex(1);
-      out.writeString(this.code);
-    }
+    out.writeString(this.code);
 
   }
 
@@ -372,39 +374,19 @@ public class countryAlternateCodes extends org.apache.avro.specific.SpecificReco
   {
     org.apache.avro.Schema.Field[] fieldOrder = in.readFieldOrderIfDiff();
     if (fieldOrder == null) {
-      if (in.readIndex() != 1) {
-        in.readNull();
-        this.codeType = null;
-      } else {
-        this.codeType = in.readString();
-      }
+      this.codeType = in.readString();
 
-      if (in.readIndex() != 1) {
-        in.readNull();
-        this.code = null;
-      } else {
-        this.code = in.readString();
-      }
+      this.code = in.readString();
 
     } else {
       for (int i = 0; i < 2; i++) {
         switch (fieldOrder[i].pos()) {
         case 0:
-          if (in.readIndex() != 1) {
-            in.readNull();
-            this.codeType = null;
-          } else {
-            this.codeType = in.readString();
-          }
+          this.codeType = in.readString();
           break;
 
         case 1:
-          if (in.readIndex() != 1) {
-            in.readNull();
-            this.code = null;
-          } else {
-            this.code = in.readString();
-          }
+          this.code = in.readString();
           break;
 
         default:

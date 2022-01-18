@@ -4,6 +4,7 @@ import lombok.Builder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
@@ -21,15 +22,15 @@ public class Geography {
     private String geoType;
     private String name;
     private String status;
-    private ZonedDateTime validFrom;
-    private ZonedDateTime validTo;
+    private LocalDate validFrom;
+    private LocalDate validTo;
     private String longitude;
     private String latitude;
     private String timeZone;
     private String daylightSavingTime;
     private String utcOffsetMinutes;
-    private ZonedDateTime daylightSavingStart;
-    private ZonedDateTime daylightSavingEnd;
+    private LocalDate daylightSavingStart;
+    private LocalDate daylightSavingEnd;
     private String daylightSavingShiftMinutes;
     private String description;
     private String workaroundReason;
@@ -38,7 +39,7 @@ public class Geography {
     private String stateProvinceMandatory;
     private String dialingCode;
     private String dialingCodeDescription;
-    private String portFlag;
+    private boolean portFlag;
     private String olsonTimeZone;
     private String bdaType;
     private String hsudName;

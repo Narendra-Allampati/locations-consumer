@@ -1,19 +1,7 @@
 package com.maersk.referencedata.locationsconsumer.services;
 
-import com.maersk.Geography.smds.operations.MSK.alternateCodes;
-import com.maersk.Geography.smds.operations.MSK.alternateNames;
-import com.maersk.Geography.smds.operations.MSK.bda;
-import com.maersk.Geography.smds.operations.MSK.bdaAlternateCode;
-import com.maersk.Geography.smds.operations.MSK.bdaLocation;
-import com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode;
-import com.maersk.Geography.smds.operations.MSK.country;
-import com.maersk.Geography.smds.operations.MSK.countryAlternateCodes;
-import com.maersk.Geography.smds.operations.MSK.geography;
-import com.maersk.Geography.smds.operations.MSK.geographyMessage;
-import com.maersk.Geography.smds.operations.MSK.parent;
-import com.maersk.Geography.smds.operations.MSK.parentAlternateCode;
-import com.maersk.Geography.smds.operations.MSK.subCityParent;
-import com.maersk.Geography.smds.operations.MSK.subCityParentAlternateCode;
+import com.maersk.geography.smds.operations.msk.*;
+
 import com.maersk.referencedata.locationsconsumer.domains.postgres.AlternateCode;
 import com.maersk.referencedata.locationsconsumer.domains.postgres.AlternateName;
 import com.maersk.referencedata.locationsconsumer.domains.postgres.BusinessDefinedArea;
@@ -77,7 +65,7 @@ public class LocationsService {
         try {
             return Mono.just(geographyRecord)
                     .map(KafkaDeserializerUtils::extractDeserializerError)
-                    .<geographyMessage>handle((tuple, sink) -> {
+                    .<com.maersk.geography.smds.operations.msk.geographyMessage>handle((tuple, sink) -> {
                         if (tuple.getT2().isEmpty() && Objects.nonNull(tuple.getT1().value())) {
                             sink.next(tuple.getT1().value());
                         } else {
@@ -118,23 +106,23 @@ public class LocationsService {
                 .geoType(geography.getGeoType())
                 .name(geography.getName())
                 .status(geography.getStatus())
-                .validFrom(mapLongToZonedDateTime(geography.getValidFrom()))
-                .validTo(mapLongToZonedDateTime(geography.getValidTo()))
+                .validFrom(geography.getValidFrom())
+                .validTo(geography.getValidTo())
                 .longitude(geography.getLongitude())
                 .latitude(geography.getLatitude())
                 .timeZone(geography.getTimeZone())
                 .daylightSavingTime(geography.getDaylightSavingTime())
                 .utcOffsetMinutes(geography.getUtcOffsetMinutes())
-                .daylightSavingStart(mapLongToZonedDateTime(geography.getDaylightSavingStart()))
-                .daylightSavingEnd(mapLongToZonedDateTime(geography.getDaylightSavingEnd()))
+                .daylightSavingStart(geography.getDaylightSavingStart())
+                .daylightSavingEnd(geography.getDaylightSavingEnd())
                 .daylightSavingShiftMinutes(geography.getDaylightSavingShiftMinutes())
                 .description(geography.getDescription())
                 .workaroundReason(geography.getWorkaroundReason())
                 .restricted(geography.getRestricted())
-                .postalCodeMandatoryFlag(geography.getPostalCodeMandatoryFlag())
-                .stateProvinceMandatory(geography.getStateProvienceMandatory())
+                .postalCodeMandatoryFlag(geography.getPostalCodeMandatory())
+                .stateProvinceMandatory(geography.getStateProvinceMandatory())
                 .dialingCode(geography.getDialingCode())
-                .dialingCodeDescription(geography.getDialingCodedescription())
+                .dialingCodeDescription(geography.getDialingCodeDescription())
                 .portFlag(geography.getPortFlag())
                 .olsonTimeZone(geography.getOlsonTimezone())
                 .bdaType(geography.getBdaType())
@@ -149,11 +137,11 @@ public class LocationsService {
                 .build();
     }
 
-    private String findCode(List<alternateCodes> alternateCodes, String type) {
+    private String findCode(List<alternateCode> alternateCodes, String type) {
         return alternateCodes.stream()
                 .filter(value -> type.equals(value.getCodeType()))
                 .findFirst()
-                .map(com.maersk.Geography.smds.operations.MSK.alternateCodes::getCode)
+                .map(alternateCode::getCode)
                 .orElse(UUID.randomUUID().toString());
     }
 
@@ -267,7 +255,7 @@ public class LocationsService {
                 .collect(Collectors.toList());
     }
 
-    private List<AlternateCode> mapToCountryAlternateCodes(List<countryAlternateCodes> alternateCodes) {
+    private List<AlternateCode> mapToCountryAlternateCodes(List<countryAlternateCode> alternateCodes) {
         return Optional.ofNullable(alternateCodes)
                 .orElse(Collections.emptyList()).stream().map(alternateCode ->
                         AlternateCode.builder()
@@ -278,7 +266,7 @@ public class LocationsService {
                 .collect(Collectors.toList());
     }
 
-    private List<AlternateCode> mapToAlternateCodes(List<alternateCodes> alternateCodes, String geoID) {
+    private List<AlternateCode> mapToAlternateCodes(List<alternateCode> alternateCodes, String geoID) {
         return Optional.ofNullable(alternateCodes)
                 .orElse(Collections.emptyList()).stream().map(alternateCode ->
                         AlternateCode.builder()
@@ -290,7 +278,7 @@ public class LocationsService {
                 .collect(Collectors.toList());
     }
 
-    private List<AlternateName> mapToAlternateNames(List<alternateNames> alternateNames, String geoID) {
+    private List<AlternateName> mapToAlternateNames(List<alternateName> alternateNames, String geoID) {
         return Optional.ofNullable(alternateNames)
                 .orElse(Collections.emptyList()).stream().map(alternateName ->
                         AlternateName.builder()

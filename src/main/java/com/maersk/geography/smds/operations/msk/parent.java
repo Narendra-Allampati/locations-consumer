@@ -3,7 +3,7 @@
  *
  * DO NOT EDIT DIRECTLY
  */
-package com.maersk.Geography.smds.operations.MSK;
+package com.maersk.geography.smds.operations.msk;
 
 import org.apache.avro.generic.GenericArray;
 import org.apache.avro.specific.SpecificData;
@@ -12,28 +12,28 @@ import org.apache.avro.message.BinaryMessageEncoder;
 import org.apache.avro.message.BinaryMessageDecoder;
 import org.apache.avro.message.SchemaStore;
 
-/** BDA Location Details */
+/** Display Parent Information.For city Copenghagen  the parent is country Denmark */
 @org.apache.avro.specific.AvroGenerated
-public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -716008090423417271L;
+public class parent extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
+  private static final long serialVersionUID = 6667925560591839408L;
 
 
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"bdaLocation\",\"namespace\":\"com.maersk.Geography.smds.operations.MSK\",\"doc\":\"BDA Location Details\",\"fields\":[{\"name\":\"name\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"type\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"status\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"alternateCodes\",\"type\":[\"null\",{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"bdaLocationAlternateCode\",\"doc\":\"BDALocation AlternateCode Details\",\"fields\":[{\"name\":\"codeType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"code\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]}]}}]}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"parent\",\"namespace\":\"com.maersk.geography.smds.operations.msk\",\"doc\":\"Display Parent Information.For city Copenghagen  the parent is country Denmark\",\"fields\":[{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The parent name of geography object. Example: MAHARASHTRA\"},{\"name\":\"type\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The parent type of geography object. Example: State/Prov\"},{\"name\":\"bdaType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"The business defined area type of geography object. Example: FINANCIAL,POOL\"},{\"name\":\"alternateCodes\",\"type\":[\"null\",{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"parentAlternateCode\",\"doc\":\"Parent AlternateCode details\",\"fields\":[{\"name\":\"codeType\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The alternate code type of  parent object. Example: RKTS,RKST,GEOID\"},{\"name\":\"code\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The alternate code value of  parent object. Example: INPNQ00\"}]}}]}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static final SpecificData MODEL$ = new SpecificData();
 
-  private static final BinaryMessageEncoder<bdaLocation> ENCODER =
-      new BinaryMessageEncoder<bdaLocation>(MODEL$, SCHEMA$);
+  private static final BinaryMessageEncoder<parent> ENCODER =
+      new BinaryMessageEncoder<parent>(MODEL$, SCHEMA$);
 
-  private static final BinaryMessageDecoder<bdaLocation> DECODER =
-      new BinaryMessageDecoder<bdaLocation>(MODEL$, SCHEMA$);
+  private static final BinaryMessageDecoder<parent> DECODER =
+      new BinaryMessageDecoder<parent>(MODEL$, SCHEMA$);
 
   /**
    * Return the BinaryMessageEncoder instance used by this class.
    * @return the message encoder used by this class
    */
-  public static BinaryMessageEncoder<bdaLocation> getEncoder() {
+  public static BinaryMessageEncoder<parent> getEncoder() {
     return ENCODER;
   }
 
@@ -41,7 +41,7 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
    * Return the BinaryMessageDecoder instance used by this class.
    * @return the message decoder used by this class
    */
-  public static BinaryMessageDecoder<bdaLocation> getDecoder() {
+  public static BinaryMessageDecoder<parent> getDecoder() {
     return DECODER;
   }
 
@@ -50,12 +50,12 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
    * @param resolver a {@link SchemaStore} used to find schemas by fingerprint
    * @return a BinaryMessageDecoder instance for this class backed by the given SchemaStore
    */
-  public static BinaryMessageDecoder<bdaLocation> createDecoder(SchemaStore resolver) {
-    return new BinaryMessageDecoder<bdaLocation>(MODEL$, SCHEMA$, resolver);
+  public static BinaryMessageDecoder<parent> createDecoder(SchemaStore resolver) {
+    return new BinaryMessageDecoder<parent>(MODEL$, SCHEMA$, resolver);
   }
 
   /**
-   * Serializes this bdaLocation to a ByteBuffer.
+   * Serializes this parent to a ByteBuffer.
    * @return a buffer holding the serialized data for this instance
    * @throws java.io.IOException if this instance could not be serialized
    */
@@ -64,39 +64,42 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
   }
 
   /**
-   * Deserializes a bdaLocation from a ByteBuffer.
+   * Deserializes a parent from a ByteBuffer.
    * @param b a byte buffer holding serialized data for an instance of this class
-   * @return a bdaLocation instance decoded from the given buffer
+   * @return a parent instance decoded from the given buffer
    * @throws java.io.IOException if the given bytes could not be deserialized into an instance of this class
    */
-  public static bdaLocation fromByteBuffer(
+  public static parent fromByteBuffer(
       java.nio.ByteBuffer b) throws java.io.IOException {
     return DECODER.decode(b);
   }
 
+  /** The parent name of geography object. Example: MAHARASHTRA */
   private java.lang.String name;
+  /** The parent type of geography object. Example: State/Prov */
   private java.lang.String type;
-  private java.lang.String status;
-  private java.util.List<com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode> alternateCodes;
+  /** The business defined area type of geography object. Example: FINANCIAL,POOL */
+  private java.lang.String bdaType;
+  private java.util.List<com.maersk.geography.smds.operations.msk.parentAlternateCode> alternateCodes;
 
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
    * one should use <code>newBuilder()</code>.
    */
-  public bdaLocation() {}
+  public parent() {}
 
   /**
    * All-args constructor.
-   * @param name The new value for name
-   * @param type The new value for type
-   * @param status The new value for status
+   * @param name The parent name of geography object. Example: MAHARASHTRA
+   * @param type The parent type of geography object. Example: State/Prov
+   * @param bdaType The business defined area type of geography object. Example: FINANCIAL,POOL
    * @param alternateCodes The new value for alternateCodes
    */
-  public bdaLocation(java.lang.String name, java.lang.String type, java.lang.String status, java.util.List<com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode> alternateCodes) {
+  public parent(java.lang.String name, java.lang.String type, java.lang.String bdaType, java.util.List<com.maersk.geography.smds.operations.msk.parentAlternateCode> alternateCodes) {
     this.name = name;
     this.type = type;
-    this.status = status;
+    this.bdaType = bdaType;
     this.alternateCodes = alternateCodes;
   }
 
@@ -107,7 +110,7 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
     switch (field$) {
     case 0: return name;
     case 1: return type;
-    case 2: return status;
+    case 2: return bdaType;
     case 3: return alternateCodes;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
@@ -119,15 +122,15 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
     switch (field$) {
     case 0: name = value$ != null ? value$.toString() : null; break;
     case 1: type = value$ != null ? value$.toString() : null; break;
-    case 2: status = value$ != null ? value$.toString() : null; break;
-    case 3: alternateCodes = (java.util.List<com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode>)value$; break;
+    case 2: bdaType = value$ != null ? value$.toString() : null; break;
+    case 3: alternateCodes = (java.util.List<com.maersk.geography.smds.operations.msk.parentAlternateCode>)value$; break;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
 
   /**
    * Gets the value of the 'name' field.
-   * @return The value of the 'name' field.
+   * @return The parent name of geography object. Example: MAHARASHTRA
    */
   public java.lang.String getName() {
     return name;
@@ -136,6 +139,7 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'name' field.
+   * The parent name of geography object. Example: MAHARASHTRA
    * @param value the value to set.
    */
   public void setName(java.lang.String value) {
@@ -144,7 +148,7 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Gets the value of the 'type' field.
-   * @return The value of the 'type' field.
+   * @return The parent type of geography object. Example: State/Prov
    */
   public java.lang.String getType() {
     return type;
@@ -153,6 +157,7 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
 
   /**
    * Sets the value of the 'type' field.
+   * The parent type of geography object. Example: State/Prov
    * @param value the value to set.
    */
   public void setType(java.lang.String value) {
@@ -160,27 +165,28 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
   }
 
   /**
-   * Gets the value of the 'status' field.
-   * @return The value of the 'status' field.
+   * Gets the value of the 'bdaType' field.
+   * @return The business defined area type of geography object. Example: FINANCIAL,POOL
    */
-  public java.lang.String getStatus() {
-    return status;
+  public java.lang.String getBdaType() {
+    return bdaType;
   }
 
 
   /**
-   * Sets the value of the 'status' field.
+   * Sets the value of the 'bdaType' field.
+   * The business defined area type of geography object. Example: FINANCIAL,POOL
    * @param value the value to set.
    */
-  public void setStatus(java.lang.String value) {
-    this.status = value;
+  public void setBdaType(java.lang.String value) {
+    this.bdaType = value;
   }
 
   /**
    * Gets the value of the 'alternateCodes' field.
    * @return The value of the 'alternateCodes' field.
    */
-  public java.util.List<com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode> getAlternateCodes() {
+  public java.util.List<com.maersk.geography.smds.operations.msk.parentAlternateCode> getAlternateCodes() {
     return alternateCodes;
   }
 
@@ -189,55 +195,58 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
    * Sets the value of the 'alternateCodes' field.
    * @param value the value to set.
    */
-  public void setAlternateCodes(java.util.List<com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode> value) {
+  public void setAlternateCodes(java.util.List<com.maersk.geography.smds.operations.msk.parentAlternateCode> value) {
     this.alternateCodes = value;
   }
 
   /**
-   * Creates a new bdaLocation RecordBuilder.
-   * @return A new bdaLocation RecordBuilder
+   * Creates a new parent RecordBuilder.
+   * @return A new parent RecordBuilder
    */
-  public static com.maersk.Geography.smds.operations.MSK.bdaLocation.Builder newBuilder() {
-    return new com.maersk.Geography.smds.operations.MSK.bdaLocation.Builder();
+  public static com.maersk.geography.smds.operations.msk.parent.Builder newBuilder() {
+    return new com.maersk.geography.smds.operations.msk.parent.Builder();
   }
 
   /**
-   * Creates a new bdaLocation RecordBuilder by copying an existing Builder.
+   * Creates a new parent RecordBuilder by copying an existing Builder.
    * @param other The existing builder to copy.
-   * @return A new bdaLocation RecordBuilder
+   * @return A new parent RecordBuilder
    */
-  public static com.maersk.Geography.smds.operations.MSK.bdaLocation.Builder newBuilder(com.maersk.Geography.smds.operations.MSK.bdaLocation.Builder other) {
+  public static com.maersk.geography.smds.operations.msk.parent.Builder newBuilder(com.maersk.geography.smds.operations.msk.parent.Builder other) {
     if (other == null) {
-      return new com.maersk.Geography.smds.operations.MSK.bdaLocation.Builder();
+      return new com.maersk.geography.smds.operations.msk.parent.Builder();
     } else {
-      return new com.maersk.Geography.smds.operations.MSK.bdaLocation.Builder(other);
+      return new com.maersk.geography.smds.operations.msk.parent.Builder(other);
     }
   }
 
   /**
-   * Creates a new bdaLocation RecordBuilder by copying an existing bdaLocation instance.
+   * Creates a new parent RecordBuilder by copying an existing parent instance.
    * @param other The existing instance to copy.
-   * @return A new bdaLocation RecordBuilder
+   * @return A new parent RecordBuilder
    */
-  public static com.maersk.Geography.smds.operations.MSK.bdaLocation.Builder newBuilder(com.maersk.Geography.smds.operations.MSK.bdaLocation other) {
+  public static com.maersk.geography.smds.operations.msk.parent.Builder newBuilder(com.maersk.geography.smds.operations.msk.parent other) {
     if (other == null) {
-      return new com.maersk.Geography.smds.operations.MSK.bdaLocation.Builder();
+      return new com.maersk.geography.smds.operations.msk.parent.Builder();
     } else {
-      return new com.maersk.Geography.smds.operations.MSK.bdaLocation.Builder(other);
+      return new com.maersk.geography.smds.operations.msk.parent.Builder(other);
     }
   }
 
   /**
-   * RecordBuilder for bdaLocation instances.
+   * RecordBuilder for parent instances.
    */
   @org.apache.avro.specific.AvroGenerated
-  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<bdaLocation>
-    implements org.apache.avro.data.RecordBuilder<bdaLocation> {
+  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<parent>
+    implements org.apache.avro.data.RecordBuilder<parent> {
 
+    /** The parent name of geography object. Example: MAHARASHTRA */
     private java.lang.String name;
+    /** The parent type of geography object. Example: State/Prov */
     private java.lang.String type;
-    private java.lang.String status;
-    private java.util.List<com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode> alternateCodes;
+    /** The business defined area type of geography object. Example: FINANCIAL,POOL */
+    private java.lang.String bdaType;
+    private java.util.List<com.maersk.geography.smds.operations.msk.parentAlternateCode> alternateCodes;
 
     /** Creates a new Builder */
     private Builder() {
@@ -248,7 +257,7 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
      * Creates a Builder by copying an existing Builder.
      * @param other The existing Builder to copy.
      */
-    private Builder(com.maersk.Geography.smds.operations.MSK.bdaLocation.Builder other) {
+    private Builder(com.maersk.geography.smds.operations.msk.parent.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.name)) {
         this.name = data().deepCopy(fields()[0].schema(), other.name);
@@ -258,8 +267,8 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
         this.type = data().deepCopy(fields()[1].schema(), other.type);
         fieldSetFlags()[1] = other.fieldSetFlags()[1];
       }
-      if (isValidValue(fields()[2], other.status)) {
-        this.status = data().deepCopy(fields()[2].schema(), other.status);
+      if (isValidValue(fields()[2], other.bdaType)) {
+        this.bdaType = data().deepCopy(fields()[2].schema(), other.bdaType);
         fieldSetFlags()[2] = other.fieldSetFlags()[2];
       }
       if (isValidValue(fields()[3], other.alternateCodes)) {
@@ -269,10 +278,10 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
     }
 
     /**
-     * Creates a Builder by copying an existing bdaLocation instance
+     * Creates a Builder by copying an existing parent instance
      * @param other The existing instance to copy.
      */
-    private Builder(com.maersk.Geography.smds.operations.MSK.bdaLocation other) {
+    private Builder(com.maersk.geography.smds.operations.msk.parent other) {
       super(SCHEMA$, MODEL$);
       if (isValidValue(fields()[0], other.name)) {
         this.name = data().deepCopy(fields()[0].schema(), other.name);
@@ -282,8 +291,8 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
         this.type = data().deepCopy(fields()[1].schema(), other.type);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.status)) {
-        this.status = data().deepCopy(fields()[2].schema(), other.status);
+      if (isValidValue(fields()[2], other.bdaType)) {
+        this.bdaType = data().deepCopy(fields()[2].schema(), other.bdaType);
         fieldSetFlags()[2] = true;
       }
       if (isValidValue(fields()[3], other.alternateCodes)) {
@@ -294,6 +303,7 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
 
     /**
       * Gets the value of the 'name' field.
+      * The parent name of geography object. Example: MAHARASHTRA
       * @return The value.
       */
     public java.lang.String getName() {
@@ -303,10 +313,11 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
 
     /**
       * Sets the value of the 'name' field.
+      * The parent name of geography object. Example: MAHARASHTRA
       * @param value The value of 'name'.
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.bdaLocation.Builder setName(java.lang.String value) {
+    public com.maersk.geography.smds.operations.msk.parent.Builder setName(java.lang.String value) {
       validate(fields()[0], value);
       this.name = value;
       fieldSetFlags()[0] = true;
@@ -315,6 +326,7 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
 
     /**
       * Checks whether the 'name' field has been set.
+      * The parent name of geography object. Example: MAHARASHTRA
       * @return True if the 'name' field has been set, false otherwise.
       */
     public boolean hasName() {
@@ -324,9 +336,10 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
 
     /**
       * Clears the value of the 'name' field.
+      * The parent name of geography object. Example: MAHARASHTRA
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.bdaLocation.Builder clearName() {
+    public com.maersk.geography.smds.operations.msk.parent.Builder clearName() {
       name = null;
       fieldSetFlags()[0] = false;
       return this;
@@ -334,6 +347,7 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
 
     /**
       * Gets the value of the 'type' field.
+      * The parent type of geography object. Example: State/Prov
       * @return The value.
       */
     public java.lang.String getType() {
@@ -343,10 +357,11 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
 
     /**
       * Sets the value of the 'type' field.
+      * The parent type of geography object. Example: State/Prov
       * @param value The value of 'type'.
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.bdaLocation.Builder setType(java.lang.String value) {
+    public com.maersk.geography.smds.operations.msk.parent.Builder setType(java.lang.String value) {
       validate(fields()[1], value);
       this.type = value;
       fieldSetFlags()[1] = true;
@@ -355,6 +370,7 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
 
     /**
       * Checks whether the 'type' field has been set.
+      * The parent type of geography object. Example: State/Prov
       * @return True if the 'type' field has been set, false otherwise.
       */
     public boolean hasType() {
@@ -364,50 +380,55 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
 
     /**
       * Clears the value of the 'type' field.
+      * The parent type of geography object. Example: State/Prov
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.bdaLocation.Builder clearType() {
+    public com.maersk.geography.smds.operations.msk.parent.Builder clearType() {
       type = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
     /**
-      * Gets the value of the 'status' field.
+      * Gets the value of the 'bdaType' field.
+      * The business defined area type of geography object. Example: FINANCIAL,POOL
       * @return The value.
       */
-    public java.lang.String getStatus() {
-      return status;
+    public java.lang.String getBdaType() {
+      return bdaType;
     }
 
 
     /**
-      * Sets the value of the 'status' field.
-      * @param value The value of 'status'.
+      * Sets the value of the 'bdaType' field.
+      * The business defined area type of geography object. Example: FINANCIAL,POOL
+      * @param value The value of 'bdaType'.
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.bdaLocation.Builder setStatus(java.lang.String value) {
+    public com.maersk.geography.smds.operations.msk.parent.Builder setBdaType(java.lang.String value) {
       validate(fields()[2], value);
-      this.status = value;
+      this.bdaType = value;
       fieldSetFlags()[2] = true;
       return this;
     }
 
     /**
-      * Checks whether the 'status' field has been set.
-      * @return True if the 'status' field has been set, false otherwise.
+      * Checks whether the 'bdaType' field has been set.
+      * The business defined area type of geography object. Example: FINANCIAL,POOL
+      * @return True if the 'bdaType' field has been set, false otherwise.
       */
-    public boolean hasStatus() {
+    public boolean hasBdaType() {
       return fieldSetFlags()[2];
     }
 
 
     /**
-      * Clears the value of the 'status' field.
+      * Clears the value of the 'bdaType' field.
+      * The business defined area type of geography object. Example: FINANCIAL,POOL
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.bdaLocation.Builder clearStatus() {
-      status = null;
+    public com.maersk.geography.smds.operations.msk.parent.Builder clearBdaType() {
+      bdaType = null;
       fieldSetFlags()[2] = false;
       return this;
     }
@@ -416,7 +437,7 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
       * Gets the value of the 'alternateCodes' field.
       * @return The value.
       */
-    public java.util.List<com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode> getAlternateCodes() {
+    public java.util.List<com.maersk.geography.smds.operations.msk.parentAlternateCode> getAlternateCodes() {
       return alternateCodes;
     }
 
@@ -426,7 +447,7 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
       * @param value The value of 'alternateCodes'.
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.bdaLocation.Builder setAlternateCodes(java.util.List<com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode> value) {
+    public com.maersk.geography.smds.operations.msk.parent.Builder setAlternateCodes(java.util.List<com.maersk.geography.smds.operations.msk.parentAlternateCode> value) {
       validate(fields()[3], value);
       this.alternateCodes = value;
       fieldSetFlags()[3] = true;
@@ -446,7 +467,7 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
       * Clears the value of the 'alternateCodes' field.
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.bdaLocation.Builder clearAlternateCodes() {
+    public com.maersk.geography.smds.operations.msk.parent.Builder clearAlternateCodes() {
       alternateCodes = null;
       fieldSetFlags()[3] = false;
       return this;
@@ -454,13 +475,13 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
 
     @Override
     @SuppressWarnings("unchecked")
-    public bdaLocation build() {
+    public parent build() {
       try {
-        bdaLocation record = new bdaLocation();
+        parent record = new parent();
         record.name = fieldSetFlags()[0] ? this.name : (java.lang.String) defaultValue(fields()[0]);
         record.type = fieldSetFlags()[1] ? this.type : (java.lang.String) defaultValue(fields()[1]);
-        record.status = fieldSetFlags()[2] ? this.status : (java.lang.String) defaultValue(fields()[2]);
-        record.alternateCodes = fieldSetFlags()[3] ? this.alternateCodes : (java.util.List<com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode>) defaultValue(fields()[3]);
+        record.bdaType = fieldSetFlags()[2] ? this.bdaType : (java.lang.String) defaultValue(fields()[2]);
+        record.alternateCodes = fieldSetFlags()[3] ? this.alternateCodes : (java.util.List<com.maersk.geography.smds.operations.msk.parentAlternateCode>) defaultValue(fields()[3]);
         return record;
       } catch (org.apache.avro.AvroMissingFieldException e) {
         throw e;
@@ -471,8 +492,8 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
   }
 
   @SuppressWarnings("unchecked")
-  private static final org.apache.avro.io.DatumWriter<bdaLocation>
-    WRITER$ = (org.apache.avro.io.DatumWriter<bdaLocation>)MODEL$.createDatumWriter(SCHEMA$);
+  private static final org.apache.avro.io.DatumWriter<parent>
+    WRITER$ = (org.apache.avro.io.DatumWriter<parent>)MODEL$.createDatumWriter(SCHEMA$);
 
   @Override public void writeExternal(java.io.ObjectOutput out)
     throws java.io.IOException {
@@ -480,8 +501,8 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
   }
 
   @SuppressWarnings("unchecked")
-  private static final org.apache.avro.io.DatumReader<bdaLocation>
-    READER$ = (org.apache.avro.io.DatumReader<bdaLocation>)MODEL$.createDatumReader(SCHEMA$);
+  private static final org.apache.avro.io.DatumReader<parent>
+    READER$ = (org.apache.avro.io.DatumReader<parent>)MODEL$.createDatumReader(SCHEMA$);
 
   @Override public void readExternal(java.io.ObjectInput in)
     throws java.io.IOException {
@@ -493,28 +514,16 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
   @Override public void customEncode(org.apache.avro.io.Encoder out)
     throws java.io.IOException
   {
-    if (this.name == null) {
-      out.writeIndex(0);
-      out.writeNull();
-    } else {
-      out.writeIndex(1);
-      out.writeString(this.name);
-    }
+    out.writeString(this.name);
 
-    if (this.type == null) {
-      out.writeIndex(0);
-      out.writeNull();
-    } else {
-      out.writeIndex(1);
-      out.writeString(this.type);
-    }
+    out.writeString(this.type);
 
-    if (this.status == null) {
+    if (this.bdaType == null) {
       out.writeIndex(0);
       out.writeNull();
     } else {
       out.writeIndex(1);
-      out.writeString(this.status);
+      out.writeString(this.bdaType);
     }
 
     if (this.alternateCodes == null) {
@@ -526,7 +535,7 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
       out.writeArrayStart();
       out.setItemCount(size0);
       long actualSize0 = 0;
-      for (com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode e0: this.alternateCodes) {
+      for (com.maersk.geography.smds.operations.msk.parentAlternateCode e0: this.alternateCodes) {
         actualSize0++;
         out.startItem();
         e0.customEncode(out);
@@ -543,25 +552,15 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
   {
     org.apache.avro.Schema.Field[] fieldOrder = in.readFieldOrderIfDiff();
     if (fieldOrder == null) {
-      if (in.readIndex() != 1) {
-        in.readNull();
-        this.name = null;
-      } else {
-        this.name = in.readString();
-      }
+      this.name = in.readString();
+
+      this.type = in.readString();
 
       if (in.readIndex() != 1) {
         in.readNull();
-        this.type = null;
+        this.bdaType = null;
       } else {
-        this.type = in.readString();
-      }
-
-      if (in.readIndex() != 1) {
-        in.readNull();
-        this.status = null;
-      } else {
-        this.status = in.readString();
+        this.bdaType = in.readString();
       }
 
       if (in.readIndex() != 1) {
@@ -569,17 +568,17 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
         this.alternateCodes = null;
       } else {
         long size0 = in.readArrayStart();
-        java.util.List<com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode> a0 = this.alternateCodes;
+        java.util.List<com.maersk.geography.smds.operations.msk.parentAlternateCode> a0 = this.alternateCodes;
         if (a0 == null) {
-          a0 = new SpecificData.Array<com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode>((int)size0, SCHEMA$.getField("alternateCodes").schema().getTypes().get(1));
+          a0 = new SpecificData.Array<com.maersk.geography.smds.operations.msk.parentAlternateCode>((int)size0, SCHEMA$.getField("alternateCodes").schema().getTypes().get(1));
           this.alternateCodes = a0;
         } else a0.clear();
-        SpecificData.Array<com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode> ga0 = (a0 instanceof SpecificData.Array ? (SpecificData.Array<com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode>)a0 : null);
+        SpecificData.Array<com.maersk.geography.smds.operations.msk.parentAlternateCode> ga0 = (a0 instanceof SpecificData.Array ? (SpecificData.Array<com.maersk.geography.smds.operations.msk.parentAlternateCode>)a0 : null);
         for ( ; 0 < size0; size0 = in.arrayNext()) {
           for ( ; size0 != 0; size0--) {
-            com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode e0 = (ga0 != null ? ga0.peek() : null);
+            com.maersk.geography.smds.operations.msk.parentAlternateCode e0 = (ga0 != null ? ga0.peek() : null);
             if (e0 == null) {
-              e0 = new com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode();
+              e0 = new com.maersk.geography.smds.operations.msk.parentAlternateCode();
             }
             e0.customDecode(in);
             a0.add(e0);
@@ -591,29 +590,19 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
       for (int i = 0; i < 4; i++) {
         switch (fieldOrder[i].pos()) {
         case 0:
-          if (in.readIndex() != 1) {
-            in.readNull();
-            this.name = null;
-          } else {
-            this.name = in.readString();
-          }
+          this.name = in.readString();
           break;
 
         case 1:
-          if (in.readIndex() != 1) {
-            in.readNull();
-            this.type = null;
-          } else {
-            this.type = in.readString();
-          }
+          this.type = in.readString();
           break;
 
         case 2:
           if (in.readIndex() != 1) {
             in.readNull();
-            this.status = null;
+            this.bdaType = null;
           } else {
-            this.status = in.readString();
+            this.bdaType = in.readString();
           }
           break;
 
@@ -623,17 +612,17 @@ public class bdaLocation extends org.apache.avro.specific.SpecificRecordBase imp
             this.alternateCodes = null;
           } else {
             long size0 = in.readArrayStart();
-            java.util.List<com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode> a0 = this.alternateCodes;
+            java.util.List<com.maersk.geography.smds.operations.msk.parentAlternateCode> a0 = this.alternateCodes;
             if (a0 == null) {
-              a0 = new SpecificData.Array<com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode>((int)size0, SCHEMA$.getField("alternateCodes").schema().getTypes().get(1));
+              a0 = new SpecificData.Array<com.maersk.geography.smds.operations.msk.parentAlternateCode>((int)size0, SCHEMA$.getField("alternateCodes").schema().getTypes().get(1));
               this.alternateCodes = a0;
             } else a0.clear();
-            SpecificData.Array<com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode> ga0 = (a0 instanceof SpecificData.Array ? (SpecificData.Array<com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode>)a0 : null);
+            SpecificData.Array<com.maersk.geography.smds.operations.msk.parentAlternateCode> ga0 = (a0 instanceof SpecificData.Array ? (SpecificData.Array<com.maersk.geography.smds.operations.msk.parentAlternateCode>)a0 : null);
             for ( ; 0 < size0; size0 = in.arrayNext()) {
               for ( ; size0 != 0; size0--) {
-                com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode e0 = (ga0 != null ? ga0.peek() : null);
+                com.maersk.geography.smds.operations.msk.parentAlternateCode e0 = (ga0 != null ? ga0.peek() : null);
                 if (e0 == null) {
-                  e0 = new com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode();
+                  e0 = new com.maersk.geography.smds.operations.msk.parentAlternateCode();
                 }
                 e0.customDecode(in);
                 a0.add(e0);

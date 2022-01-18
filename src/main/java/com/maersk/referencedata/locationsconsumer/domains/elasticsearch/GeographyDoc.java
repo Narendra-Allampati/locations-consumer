@@ -1,6 +1,6 @@
 package com.maersk.referencedata.locationsconsumer.domains.elasticsearch;
 
-import com.maersk.Geography.smds.operations.MSK.geographyMessage;
+import com.maersk.geography.smds.operations.msk.geographyMessage;
 import lombok.Builder;
 import org.springframework.data.annotation.Id;
 //import org.springframework.data.elasticsearch.annotations.Document;

@@ -3,7 +3,7 @@
  *
  * DO NOT EDIT DIRECTLY
  */
-package com.maersk.Geography.smds.operations.MSK;
+package com.maersk.geography.smds.operations.msk;
 
 import org.apache.avro.generic.GenericArray;
 import org.apache.avro.specific.SpecificData;
@@ -12,28 +12,28 @@ import org.apache.avro.message.BinaryMessageEncoder;
 import org.apache.avro.message.BinaryMessageDecoder;
 import org.apache.avro.message.SchemaStore;
 
-/** BDALocation AlternateCode Details */
+/** SubCityParent AlternateCode details */
 @org.apache.avro.specific.AvroGenerated
-public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -5500340366964808664L;
+public class subCityParentAlternateCode extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
+  private static final long serialVersionUID = -2385176896618257580L;
 
 
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"bdaLocationAlternateCode\",\"namespace\":\"com.maersk.Geography.smds.operations.MSK\",\"doc\":\"BDALocation AlternateCode Details\",\"fields\":[{\"name\":\"codeType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"code\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"subCityParentAlternateCode\",\"namespace\":\"com.maersk.geography.smds.operations.msk\",\"doc\":\"SubCityParent AlternateCode details\",\"fields\":[{\"name\":\"codeType\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The alternate code type of subcity. Example: RKTS,RKST,GEOID\"},{\"name\":\"code\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The alternate value type of subcity. Example: INPNQ00\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static final SpecificData MODEL$ = new SpecificData();
 
-  private static final BinaryMessageEncoder<bdaLocationAlternateCode> ENCODER =
-      new BinaryMessageEncoder<bdaLocationAlternateCode>(MODEL$, SCHEMA$);
+  private static final BinaryMessageEncoder<subCityParentAlternateCode> ENCODER =
+      new BinaryMessageEncoder<subCityParentAlternateCode>(MODEL$, SCHEMA$);
 
-  private static final BinaryMessageDecoder<bdaLocationAlternateCode> DECODER =
-      new BinaryMessageDecoder<bdaLocationAlternateCode>(MODEL$, SCHEMA$);
+  private static final BinaryMessageDecoder<subCityParentAlternateCode> DECODER =
+      new BinaryMessageDecoder<subCityParentAlternateCode>(MODEL$, SCHEMA$);
 
   /**
    * Return the BinaryMessageEncoder instance used by this class.
    * @return the message encoder used by this class
    */
-  public static BinaryMessageEncoder<bdaLocationAlternateCode> getEncoder() {
+  public static BinaryMessageEncoder<subCityParentAlternateCode> getEncoder() {
     return ENCODER;
   }
 
@@ -41,7 +41,7 @@ public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificR
    * Return the BinaryMessageDecoder instance used by this class.
    * @return the message decoder used by this class
    */
-  public static BinaryMessageDecoder<bdaLocationAlternateCode> getDecoder() {
+  public static BinaryMessageDecoder<subCityParentAlternateCode> getDecoder() {
     return DECODER;
   }
 
@@ -50,12 +50,12 @@ public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificR
    * @param resolver a {@link SchemaStore} used to find schemas by fingerprint
    * @return a BinaryMessageDecoder instance for this class backed by the given SchemaStore
    */
-  public static BinaryMessageDecoder<bdaLocationAlternateCode> createDecoder(SchemaStore resolver) {
-    return new BinaryMessageDecoder<bdaLocationAlternateCode>(MODEL$, SCHEMA$, resolver);
+  public static BinaryMessageDecoder<subCityParentAlternateCode> createDecoder(SchemaStore resolver) {
+    return new BinaryMessageDecoder<subCityParentAlternateCode>(MODEL$, SCHEMA$, resolver);
   }
 
   /**
-   * Serializes this bdaLocationAlternateCode to a ByteBuffer.
+   * Serializes this subCityParentAlternateCode to a ByteBuffer.
    * @return a buffer holding the serialized data for this instance
    * @throws java.io.IOException if this instance could not be serialized
    */
@@ -64,17 +64,19 @@ public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificR
   }
 
   /**
-   * Deserializes a bdaLocationAlternateCode from a ByteBuffer.
+   * Deserializes a subCityParentAlternateCode from a ByteBuffer.
    * @param b a byte buffer holding serialized data for an instance of this class
-   * @return a bdaLocationAlternateCode instance decoded from the given buffer
+   * @return a subCityParentAlternateCode instance decoded from the given buffer
    * @throws java.io.IOException if the given bytes could not be deserialized into an instance of this class
    */
-  public static bdaLocationAlternateCode fromByteBuffer(
+  public static subCityParentAlternateCode fromByteBuffer(
       java.nio.ByteBuffer b) throws java.io.IOException {
     return DECODER.decode(b);
   }
 
+  /** The alternate code type of subcity. Example: RKTS,RKST,GEOID */
   private java.lang.String codeType;
+  /** The alternate value type of subcity. Example: INPNQ00 */
   private java.lang.String code;
 
   /**
@@ -82,14 +84,14 @@ public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificR
    * to their default values from the schema.  If that is desired then
    * one should use <code>newBuilder()</code>.
    */
-  public bdaLocationAlternateCode() {}
+  public subCityParentAlternateCode() {}
 
   /**
    * All-args constructor.
-   * @param codeType The new value for codeType
-   * @param code The new value for code
+   * @param codeType The alternate code type of subcity. Example: RKTS,RKST,GEOID
+   * @param code The alternate value type of subcity. Example: INPNQ00
    */
-  public bdaLocationAlternateCode(java.lang.String codeType, java.lang.String code) {
+  public subCityParentAlternateCode(java.lang.String codeType, java.lang.String code) {
     this.codeType = codeType;
     this.code = code;
   }
@@ -117,7 +119,7 @@ public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificR
 
   /**
    * Gets the value of the 'codeType' field.
-   * @return The value of the 'codeType' field.
+   * @return The alternate code type of subcity. Example: RKTS,RKST,GEOID
    */
   public java.lang.String getCodeType() {
     return codeType;
@@ -126,6 +128,7 @@ public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificR
 
   /**
    * Sets the value of the 'codeType' field.
+   * The alternate code type of subcity. Example: RKTS,RKST,GEOID
    * @param value the value to set.
    */
   public void setCodeType(java.lang.String value) {
@@ -134,7 +137,7 @@ public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificR
 
   /**
    * Gets the value of the 'code' field.
-   * @return The value of the 'code' field.
+   * @return The alternate value type of subcity. Example: INPNQ00
    */
   public java.lang.String getCode() {
     return code;
@@ -143,6 +146,7 @@ public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificR
 
   /**
    * Sets the value of the 'code' field.
+   * The alternate value type of subcity. Example: INPNQ00
    * @param value the value to set.
    */
   public void setCode(java.lang.String value) {
@@ -150,47 +154,49 @@ public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificR
   }
 
   /**
-   * Creates a new bdaLocationAlternateCode RecordBuilder.
-   * @return A new bdaLocationAlternateCode RecordBuilder
+   * Creates a new subCityParentAlternateCode RecordBuilder.
+   * @return A new subCityParentAlternateCode RecordBuilder
    */
-  public static com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode.Builder newBuilder() {
-    return new com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode.Builder();
+  public static com.maersk.geography.smds.operations.msk.subCityParentAlternateCode.Builder newBuilder() {
+    return new com.maersk.geography.smds.operations.msk.subCityParentAlternateCode.Builder();
   }
 
   /**
-   * Creates a new bdaLocationAlternateCode RecordBuilder by copying an existing Builder.
+   * Creates a new subCityParentAlternateCode RecordBuilder by copying an existing Builder.
    * @param other The existing builder to copy.
-   * @return A new bdaLocationAlternateCode RecordBuilder
+   * @return A new subCityParentAlternateCode RecordBuilder
    */
-  public static com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode.Builder newBuilder(com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode.Builder other) {
+  public static com.maersk.geography.smds.operations.msk.subCityParentAlternateCode.Builder newBuilder(com.maersk.geography.smds.operations.msk.subCityParentAlternateCode.Builder other) {
     if (other == null) {
-      return new com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode.Builder();
+      return new com.maersk.geography.smds.operations.msk.subCityParentAlternateCode.Builder();
     } else {
-      return new com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode.Builder(other);
+      return new com.maersk.geography.smds.operations.msk.subCityParentAlternateCode.Builder(other);
     }
   }
 
   /**
-   * Creates a new bdaLocationAlternateCode RecordBuilder by copying an existing bdaLocationAlternateCode instance.
+   * Creates a new subCityParentAlternateCode RecordBuilder by copying an existing subCityParentAlternateCode instance.
    * @param other The existing instance to copy.
-   * @return A new bdaLocationAlternateCode RecordBuilder
+   * @return A new subCityParentAlternateCode RecordBuilder
    */
-  public static com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode.Builder newBuilder(com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode other) {
+  public static com.maersk.geography.smds.operations.msk.subCityParentAlternateCode.Builder newBuilder(com.maersk.geography.smds.operations.msk.subCityParentAlternateCode other) {
     if (other == null) {
-      return new com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode.Builder();
+      return new com.maersk.geography.smds.operations.msk.subCityParentAlternateCode.Builder();
     } else {
-      return new com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode.Builder(other);
+      return new com.maersk.geography.smds.operations.msk.subCityParentAlternateCode.Builder(other);
     }
   }
 
   /**
-   * RecordBuilder for bdaLocationAlternateCode instances.
+   * RecordBuilder for subCityParentAlternateCode instances.
    */
   @org.apache.avro.specific.AvroGenerated
-  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<bdaLocationAlternateCode>
-    implements org.apache.avro.data.RecordBuilder<bdaLocationAlternateCode> {
+  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<subCityParentAlternateCode>
+    implements org.apache.avro.data.RecordBuilder<subCityParentAlternateCode> {
 
+    /** The alternate code type of subcity. Example: RKTS,RKST,GEOID */
     private java.lang.String codeType;
+    /** The alternate value type of subcity. Example: INPNQ00 */
     private java.lang.String code;
 
     /** Creates a new Builder */
@@ -202,7 +208,7 @@ public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificR
      * Creates a Builder by copying an existing Builder.
      * @param other The existing Builder to copy.
      */
-    private Builder(com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode.Builder other) {
+    private Builder(com.maersk.geography.smds.operations.msk.subCityParentAlternateCode.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.codeType)) {
         this.codeType = data().deepCopy(fields()[0].schema(), other.codeType);
@@ -215,10 +221,10 @@ public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificR
     }
 
     /**
-     * Creates a Builder by copying an existing bdaLocationAlternateCode instance
+     * Creates a Builder by copying an existing subCityParentAlternateCode instance
      * @param other The existing instance to copy.
      */
-    private Builder(com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode other) {
+    private Builder(com.maersk.geography.smds.operations.msk.subCityParentAlternateCode other) {
       super(SCHEMA$, MODEL$);
       if (isValidValue(fields()[0], other.codeType)) {
         this.codeType = data().deepCopy(fields()[0].schema(), other.codeType);
@@ -232,6 +238,7 @@ public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificR
 
     /**
       * Gets the value of the 'codeType' field.
+      * The alternate code type of subcity. Example: RKTS,RKST,GEOID
       * @return The value.
       */
     public java.lang.String getCodeType() {
@@ -241,10 +248,11 @@ public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificR
 
     /**
       * Sets the value of the 'codeType' field.
+      * The alternate code type of subcity. Example: RKTS,RKST,GEOID
       * @param value The value of 'codeType'.
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode.Builder setCodeType(java.lang.String value) {
+    public com.maersk.geography.smds.operations.msk.subCityParentAlternateCode.Builder setCodeType(java.lang.String value) {
       validate(fields()[0], value);
       this.codeType = value;
       fieldSetFlags()[0] = true;
@@ -253,6 +261,7 @@ public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificR
 
     /**
       * Checks whether the 'codeType' field has been set.
+      * The alternate code type of subcity. Example: RKTS,RKST,GEOID
       * @return True if the 'codeType' field has been set, false otherwise.
       */
     public boolean hasCodeType() {
@@ -262,9 +271,10 @@ public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificR
 
     /**
       * Clears the value of the 'codeType' field.
+      * The alternate code type of subcity. Example: RKTS,RKST,GEOID
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode.Builder clearCodeType() {
+    public com.maersk.geography.smds.operations.msk.subCityParentAlternateCode.Builder clearCodeType() {
       codeType = null;
       fieldSetFlags()[0] = false;
       return this;
@@ -272,6 +282,7 @@ public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificR
 
     /**
       * Gets the value of the 'code' field.
+      * The alternate value type of subcity. Example: INPNQ00
       * @return The value.
       */
     public java.lang.String getCode() {
@@ -281,10 +292,11 @@ public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificR
 
     /**
       * Sets the value of the 'code' field.
+      * The alternate value type of subcity. Example: INPNQ00
       * @param value The value of 'code'.
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode.Builder setCode(java.lang.String value) {
+    public com.maersk.geography.smds.operations.msk.subCityParentAlternateCode.Builder setCode(java.lang.String value) {
       validate(fields()[1], value);
       this.code = value;
       fieldSetFlags()[1] = true;
@@ -293,6 +305,7 @@ public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificR
 
     /**
       * Checks whether the 'code' field has been set.
+      * The alternate value type of subcity. Example: INPNQ00
       * @return True if the 'code' field has been set, false otherwise.
       */
     public boolean hasCode() {
@@ -302,9 +315,10 @@ public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificR
 
     /**
       * Clears the value of the 'code' field.
+      * The alternate value type of subcity. Example: INPNQ00
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.bdaLocationAlternateCode.Builder clearCode() {
+    public com.maersk.geography.smds.operations.msk.subCityParentAlternateCode.Builder clearCode() {
       code = null;
       fieldSetFlags()[1] = false;
       return this;
@@ -312,9 +326,9 @@ public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificR
 
     @Override
     @SuppressWarnings("unchecked")
-    public bdaLocationAlternateCode build() {
+    public subCityParentAlternateCode build() {
       try {
-        bdaLocationAlternateCode record = new bdaLocationAlternateCode();
+        subCityParentAlternateCode record = new subCityParentAlternateCode();
         record.codeType = fieldSetFlags()[0] ? this.codeType : (java.lang.String) defaultValue(fields()[0]);
         record.code = fieldSetFlags()[1] ? this.code : (java.lang.String) defaultValue(fields()[1]);
         return record;
@@ -327,8 +341,8 @@ public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificR
   }
 
   @SuppressWarnings("unchecked")
-  private static final org.apache.avro.io.DatumWriter<bdaLocationAlternateCode>
-    WRITER$ = (org.apache.avro.io.DatumWriter<bdaLocationAlternateCode>)MODEL$.createDatumWriter(SCHEMA$);
+  private static final org.apache.avro.io.DatumWriter<subCityParentAlternateCode>
+    WRITER$ = (org.apache.avro.io.DatumWriter<subCityParentAlternateCode>)MODEL$.createDatumWriter(SCHEMA$);
 
   @Override public void writeExternal(java.io.ObjectOutput out)
     throws java.io.IOException {
@@ -336,8 +350,8 @@ public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificR
   }
 
   @SuppressWarnings("unchecked")
-  private static final org.apache.avro.io.DatumReader<bdaLocationAlternateCode>
-    READER$ = (org.apache.avro.io.DatumReader<bdaLocationAlternateCode>)MODEL$.createDatumReader(SCHEMA$);
+  private static final org.apache.avro.io.DatumReader<subCityParentAlternateCode>
+    READER$ = (org.apache.avro.io.DatumReader<subCityParentAlternateCode>)MODEL$.createDatumReader(SCHEMA$);
 
   @Override public void readExternal(java.io.ObjectInput in)
     throws java.io.IOException {
@@ -349,21 +363,9 @@ public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificR
   @Override public void customEncode(org.apache.avro.io.Encoder out)
     throws java.io.IOException
   {
-    if (this.codeType == null) {
-      out.writeIndex(0);
-      out.writeNull();
-    } else {
-      out.writeIndex(1);
-      out.writeString(this.codeType);
-    }
+    out.writeString(this.codeType);
 
-    if (this.code == null) {
-      out.writeIndex(0);
-      out.writeNull();
-    } else {
-      out.writeIndex(1);
-      out.writeString(this.code);
-    }
+    out.writeString(this.code);
 
   }
 
@@ -372,39 +374,19 @@ public class bdaLocationAlternateCode extends org.apache.avro.specific.SpecificR
   {
     org.apache.avro.Schema.Field[] fieldOrder = in.readFieldOrderIfDiff();
     if (fieldOrder == null) {
-      if (in.readIndex() != 1) {
-        in.readNull();
-        this.codeType = null;
-      } else {
-        this.codeType = in.readString();
-      }
+      this.codeType = in.readString();
 
-      if (in.readIndex() != 1) {
-        in.readNull();
-        this.code = null;
-      } else {
-        this.code = in.readString();
-      }
+      this.code = in.readString();
 
     } else {
       for (int i = 0; i < 2; i++) {
         switch (fieldOrder[i].pos()) {
         case 0:
-          if (in.readIndex() != 1) {
-            in.readNull();
-            this.codeType = null;
-          } else {
-            this.codeType = in.readString();
-          }
+          this.codeType = in.readString();
           break;
 
         case 1:
-          if (in.readIndex() != 1) {
-            in.readNull();
-            this.code = null;
-          } else {
-            this.code = in.readString();
-          }
+          this.code = in.readString();
           break;
 
         default:

@@ -1,7 +1,5 @@
 package com.maersk.referencedata.locationsconsumer.mappers;
 
-import com.maersk.Geography.smds.operations.MSK.alternateCodes;
-import com.maersk.Geography.smds.operations.MSK.geographyMessage;
 import com.maersk.referencedata.locationsconsumer.domains.postgres.Geography;
 import lombok.experimental.UtilityClass;
 
@@ -18,40 +16,33 @@ import java.util.Optional;
 public class GeographyMapper {
     private static final String TIME_ZONE_UTC = "UTC";
 
-    public static Geography mapAvroToDomainModel(geographyMessage geographyMessage) {
+    public static Geography mapAvroToDomainModel(com.maersk.geography.smds.operations.msk.geographyMessage geographyMessage) {
         final var geography = geographyMessage.getGeography();
-        return Geography.builder().geoRowId(findCode(geography.getAlternateCodes(), "GEOID"))
+        return Geography.builder().geoRowId(geography.getGeoId())
                 .geoType(geography.getGeoType())
                 .name(geography.getName())
                 .status(geography.getStatus())
-                .validFrom(ZonedDateTime.ofInstant(Instant.ofEpochMilli(geography.getValidFrom()), ZoneId.of(TIME_ZONE_UTC)))
-                .validTo(ZonedDateTime.ofInstant(Instant.ofEpochMilli(geography.getValidTo()), ZoneId.of(TIME_ZONE_UTC)))
+                .validFrom(geography.getValidFrom())
+                .validTo(geography.getValidTo())
                 .longitude(geography.getLongitude())
                 .latitude(geography.getLatitude())
                 .timeZone(geography.getTimeZone())
                 .daylightSavingTime(geography.getDaylightSavingTime())
                 .utcOffsetMinutes(geography.getUtcOffsetMinutes())
-                .daylightSavingStart(ZonedDateTime.ofInstant(Instant.ofEpochMilli(geography.getDaylightSavingStart()), ZoneId.of(TIME_ZONE_UTC)))
-                .daylightSavingEnd(ZonedDateTime.ofInstant(Instant.ofEpochMilli(geography.getDaylightSavingEnd()), ZoneId.of(TIME_ZONE_UTC)))
+                .daylightSavingStart(geography.getDaylightSavingStart())
+                .daylightSavingEnd(geography.getDaylightSavingEnd())
                 .daylightSavingShiftMinutes(geography.getDaylightSavingShiftMinutes())
                 .description(geography.getDescription())
                 .workaroundReason(geography.getWorkaroundReason())
                 .restricted(geography.getRestricted())
 
-                .postalCodeMandatoryFlag(geography.getPostalCodeMandatoryFlag())
-                .stateProvinceMandatory(geography.getStateProvienceMandatory())
+                .postalCodeMandatoryFlag(geography.getPostalCodeMandatory())
+                .stateProvinceMandatory(geography.getStateProvinceMandatory())
                 .dialingCode(geography.getDialingCode())
                 .dialingCodeDescription(geography.getDescription())
                 .portFlag(geography.getPortFlag())
                 .olsonTimeZone(geography.getOlsonTimezone())
                 .bdaType(geography.getBdaType())
                 .build();
-    }
-
-    private static String findCode(List<alternateCodes> alternateCodes, String type) {
-        final var alternateCode = alternateCodes.stream().filter(value -> type.equals(value.getCodeType())
-        ).findFirst().orElse(null);
-
-        return (null == alternateCode) ? null : alternateCode.getCode();
     }
 }

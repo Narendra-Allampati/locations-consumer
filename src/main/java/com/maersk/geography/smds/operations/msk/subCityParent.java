@@ -3,7 +3,7 @@
  *
  * DO NOT EDIT DIRECTLY
  */
-package com.maersk.Geography.smds.operations.MSK;
+package com.maersk.geography.smds.operations.msk;
 
 import org.apache.avro.generic.GenericArray;
 import org.apache.avro.specific.SpecificData;
@@ -12,28 +12,28 @@ import org.apache.avro.message.BinaryMessageEncoder;
 import org.apache.avro.message.BinaryMessageDecoder;
 import org.apache.avro.message.SchemaStore;
 
-/** Parent Details */
+/** Display Sub City Parent Information.For city Pune the sub cities are like viman nagar and so on */
 @org.apache.avro.specific.AvroGenerated
-public class parent extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -3468198119450214573L;
+public class subCityParent extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
+  private static final long serialVersionUID = 3985136454509052143L;
 
 
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"parent\",\"namespace\":\"com.maersk.Geography.smds.operations.MSK\",\"doc\":\"Parent Details\",\"fields\":[{\"name\":\"name\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"type\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"bdaType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"alternateCodes\",\"type\":[\"null\",{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"parentAlternateCode\",\"doc\":\"Parent AlternateCode details\",\"fields\":[{\"name\":\"codeType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"code\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]}]}}]}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"subCityParent\",\"namespace\":\"com.maersk.geography.smds.operations.msk\",\"doc\":\"Display Sub City Parent Information.For city Pune the sub cities are like viman nagar and so on\",\"fields\":[{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The sub city name of city. Example: viman nagar\"},{\"name\":\"type\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The sub city parent type of city. Example: city\"},{\"name\":\"bdaType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"The business defined area type of geography object. Example: FINANCIAL,POOL\"},{\"name\":\"alternateCodes\",\"type\":[\"null\",{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"subCityParentAlternateCode\",\"doc\":\"SubCityParent AlternateCode details\",\"fields\":[{\"name\":\"codeType\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The alternate code type of subcity. Example: RKTS,RKST,GEOID\"},{\"name\":\"code\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The alternate value type of subcity. Example: INPNQ00\"}]}}]}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static final SpecificData MODEL$ = new SpecificData();
 
-  private static final BinaryMessageEncoder<parent> ENCODER =
-      new BinaryMessageEncoder<parent>(MODEL$, SCHEMA$);
+  private static final BinaryMessageEncoder<subCityParent> ENCODER =
+      new BinaryMessageEncoder<subCityParent>(MODEL$, SCHEMA$);
 
-  private static final BinaryMessageDecoder<parent> DECODER =
-      new BinaryMessageDecoder<parent>(MODEL$, SCHEMA$);
+  private static final BinaryMessageDecoder<subCityParent> DECODER =
+      new BinaryMessageDecoder<subCityParent>(MODEL$, SCHEMA$);
 
   /**
    * Return the BinaryMessageEncoder instance used by this class.
    * @return the message encoder used by this class
    */
-  public static BinaryMessageEncoder<parent> getEncoder() {
+  public static BinaryMessageEncoder<subCityParent> getEncoder() {
     return ENCODER;
   }
 
@@ -41,7 +41,7 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
    * Return the BinaryMessageDecoder instance used by this class.
    * @return the message decoder used by this class
    */
-  public static BinaryMessageDecoder<parent> getDecoder() {
+  public static BinaryMessageDecoder<subCityParent> getDecoder() {
     return DECODER;
   }
 
@@ -50,12 +50,12 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
    * @param resolver a {@link SchemaStore} used to find schemas by fingerprint
    * @return a BinaryMessageDecoder instance for this class backed by the given SchemaStore
    */
-  public static BinaryMessageDecoder<parent> createDecoder(SchemaStore resolver) {
-    return new BinaryMessageDecoder<parent>(MODEL$, SCHEMA$, resolver);
+  public static BinaryMessageDecoder<subCityParent> createDecoder(SchemaStore resolver) {
+    return new BinaryMessageDecoder<subCityParent>(MODEL$, SCHEMA$, resolver);
   }
 
   /**
-   * Serializes this parent to a ByteBuffer.
+   * Serializes this subCityParent to a ByteBuffer.
    * @return a buffer holding the serialized data for this instance
    * @throws java.io.IOException if this instance could not be serialized
    */
@@ -64,36 +64,39 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
   }
 
   /**
-   * Deserializes a parent from a ByteBuffer.
+   * Deserializes a subCityParent from a ByteBuffer.
    * @param b a byte buffer holding serialized data for an instance of this class
-   * @return a parent instance decoded from the given buffer
+   * @return a subCityParent instance decoded from the given buffer
    * @throws java.io.IOException if the given bytes could not be deserialized into an instance of this class
    */
-  public static parent fromByteBuffer(
+  public static subCityParent fromByteBuffer(
       java.nio.ByteBuffer b) throws java.io.IOException {
     return DECODER.decode(b);
   }
 
+  /** The sub city name of city. Example: viman nagar */
   private java.lang.String name;
+  /** The sub city parent type of city. Example: city */
   private java.lang.String type;
+  /** The business defined area type of geography object. Example: FINANCIAL,POOL */
   private java.lang.String bdaType;
-  private java.util.List<com.maersk.Geography.smds.operations.MSK.parentAlternateCode> alternateCodes;
+  private java.util.List<com.maersk.geography.smds.operations.msk.subCityParentAlternateCode> alternateCodes;
 
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
    * one should use <code>newBuilder()</code>.
    */
-  public parent() {}
+  public subCityParent() {}
 
   /**
    * All-args constructor.
-   * @param name The new value for name
-   * @param type The new value for type
-   * @param bdaType The new value for bdaType
+   * @param name The sub city name of city. Example: viman nagar
+   * @param type The sub city parent type of city. Example: city
+   * @param bdaType The business defined area type of geography object. Example: FINANCIAL,POOL
    * @param alternateCodes The new value for alternateCodes
    */
-  public parent(java.lang.String name, java.lang.String type, java.lang.String bdaType, java.util.List<com.maersk.Geography.smds.operations.MSK.parentAlternateCode> alternateCodes) {
+  public subCityParent(java.lang.String name, java.lang.String type, java.lang.String bdaType, java.util.List<com.maersk.geography.smds.operations.msk.subCityParentAlternateCode> alternateCodes) {
     this.name = name;
     this.type = type;
     this.bdaType = bdaType;
@@ -120,14 +123,14 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
     case 0: name = value$ != null ? value$.toString() : null; break;
     case 1: type = value$ != null ? value$.toString() : null; break;
     case 2: bdaType = value$ != null ? value$.toString() : null; break;
-    case 3: alternateCodes = (java.util.List<com.maersk.Geography.smds.operations.MSK.parentAlternateCode>)value$; break;
+    case 3: alternateCodes = (java.util.List<com.maersk.geography.smds.operations.msk.subCityParentAlternateCode>)value$; break;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
 
   /**
    * Gets the value of the 'name' field.
-   * @return The value of the 'name' field.
+   * @return The sub city name of city. Example: viman nagar
    */
   public java.lang.String getName() {
     return name;
@@ -136,6 +139,7 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
 
   /**
    * Sets the value of the 'name' field.
+   * The sub city name of city. Example: viman nagar
    * @param value the value to set.
    */
   public void setName(java.lang.String value) {
@@ -144,7 +148,7 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
 
   /**
    * Gets the value of the 'type' field.
-   * @return The value of the 'type' field.
+   * @return The sub city parent type of city. Example: city
    */
   public java.lang.String getType() {
     return type;
@@ -153,6 +157,7 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
 
   /**
    * Sets the value of the 'type' field.
+   * The sub city parent type of city. Example: city
    * @param value the value to set.
    */
   public void setType(java.lang.String value) {
@@ -161,7 +166,7 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
 
   /**
    * Gets the value of the 'bdaType' field.
-   * @return The value of the 'bdaType' field.
+   * @return The business defined area type of geography object. Example: FINANCIAL,POOL
    */
   public java.lang.String getBdaType() {
     return bdaType;
@@ -170,6 +175,7 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
 
   /**
    * Sets the value of the 'bdaType' field.
+   * The business defined area type of geography object. Example: FINANCIAL,POOL
    * @param value the value to set.
    */
   public void setBdaType(java.lang.String value) {
@@ -180,7 +186,7 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
    * Gets the value of the 'alternateCodes' field.
    * @return The value of the 'alternateCodes' field.
    */
-  public java.util.List<com.maersk.Geography.smds.operations.MSK.parentAlternateCode> getAlternateCodes() {
+  public java.util.List<com.maersk.geography.smds.operations.msk.subCityParentAlternateCode> getAlternateCodes() {
     return alternateCodes;
   }
 
@@ -189,55 +195,58 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
    * Sets the value of the 'alternateCodes' field.
    * @param value the value to set.
    */
-  public void setAlternateCodes(java.util.List<com.maersk.Geography.smds.operations.MSK.parentAlternateCode> value) {
+  public void setAlternateCodes(java.util.List<com.maersk.geography.smds.operations.msk.subCityParentAlternateCode> value) {
     this.alternateCodes = value;
   }
 
   /**
-   * Creates a new parent RecordBuilder.
-   * @return A new parent RecordBuilder
+   * Creates a new subCityParent RecordBuilder.
+   * @return A new subCityParent RecordBuilder
    */
-  public static com.maersk.Geography.smds.operations.MSK.parent.Builder newBuilder() {
-    return new com.maersk.Geography.smds.operations.MSK.parent.Builder();
+  public static com.maersk.geography.smds.operations.msk.subCityParent.Builder newBuilder() {
+    return new com.maersk.geography.smds.operations.msk.subCityParent.Builder();
   }
 
   /**
-   * Creates a new parent RecordBuilder by copying an existing Builder.
+   * Creates a new subCityParent RecordBuilder by copying an existing Builder.
    * @param other The existing builder to copy.
-   * @return A new parent RecordBuilder
+   * @return A new subCityParent RecordBuilder
    */
-  public static com.maersk.Geography.smds.operations.MSK.parent.Builder newBuilder(com.maersk.Geography.smds.operations.MSK.parent.Builder other) {
+  public static com.maersk.geography.smds.operations.msk.subCityParent.Builder newBuilder(com.maersk.geography.smds.operations.msk.subCityParent.Builder other) {
     if (other == null) {
-      return new com.maersk.Geography.smds.operations.MSK.parent.Builder();
+      return new com.maersk.geography.smds.operations.msk.subCityParent.Builder();
     } else {
-      return new com.maersk.Geography.smds.operations.MSK.parent.Builder(other);
+      return new com.maersk.geography.smds.operations.msk.subCityParent.Builder(other);
     }
   }
 
   /**
-   * Creates a new parent RecordBuilder by copying an existing parent instance.
+   * Creates a new subCityParent RecordBuilder by copying an existing subCityParent instance.
    * @param other The existing instance to copy.
-   * @return A new parent RecordBuilder
+   * @return A new subCityParent RecordBuilder
    */
-  public static com.maersk.Geography.smds.operations.MSK.parent.Builder newBuilder(com.maersk.Geography.smds.operations.MSK.parent other) {
+  public static com.maersk.geography.smds.operations.msk.subCityParent.Builder newBuilder(com.maersk.geography.smds.operations.msk.subCityParent other) {
     if (other == null) {
-      return new com.maersk.Geography.smds.operations.MSK.parent.Builder();
+      return new com.maersk.geography.smds.operations.msk.subCityParent.Builder();
     } else {
-      return new com.maersk.Geography.smds.operations.MSK.parent.Builder(other);
+      return new com.maersk.geography.smds.operations.msk.subCityParent.Builder(other);
     }
   }
 
   /**
-   * RecordBuilder for parent instances.
+   * RecordBuilder for subCityParent instances.
    */
   @org.apache.avro.specific.AvroGenerated
-  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<parent>
-    implements org.apache.avro.data.RecordBuilder<parent> {
+  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<subCityParent>
+    implements org.apache.avro.data.RecordBuilder<subCityParent> {
 
+    /** The sub city name of city. Example: viman nagar */
     private java.lang.String name;
+    /** The sub city parent type of city. Example: city */
     private java.lang.String type;
+    /** The business defined area type of geography object. Example: FINANCIAL,POOL */
     private java.lang.String bdaType;
-    private java.util.List<com.maersk.Geography.smds.operations.MSK.parentAlternateCode> alternateCodes;
+    private java.util.List<com.maersk.geography.smds.operations.msk.subCityParentAlternateCode> alternateCodes;
 
     /** Creates a new Builder */
     private Builder() {
@@ -248,7 +257,7 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
      * Creates a Builder by copying an existing Builder.
      * @param other The existing Builder to copy.
      */
-    private Builder(com.maersk.Geography.smds.operations.MSK.parent.Builder other) {
+    private Builder(com.maersk.geography.smds.operations.msk.subCityParent.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.name)) {
         this.name = data().deepCopy(fields()[0].schema(), other.name);
@@ -269,10 +278,10 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
     }
 
     /**
-     * Creates a Builder by copying an existing parent instance
+     * Creates a Builder by copying an existing subCityParent instance
      * @param other The existing instance to copy.
      */
-    private Builder(com.maersk.Geography.smds.operations.MSK.parent other) {
+    private Builder(com.maersk.geography.smds.operations.msk.subCityParent other) {
       super(SCHEMA$, MODEL$);
       if (isValidValue(fields()[0], other.name)) {
         this.name = data().deepCopy(fields()[0].schema(), other.name);
@@ -294,6 +303,7 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
       * Gets the value of the 'name' field.
+      * The sub city name of city. Example: viman nagar
       * @return The value.
       */
     public java.lang.String getName() {
@@ -303,10 +313,11 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
       * Sets the value of the 'name' field.
+      * The sub city name of city. Example: viman nagar
       * @param value The value of 'name'.
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.parent.Builder setName(java.lang.String value) {
+    public com.maersk.geography.smds.operations.msk.subCityParent.Builder setName(java.lang.String value) {
       validate(fields()[0], value);
       this.name = value;
       fieldSetFlags()[0] = true;
@@ -315,6 +326,7 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
       * Checks whether the 'name' field has been set.
+      * The sub city name of city. Example: viman nagar
       * @return True if the 'name' field has been set, false otherwise.
       */
     public boolean hasName() {
@@ -324,9 +336,10 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
       * Clears the value of the 'name' field.
+      * The sub city name of city. Example: viman nagar
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.parent.Builder clearName() {
+    public com.maersk.geography.smds.operations.msk.subCityParent.Builder clearName() {
       name = null;
       fieldSetFlags()[0] = false;
       return this;
@@ -334,6 +347,7 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
       * Gets the value of the 'type' field.
+      * The sub city parent type of city. Example: city
       * @return The value.
       */
     public java.lang.String getType() {
@@ -343,10 +357,11 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
       * Sets the value of the 'type' field.
+      * The sub city parent type of city. Example: city
       * @param value The value of 'type'.
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.parent.Builder setType(java.lang.String value) {
+    public com.maersk.geography.smds.operations.msk.subCityParent.Builder setType(java.lang.String value) {
       validate(fields()[1], value);
       this.type = value;
       fieldSetFlags()[1] = true;
@@ -355,6 +370,7 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
       * Checks whether the 'type' field has been set.
+      * The sub city parent type of city. Example: city
       * @return True if the 'type' field has been set, false otherwise.
       */
     public boolean hasType() {
@@ -364,9 +380,10 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
       * Clears the value of the 'type' field.
+      * The sub city parent type of city. Example: city
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.parent.Builder clearType() {
+    public com.maersk.geography.smds.operations.msk.subCityParent.Builder clearType() {
       type = null;
       fieldSetFlags()[1] = false;
       return this;
@@ -374,6 +391,7 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
       * Gets the value of the 'bdaType' field.
+      * The business defined area type of geography object. Example: FINANCIAL,POOL
       * @return The value.
       */
     public java.lang.String getBdaType() {
@@ -383,10 +401,11 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
       * Sets the value of the 'bdaType' field.
+      * The business defined area type of geography object. Example: FINANCIAL,POOL
       * @param value The value of 'bdaType'.
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.parent.Builder setBdaType(java.lang.String value) {
+    public com.maersk.geography.smds.operations.msk.subCityParent.Builder setBdaType(java.lang.String value) {
       validate(fields()[2], value);
       this.bdaType = value;
       fieldSetFlags()[2] = true;
@@ -395,6 +414,7 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
       * Checks whether the 'bdaType' field has been set.
+      * The business defined area type of geography object. Example: FINANCIAL,POOL
       * @return True if the 'bdaType' field has been set, false otherwise.
       */
     public boolean hasBdaType() {
@@ -404,9 +424,10 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
       * Clears the value of the 'bdaType' field.
+      * The business defined area type of geography object. Example: FINANCIAL,POOL
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.parent.Builder clearBdaType() {
+    public com.maersk.geography.smds.operations.msk.subCityParent.Builder clearBdaType() {
       bdaType = null;
       fieldSetFlags()[2] = false;
       return this;
@@ -416,7 +437,7 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
       * Gets the value of the 'alternateCodes' field.
       * @return The value.
       */
-    public java.util.List<com.maersk.Geography.smds.operations.MSK.parentAlternateCode> getAlternateCodes() {
+    public java.util.List<com.maersk.geography.smds.operations.msk.subCityParentAlternateCode> getAlternateCodes() {
       return alternateCodes;
     }
 
@@ -426,7 +447,7 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
       * @param value The value of 'alternateCodes'.
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.parent.Builder setAlternateCodes(java.util.List<com.maersk.Geography.smds.operations.MSK.parentAlternateCode> value) {
+    public com.maersk.geography.smds.operations.msk.subCityParent.Builder setAlternateCodes(java.util.List<com.maersk.geography.smds.operations.msk.subCityParentAlternateCode> value) {
       validate(fields()[3], value);
       this.alternateCodes = value;
       fieldSetFlags()[3] = true;
@@ -446,7 +467,7 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
       * Clears the value of the 'alternateCodes' field.
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.parent.Builder clearAlternateCodes() {
+    public com.maersk.geography.smds.operations.msk.subCityParent.Builder clearAlternateCodes() {
       alternateCodes = null;
       fieldSetFlags()[3] = false;
       return this;
@@ -454,13 +475,13 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
 
     @Override
     @SuppressWarnings("unchecked")
-    public parent build() {
+    public subCityParent build() {
       try {
-        parent record = new parent();
+        subCityParent record = new subCityParent();
         record.name = fieldSetFlags()[0] ? this.name : (java.lang.String) defaultValue(fields()[0]);
         record.type = fieldSetFlags()[1] ? this.type : (java.lang.String) defaultValue(fields()[1]);
         record.bdaType = fieldSetFlags()[2] ? this.bdaType : (java.lang.String) defaultValue(fields()[2]);
-        record.alternateCodes = fieldSetFlags()[3] ? this.alternateCodes : (java.util.List<com.maersk.Geography.smds.operations.MSK.parentAlternateCode>) defaultValue(fields()[3]);
+        record.alternateCodes = fieldSetFlags()[3] ? this.alternateCodes : (java.util.List<com.maersk.geography.smds.operations.msk.subCityParentAlternateCode>) defaultValue(fields()[3]);
         return record;
       } catch (org.apache.avro.AvroMissingFieldException e) {
         throw e;
@@ -471,8 +492,8 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
   }
 
   @SuppressWarnings("unchecked")
-  private static final org.apache.avro.io.DatumWriter<parent>
-    WRITER$ = (org.apache.avro.io.DatumWriter<parent>)MODEL$.createDatumWriter(SCHEMA$);
+  private static final org.apache.avro.io.DatumWriter<subCityParent>
+    WRITER$ = (org.apache.avro.io.DatumWriter<subCityParent>)MODEL$.createDatumWriter(SCHEMA$);
 
   @Override public void writeExternal(java.io.ObjectOutput out)
     throws java.io.IOException {
@@ -480,8 +501,8 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
   }
 
   @SuppressWarnings("unchecked")
-  private static final org.apache.avro.io.DatumReader<parent>
-    READER$ = (org.apache.avro.io.DatumReader<parent>)MODEL$.createDatumReader(SCHEMA$);
+  private static final org.apache.avro.io.DatumReader<subCityParent>
+    READER$ = (org.apache.avro.io.DatumReader<subCityParent>)MODEL$.createDatumReader(SCHEMA$);
 
   @Override public void readExternal(java.io.ObjectInput in)
     throws java.io.IOException {
@@ -493,21 +514,9 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
   @Override public void customEncode(org.apache.avro.io.Encoder out)
     throws java.io.IOException
   {
-    if (this.name == null) {
-      out.writeIndex(0);
-      out.writeNull();
-    } else {
-      out.writeIndex(1);
-      out.writeString(this.name);
-    }
+    out.writeString(this.name);
 
-    if (this.type == null) {
-      out.writeIndex(0);
-      out.writeNull();
-    } else {
-      out.writeIndex(1);
-      out.writeString(this.type);
-    }
+    out.writeString(this.type);
 
     if (this.bdaType == null) {
       out.writeIndex(0);
@@ -526,7 +535,7 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
       out.writeArrayStart();
       out.setItemCount(size0);
       long actualSize0 = 0;
-      for (com.maersk.Geography.smds.operations.MSK.parentAlternateCode e0: this.alternateCodes) {
+      for (com.maersk.geography.smds.operations.msk.subCityParentAlternateCode e0: this.alternateCodes) {
         actualSize0++;
         out.startItem();
         e0.customEncode(out);
@@ -543,19 +552,9 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
   {
     org.apache.avro.Schema.Field[] fieldOrder = in.readFieldOrderIfDiff();
     if (fieldOrder == null) {
-      if (in.readIndex() != 1) {
-        in.readNull();
-        this.name = null;
-      } else {
-        this.name = in.readString();
-      }
+      this.name = in.readString();
 
-      if (in.readIndex() != 1) {
-        in.readNull();
-        this.type = null;
-      } else {
-        this.type = in.readString();
-      }
+      this.type = in.readString();
 
       if (in.readIndex() != 1) {
         in.readNull();
@@ -569,17 +568,17 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
         this.alternateCodes = null;
       } else {
         long size0 = in.readArrayStart();
-        java.util.List<com.maersk.Geography.smds.operations.MSK.parentAlternateCode> a0 = this.alternateCodes;
+        java.util.List<com.maersk.geography.smds.operations.msk.subCityParentAlternateCode> a0 = this.alternateCodes;
         if (a0 == null) {
-          a0 = new SpecificData.Array<com.maersk.Geography.smds.operations.MSK.parentAlternateCode>((int)size0, SCHEMA$.getField("alternateCodes").schema().getTypes().get(1));
+          a0 = new SpecificData.Array<com.maersk.geography.smds.operations.msk.subCityParentAlternateCode>((int)size0, SCHEMA$.getField("alternateCodes").schema().getTypes().get(1));
           this.alternateCodes = a0;
         } else a0.clear();
-        SpecificData.Array<com.maersk.Geography.smds.operations.MSK.parentAlternateCode> ga0 = (a0 instanceof SpecificData.Array ? (SpecificData.Array<com.maersk.Geography.smds.operations.MSK.parentAlternateCode>)a0 : null);
+        SpecificData.Array<com.maersk.geography.smds.operations.msk.subCityParentAlternateCode> ga0 = (a0 instanceof SpecificData.Array ? (SpecificData.Array<com.maersk.geography.smds.operations.msk.subCityParentAlternateCode>)a0 : null);
         for ( ; 0 < size0; size0 = in.arrayNext()) {
           for ( ; size0 != 0; size0--) {
-            com.maersk.Geography.smds.operations.MSK.parentAlternateCode e0 = (ga0 != null ? ga0.peek() : null);
+            com.maersk.geography.smds.operations.msk.subCityParentAlternateCode e0 = (ga0 != null ? ga0.peek() : null);
             if (e0 == null) {
-              e0 = new com.maersk.Geography.smds.operations.MSK.parentAlternateCode();
+              e0 = new com.maersk.geography.smds.operations.msk.subCityParentAlternateCode();
             }
             e0.customDecode(in);
             a0.add(e0);
@@ -591,21 +590,11 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
       for (int i = 0; i < 4; i++) {
         switch (fieldOrder[i].pos()) {
         case 0:
-          if (in.readIndex() != 1) {
-            in.readNull();
-            this.name = null;
-          } else {
-            this.name = in.readString();
-          }
+          this.name = in.readString();
           break;
 
         case 1:
-          if (in.readIndex() != 1) {
-            in.readNull();
-            this.type = null;
-          } else {
-            this.type = in.readString();
-          }
+          this.type = in.readString();
           break;
 
         case 2:
@@ -623,17 +612,17 @@ public class parent extends org.apache.avro.specific.SpecificRecordBase implemen
             this.alternateCodes = null;
           } else {
             long size0 = in.readArrayStart();
-            java.util.List<com.maersk.Geography.smds.operations.MSK.parentAlternateCode> a0 = this.alternateCodes;
+            java.util.List<com.maersk.geography.smds.operations.msk.subCityParentAlternateCode> a0 = this.alternateCodes;
             if (a0 == null) {
-              a0 = new SpecificData.Array<com.maersk.Geography.smds.operations.MSK.parentAlternateCode>((int)size0, SCHEMA$.getField("alternateCodes").schema().getTypes().get(1));
+              a0 = new SpecificData.Array<com.maersk.geography.smds.operations.msk.subCityParentAlternateCode>((int)size0, SCHEMA$.getField("alternateCodes").schema().getTypes().get(1));
               this.alternateCodes = a0;
             } else a0.clear();
-            SpecificData.Array<com.maersk.Geography.smds.operations.MSK.parentAlternateCode> ga0 = (a0 instanceof SpecificData.Array ? (SpecificData.Array<com.maersk.Geography.smds.operations.MSK.parentAlternateCode>)a0 : null);
+            SpecificData.Array<com.maersk.geography.smds.operations.msk.subCityParentAlternateCode> ga0 = (a0 instanceof SpecificData.Array ? (SpecificData.Array<com.maersk.geography.smds.operations.msk.subCityParentAlternateCode>)a0 : null);
             for ( ; 0 < size0; size0 = in.arrayNext()) {
               for ( ; size0 != 0; size0--) {
-                com.maersk.Geography.smds.operations.MSK.parentAlternateCode e0 = (ga0 != null ? ga0.peek() : null);
+                com.maersk.geography.smds.operations.msk.subCityParentAlternateCode e0 = (ga0 != null ? ga0.peek() : null);
                 if (e0 == null) {
-                  e0 = new com.maersk.Geography.smds.operations.MSK.parentAlternateCode();
+                  e0 = new com.maersk.geography.smds.operations.msk.subCityParentAlternateCode();
                 }
                 e0.customDecode(in);
                 a0.add(e0);

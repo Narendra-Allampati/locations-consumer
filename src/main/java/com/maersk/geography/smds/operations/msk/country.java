@@ -3,7 +3,7 @@
  *
  * DO NOT EDIT DIRECTLY
  */
-package com.maersk.Geography.smds.operations.MSK;
+package com.maersk.geography.smds.operations.msk;
 
 import org.apache.avro.generic.GenericArray;
 import org.apache.avro.specific.SpecificData;
@@ -15,10 +15,10 @@ import org.apache.avro.message.SchemaStore;
 /** Country Details */
 @org.apache.avro.specific.AvroGenerated
 public class country extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 7110380377046354495L;
+  private static final long serialVersionUID = 1742420520722695830L;
 
 
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"country\",\"namespace\":\"com.maersk.Geography.smds.operations.MSK\",\"doc\":\"Country Details\",\"fields\":[{\"name\":\"name\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"type\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"alternateCodes\",\"type\":[\"null\",{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"countryAlternateCodes\",\"doc\":\"Country AlternateCode Details\",\"fields\":[{\"name\":\"codeType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"code\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]}]}}]}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"country\",\"namespace\":\"com.maersk.geography.smds.operations.msk\",\"doc\":\"Country Details\",\"fields\":[{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The name of country. Example: India\"},{\"name\":\"type\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The code type of country. Example: GDA.COUNTRY\"},{\"name\":\"alternateCodes\",\"type\":[\"null\",{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"countryAlternateCode\",\"doc\":\"Country AlternateCode Details\",\"fields\":[{\"name\":\"codeType\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The alternate code type of  country. Example: RKTS,RKST,GEOID\"},{\"name\":\"code\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The alternate code value of  country. Example: INPNQ00\"}]}}]}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static final SpecificData MODEL$ = new SpecificData();
@@ -74,9 +74,11 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
     return DECODER.decode(b);
   }
 
+  /** The name of country. Example: India */
   private java.lang.String name;
+  /** The code type of country. Example: GDA.COUNTRY */
   private java.lang.String type;
-  private java.util.List<com.maersk.Geography.smds.operations.MSK.countryAlternateCodes> alternateCodes;
+  private java.util.List<com.maersk.geography.smds.operations.msk.countryAlternateCode> alternateCodes;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -87,11 +89,11 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
 
   /**
    * All-args constructor.
-   * @param name The new value for name
-   * @param type The new value for type
+   * @param name The name of country. Example: India
+   * @param type The code type of country. Example: GDA.COUNTRY
    * @param alternateCodes The new value for alternateCodes
    */
-  public country(java.lang.String name, java.lang.String type, java.util.List<com.maersk.Geography.smds.operations.MSK.countryAlternateCodes> alternateCodes) {
+  public country(java.lang.String name, java.lang.String type, java.util.List<com.maersk.geography.smds.operations.msk.countryAlternateCode> alternateCodes) {
     this.name = name;
     this.type = type;
     this.alternateCodes = alternateCodes;
@@ -115,14 +117,14 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
     switch (field$) {
     case 0: name = value$ != null ? value$.toString() : null; break;
     case 1: type = value$ != null ? value$.toString() : null; break;
-    case 2: alternateCodes = (java.util.List<com.maersk.Geography.smds.operations.MSK.countryAlternateCodes>)value$; break;
+    case 2: alternateCodes = (java.util.List<com.maersk.geography.smds.operations.msk.countryAlternateCode>)value$; break;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
 
   /**
    * Gets the value of the 'name' field.
-   * @return The value of the 'name' field.
+   * @return The name of country. Example: India
    */
   public java.lang.String getName() {
     return name;
@@ -131,6 +133,7 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
 
   /**
    * Sets the value of the 'name' field.
+   * The name of country. Example: India
    * @param value the value to set.
    */
   public void setName(java.lang.String value) {
@@ -139,7 +142,7 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
 
   /**
    * Gets the value of the 'type' field.
-   * @return The value of the 'type' field.
+   * @return The code type of country. Example: GDA.COUNTRY
    */
   public java.lang.String getType() {
     return type;
@@ -148,6 +151,7 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
 
   /**
    * Sets the value of the 'type' field.
+   * The code type of country. Example: GDA.COUNTRY
    * @param value the value to set.
    */
   public void setType(java.lang.String value) {
@@ -158,7 +162,7 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
    * Gets the value of the 'alternateCodes' field.
    * @return The value of the 'alternateCodes' field.
    */
-  public java.util.List<com.maersk.Geography.smds.operations.MSK.countryAlternateCodes> getAlternateCodes() {
+  public java.util.List<com.maersk.geography.smds.operations.msk.countryAlternateCode> getAlternateCodes() {
     return alternateCodes;
   }
 
@@ -167,7 +171,7 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
    * Sets the value of the 'alternateCodes' field.
    * @param value the value to set.
    */
-  public void setAlternateCodes(java.util.List<com.maersk.Geography.smds.operations.MSK.countryAlternateCodes> value) {
+  public void setAlternateCodes(java.util.List<com.maersk.geography.smds.operations.msk.countryAlternateCode> value) {
     this.alternateCodes = value;
   }
 
@@ -175,8 +179,8 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
    * Creates a new country RecordBuilder.
    * @return A new country RecordBuilder
    */
-  public static com.maersk.Geography.smds.operations.MSK.country.Builder newBuilder() {
-    return new com.maersk.Geography.smds.operations.MSK.country.Builder();
+  public static com.maersk.geography.smds.operations.msk.country.Builder newBuilder() {
+    return new com.maersk.geography.smds.operations.msk.country.Builder();
   }
 
   /**
@@ -184,11 +188,11 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
    * @param other The existing builder to copy.
    * @return A new country RecordBuilder
    */
-  public static com.maersk.Geography.smds.operations.MSK.country.Builder newBuilder(com.maersk.Geography.smds.operations.MSK.country.Builder other) {
+  public static com.maersk.geography.smds.operations.msk.country.Builder newBuilder(com.maersk.geography.smds.operations.msk.country.Builder other) {
     if (other == null) {
-      return new com.maersk.Geography.smds.operations.MSK.country.Builder();
+      return new com.maersk.geography.smds.operations.msk.country.Builder();
     } else {
-      return new com.maersk.Geography.smds.operations.MSK.country.Builder(other);
+      return new com.maersk.geography.smds.operations.msk.country.Builder(other);
     }
   }
 
@@ -197,11 +201,11 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
    * @param other The existing instance to copy.
    * @return A new country RecordBuilder
    */
-  public static com.maersk.Geography.smds.operations.MSK.country.Builder newBuilder(com.maersk.Geography.smds.operations.MSK.country other) {
+  public static com.maersk.geography.smds.operations.msk.country.Builder newBuilder(com.maersk.geography.smds.operations.msk.country other) {
     if (other == null) {
-      return new com.maersk.Geography.smds.operations.MSK.country.Builder();
+      return new com.maersk.geography.smds.operations.msk.country.Builder();
     } else {
-      return new com.maersk.Geography.smds.operations.MSK.country.Builder(other);
+      return new com.maersk.geography.smds.operations.msk.country.Builder(other);
     }
   }
 
@@ -212,9 +216,11 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<country>
     implements org.apache.avro.data.RecordBuilder<country> {
 
+    /** The name of country. Example: India */
     private java.lang.String name;
+    /** The code type of country. Example: GDA.COUNTRY */
     private java.lang.String type;
-    private java.util.List<com.maersk.Geography.smds.operations.MSK.countryAlternateCodes> alternateCodes;
+    private java.util.List<com.maersk.geography.smds.operations.msk.countryAlternateCode> alternateCodes;
 
     /** Creates a new Builder */
     private Builder() {
@@ -225,7 +231,7 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
      * Creates a Builder by copying an existing Builder.
      * @param other The existing Builder to copy.
      */
-    private Builder(com.maersk.Geography.smds.operations.MSK.country.Builder other) {
+    private Builder(com.maersk.geography.smds.operations.msk.country.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.name)) {
         this.name = data().deepCopy(fields()[0].schema(), other.name);
@@ -245,7 +251,7 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
      * Creates a Builder by copying an existing country instance
      * @param other The existing instance to copy.
      */
-    private Builder(com.maersk.Geography.smds.operations.MSK.country other) {
+    private Builder(com.maersk.geography.smds.operations.msk.country other) {
       super(SCHEMA$, MODEL$);
       if (isValidValue(fields()[0], other.name)) {
         this.name = data().deepCopy(fields()[0].schema(), other.name);
@@ -263,6 +269,7 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
 
     /**
       * Gets the value of the 'name' field.
+      * The name of country. Example: India
       * @return The value.
       */
     public java.lang.String getName() {
@@ -272,10 +279,11 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
 
     /**
       * Sets the value of the 'name' field.
+      * The name of country. Example: India
       * @param value The value of 'name'.
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.country.Builder setName(java.lang.String value) {
+    public com.maersk.geography.smds.operations.msk.country.Builder setName(java.lang.String value) {
       validate(fields()[0], value);
       this.name = value;
       fieldSetFlags()[0] = true;
@@ -284,6 +292,7 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
 
     /**
       * Checks whether the 'name' field has been set.
+      * The name of country. Example: India
       * @return True if the 'name' field has been set, false otherwise.
       */
     public boolean hasName() {
@@ -293,9 +302,10 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
 
     /**
       * Clears the value of the 'name' field.
+      * The name of country. Example: India
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.country.Builder clearName() {
+    public com.maersk.geography.smds.operations.msk.country.Builder clearName() {
       name = null;
       fieldSetFlags()[0] = false;
       return this;
@@ -303,6 +313,7 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
 
     /**
       * Gets the value of the 'type' field.
+      * The code type of country. Example: GDA.COUNTRY
       * @return The value.
       */
     public java.lang.String getType() {
@@ -312,10 +323,11 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
 
     /**
       * Sets the value of the 'type' field.
+      * The code type of country. Example: GDA.COUNTRY
       * @param value The value of 'type'.
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.country.Builder setType(java.lang.String value) {
+    public com.maersk.geography.smds.operations.msk.country.Builder setType(java.lang.String value) {
       validate(fields()[1], value);
       this.type = value;
       fieldSetFlags()[1] = true;
@@ -324,6 +336,7 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
 
     /**
       * Checks whether the 'type' field has been set.
+      * The code type of country. Example: GDA.COUNTRY
       * @return True if the 'type' field has been set, false otherwise.
       */
     public boolean hasType() {
@@ -333,9 +346,10 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
 
     /**
       * Clears the value of the 'type' field.
+      * The code type of country. Example: GDA.COUNTRY
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.country.Builder clearType() {
+    public com.maersk.geography.smds.operations.msk.country.Builder clearType() {
       type = null;
       fieldSetFlags()[1] = false;
       return this;
@@ -345,7 +359,7 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
       * Gets the value of the 'alternateCodes' field.
       * @return The value.
       */
-    public java.util.List<com.maersk.Geography.smds.operations.MSK.countryAlternateCodes> getAlternateCodes() {
+    public java.util.List<com.maersk.geography.smds.operations.msk.countryAlternateCode> getAlternateCodes() {
       return alternateCodes;
     }
 
@@ -355,7 +369,7 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
       * @param value The value of 'alternateCodes'.
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.country.Builder setAlternateCodes(java.util.List<com.maersk.Geography.smds.operations.MSK.countryAlternateCodes> value) {
+    public com.maersk.geography.smds.operations.msk.country.Builder setAlternateCodes(java.util.List<com.maersk.geography.smds.operations.msk.countryAlternateCode> value) {
       validate(fields()[2], value);
       this.alternateCodes = value;
       fieldSetFlags()[2] = true;
@@ -375,7 +389,7 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
       * Clears the value of the 'alternateCodes' field.
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.country.Builder clearAlternateCodes() {
+    public com.maersk.geography.smds.operations.msk.country.Builder clearAlternateCodes() {
       alternateCodes = null;
       fieldSetFlags()[2] = false;
       return this;
@@ -388,7 +402,7 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
         country record = new country();
         record.name = fieldSetFlags()[0] ? this.name : (java.lang.String) defaultValue(fields()[0]);
         record.type = fieldSetFlags()[1] ? this.type : (java.lang.String) defaultValue(fields()[1]);
-        record.alternateCodes = fieldSetFlags()[2] ? this.alternateCodes : (java.util.List<com.maersk.Geography.smds.operations.MSK.countryAlternateCodes>) defaultValue(fields()[2]);
+        record.alternateCodes = fieldSetFlags()[2] ? this.alternateCodes : (java.util.List<com.maersk.geography.smds.operations.msk.countryAlternateCode>) defaultValue(fields()[2]);
         return record;
       } catch (org.apache.avro.AvroMissingFieldException e) {
         throw e;
@@ -421,21 +435,9 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
   @Override public void customEncode(org.apache.avro.io.Encoder out)
     throws java.io.IOException
   {
-    if (this.name == null) {
-      out.writeIndex(0);
-      out.writeNull();
-    } else {
-      out.writeIndex(1);
-      out.writeString(this.name);
-    }
+    out.writeString(this.name);
 
-    if (this.type == null) {
-      out.writeIndex(0);
-      out.writeNull();
-    } else {
-      out.writeIndex(1);
-      out.writeString(this.type);
-    }
+    out.writeString(this.type);
 
     if (this.alternateCodes == null) {
       out.writeIndex(0);
@@ -446,7 +448,7 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
       out.writeArrayStart();
       out.setItemCount(size0);
       long actualSize0 = 0;
-      for (com.maersk.Geography.smds.operations.MSK.countryAlternateCodes e0: this.alternateCodes) {
+      for (com.maersk.geography.smds.operations.msk.countryAlternateCode e0: this.alternateCodes) {
         actualSize0++;
         out.startItem();
         e0.customEncode(out);
@@ -463,36 +465,26 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
   {
     org.apache.avro.Schema.Field[] fieldOrder = in.readFieldOrderIfDiff();
     if (fieldOrder == null) {
-      if (in.readIndex() != 1) {
-        in.readNull();
-        this.name = null;
-      } else {
-        this.name = in.readString();
-      }
+      this.name = in.readString();
 
-      if (in.readIndex() != 1) {
-        in.readNull();
-        this.type = null;
-      } else {
-        this.type = in.readString();
-      }
+      this.type = in.readString();
 
       if (in.readIndex() != 1) {
         in.readNull();
         this.alternateCodes = null;
       } else {
         long size0 = in.readArrayStart();
-        java.util.List<com.maersk.Geography.smds.operations.MSK.countryAlternateCodes> a0 = this.alternateCodes;
+        java.util.List<com.maersk.geography.smds.operations.msk.countryAlternateCode> a0 = this.alternateCodes;
         if (a0 == null) {
-          a0 = new SpecificData.Array<com.maersk.Geography.smds.operations.MSK.countryAlternateCodes>((int)size0, SCHEMA$.getField("alternateCodes").schema().getTypes().get(1));
+          a0 = new SpecificData.Array<com.maersk.geography.smds.operations.msk.countryAlternateCode>((int)size0, SCHEMA$.getField("alternateCodes").schema().getTypes().get(1));
           this.alternateCodes = a0;
         } else a0.clear();
-        SpecificData.Array<com.maersk.Geography.smds.operations.MSK.countryAlternateCodes> ga0 = (a0 instanceof SpecificData.Array ? (SpecificData.Array<com.maersk.Geography.smds.operations.MSK.countryAlternateCodes>)a0 : null);
+        SpecificData.Array<com.maersk.geography.smds.operations.msk.countryAlternateCode> ga0 = (a0 instanceof SpecificData.Array ? (SpecificData.Array<com.maersk.geography.smds.operations.msk.countryAlternateCode>)a0 : null);
         for ( ; 0 < size0; size0 = in.arrayNext()) {
           for ( ; size0 != 0; size0--) {
-            com.maersk.Geography.smds.operations.MSK.countryAlternateCodes e0 = (ga0 != null ? ga0.peek() : null);
+            com.maersk.geography.smds.operations.msk.countryAlternateCode e0 = (ga0 != null ? ga0.peek() : null);
             if (e0 == null) {
-              e0 = new com.maersk.Geography.smds.operations.MSK.countryAlternateCodes();
+              e0 = new com.maersk.geography.smds.operations.msk.countryAlternateCode();
             }
             e0.customDecode(in);
             a0.add(e0);
@@ -504,21 +496,11 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
       for (int i = 0; i < 3; i++) {
         switch (fieldOrder[i].pos()) {
         case 0:
-          if (in.readIndex() != 1) {
-            in.readNull();
-            this.name = null;
-          } else {
-            this.name = in.readString();
-          }
+          this.name = in.readString();
           break;
 
         case 1:
-          if (in.readIndex() != 1) {
-            in.readNull();
-            this.type = null;
-          } else {
-            this.type = in.readString();
-          }
+          this.type = in.readString();
           break;
 
         case 2:
@@ -527,17 +509,17 @@ public class country extends org.apache.avro.specific.SpecificRecordBase impleme
             this.alternateCodes = null;
           } else {
             long size0 = in.readArrayStart();
-            java.util.List<com.maersk.Geography.smds.operations.MSK.countryAlternateCodes> a0 = this.alternateCodes;
+            java.util.List<com.maersk.geography.smds.operations.msk.countryAlternateCode> a0 = this.alternateCodes;
             if (a0 == null) {
-              a0 = new SpecificData.Array<com.maersk.Geography.smds.operations.MSK.countryAlternateCodes>((int)size0, SCHEMA$.getField("alternateCodes").schema().getTypes().get(1));
+              a0 = new SpecificData.Array<com.maersk.geography.smds.operations.msk.countryAlternateCode>((int)size0, SCHEMA$.getField("alternateCodes").schema().getTypes().get(1));
               this.alternateCodes = a0;
             } else a0.clear();
-            SpecificData.Array<com.maersk.Geography.smds.operations.MSK.countryAlternateCodes> ga0 = (a0 instanceof SpecificData.Array ? (SpecificData.Array<com.maersk.Geography.smds.operations.MSK.countryAlternateCodes>)a0 : null);
+            SpecificData.Array<com.maersk.geography.smds.operations.msk.countryAlternateCode> ga0 = (a0 instanceof SpecificData.Array ? (SpecificData.Array<com.maersk.geography.smds.operations.msk.countryAlternateCode>)a0 : null);
             for ( ; 0 < size0; size0 = in.arrayNext()) {
               for ( ; size0 != 0; size0--) {
-                com.maersk.Geography.smds.operations.MSK.countryAlternateCodes e0 = (ga0 != null ? ga0.peek() : null);
+                com.maersk.geography.smds.operations.msk.countryAlternateCode e0 = (ga0 != null ? ga0.peek() : null);
                 if (e0 == null) {
-                  e0 = new com.maersk.Geography.smds.operations.MSK.countryAlternateCodes();
+                  e0 = new com.maersk.geography.smds.operations.msk.countryAlternateCode();
                 }
                 e0.customDecode(in);
                 a0.add(e0);

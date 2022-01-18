@@ -3,7 +3,7 @@
  *
  * DO NOT EDIT DIRECTLY
  */
-package com.maersk.Geography.smds.operations.MSK;
+package com.maersk.geography.smds.operations.msk;
 
 import org.apache.avro.generic.GenericArray;
 import org.apache.avro.specific.SpecificData;
@@ -14,26 +14,26 @@ import org.apache.avro.message.SchemaStore;
 
 /** AlternateNames Details */
 @org.apache.avro.specific.AvroGenerated
-public class alternateNames extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 6285871036519794586L;
+public class alternateName extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
+  private static final long serialVersionUID = 2258503846418913572L;
 
 
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"alternateNames\",\"namespace\":\"com.maersk.Geography.smds.operations.MSK\",\"doc\":\"AlternateNames Details\",\"fields\":[{\"name\":\"name\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"description\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"status\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"alternateName\",\"namespace\":\"com.maersk.geography.smds.operations.msk\",\"doc\":\"AlternateNames Details\",\"fields\":[{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The alternate name of  geography object. Example: ICD PUNE\"},{\"name\":\"description\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"doc\":\"The alternate name description of  geography object. Example: ICD PUNE\"},{\"name\":\"status\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"doc\":\"The status of  geography object. Example: ACTIVE OR INACTIVE\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static final SpecificData MODEL$ = new SpecificData();
 
-  private static final BinaryMessageEncoder<alternateNames> ENCODER =
-      new BinaryMessageEncoder<alternateNames>(MODEL$, SCHEMA$);
+  private static final BinaryMessageEncoder<alternateName> ENCODER =
+      new BinaryMessageEncoder<alternateName>(MODEL$, SCHEMA$);
 
-  private static final BinaryMessageDecoder<alternateNames> DECODER =
-      new BinaryMessageDecoder<alternateNames>(MODEL$, SCHEMA$);
+  private static final BinaryMessageDecoder<alternateName> DECODER =
+      new BinaryMessageDecoder<alternateName>(MODEL$, SCHEMA$);
 
   /**
    * Return the BinaryMessageEncoder instance used by this class.
    * @return the message encoder used by this class
    */
-  public static BinaryMessageEncoder<alternateNames> getEncoder() {
+  public static BinaryMessageEncoder<alternateName> getEncoder() {
     return ENCODER;
   }
 
@@ -41,7 +41,7 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
    * Return the BinaryMessageDecoder instance used by this class.
    * @return the message decoder used by this class
    */
-  public static BinaryMessageDecoder<alternateNames> getDecoder() {
+  public static BinaryMessageDecoder<alternateName> getDecoder() {
     return DECODER;
   }
 
@@ -50,12 +50,12 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
    * @param resolver a {@link SchemaStore} used to find schemas by fingerprint
    * @return a BinaryMessageDecoder instance for this class backed by the given SchemaStore
    */
-  public static BinaryMessageDecoder<alternateNames> createDecoder(SchemaStore resolver) {
-    return new BinaryMessageDecoder<alternateNames>(MODEL$, SCHEMA$, resolver);
+  public static BinaryMessageDecoder<alternateName> createDecoder(SchemaStore resolver) {
+    return new BinaryMessageDecoder<alternateName>(MODEL$, SCHEMA$, resolver);
   }
 
   /**
-   * Serializes this alternateNames to a ByteBuffer.
+   * Serializes this alternateName to a ByteBuffer.
    * @return a buffer holding the serialized data for this instance
    * @throws java.io.IOException if this instance could not be serialized
    */
@@ -64,18 +64,21 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
   }
 
   /**
-   * Deserializes a alternateNames from a ByteBuffer.
+   * Deserializes a alternateName from a ByteBuffer.
    * @param b a byte buffer holding serialized data for an instance of this class
-   * @return a alternateNames instance decoded from the given buffer
+   * @return a alternateName instance decoded from the given buffer
    * @throws java.io.IOException if the given bytes could not be deserialized into an instance of this class
    */
-  public static alternateNames fromByteBuffer(
+  public static alternateName fromByteBuffer(
       java.nio.ByteBuffer b) throws java.io.IOException {
     return DECODER.decode(b);
   }
 
+  /** The alternate name of  geography object. Example: ICD PUNE */
   private java.lang.String name;
+  /** The alternate name description of  geography object. Example: ICD PUNE */
   private java.lang.String description;
+  /** The status of  geography object. Example: ACTIVE OR INACTIVE */
   private java.lang.String status;
 
   /**
@@ -83,15 +86,15 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
    * to their default values from the schema.  If that is desired then
    * one should use <code>newBuilder()</code>.
    */
-  public alternateNames() {}
+  public alternateName() {}
 
   /**
    * All-args constructor.
-   * @param name The new value for name
-   * @param description The new value for description
-   * @param status The new value for status
+   * @param name The alternate name of  geography object. Example: ICD PUNE
+   * @param description The alternate name description of  geography object. Example: ICD PUNE
+   * @param status The status of  geography object. Example: ACTIVE OR INACTIVE
    */
-  public alternateNames(java.lang.String name, java.lang.String description, java.lang.String status) {
+  public alternateName(java.lang.String name, java.lang.String description, java.lang.String status) {
     this.name = name;
     this.description = description;
     this.status = status;
@@ -122,7 +125,7 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
 
   /**
    * Gets the value of the 'name' field.
-   * @return The value of the 'name' field.
+   * @return The alternate name of  geography object. Example: ICD PUNE
    */
   public java.lang.String getName() {
     return name;
@@ -131,6 +134,7 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
 
   /**
    * Sets the value of the 'name' field.
+   * The alternate name of  geography object. Example: ICD PUNE
    * @param value the value to set.
    */
   public void setName(java.lang.String value) {
@@ -139,7 +143,7 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
 
   /**
    * Gets the value of the 'description' field.
-   * @return The value of the 'description' field.
+   * @return The alternate name description of  geography object. Example: ICD PUNE
    */
   public java.lang.String getDescription() {
     return description;
@@ -148,6 +152,7 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
 
   /**
    * Sets the value of the 'description' field.
+   * The alternate name description of  geography object. Example: ICD PUNE
    * @param value the value to set.
    */
   public void setDescription(java.lang.String value) {
@@ -156,7 +161,7 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
 
   /**
    * Gets the value of the 'status' field.
-   * @return The value of the 'status' field.
+   * @return The status of  geography object. Example: ACTIVE OR INACTIVE
    */
   public java.lang.String getStatus() {
     return status;
@@ -165,6 +170,7 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
 
   /**
    * Sets the value of the 'status' field.
+   * The status of  geography object. Example: ACTIVE OR INACTIVE
    * @param value the value to set.
    */
   public void setStatus(java.lang.String value) {
@@ -172,48 +178,51 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
   }
 
   /**
-   * Creates a new alternateNames RecordBuilder.
-   * @return A new alternateNames RecordBuilder
+   * Creates a new alternateName RecordBuilder.
+   * @return A new alternateName RecordBuilder
    */
-  public static com.maersk.Geography.smds.operations.MSK.alternateNames.Builder newBuilder() {
-    return new com.maersk.Geography.smds.operations.MSK.alternateNames.Builder();
+  public static com.maersk.geography.smds.operations.msk.alternateName.Builder newBuilder() {
+    return new com.maersk.geography.smds.operations.msk.alternateName.Builder();
   }
 
   /**
-   * Creates a new alternateNames RecordBuilder by copying an existing Builder.
+   * Creates a new alternateName RecordBuilder by copying an existing Builder.
    * @param other The existing builder to copy.
-   * @return A new alternateNames RecordBuilder
+   * @return A new alternateName RecordBuilder
    */
-  public static com.maersk.Geography.smds.operations.MSK.alternateNames.Builder newBuilder(com.maersk.Geography.smds.operations.MSK.alternateNames.Builder other) {
+  public static com.maersk.geography.smds.operations.msk.alternateName.Builder newBuilder(com.maersk.geography.smds.operations.msk.alternateName.Builder other) {
     if (other == null) {
-      return new com.maersk.Geography.smds.operations.MSK.alternateNames.Builder();
+      return new com.maersk.geography.smds.operations.msk.alternateName.Builder();
     } else {
-      return new com.maersk.Geography.smds.operations.MSK.alternateNames.Builder(other);
+      return new com.maersk.geography.smds.operations.msk.alternateName.Builder(other);
     }
   }
 
   /**
-   * Creates a new alternateNames RecordBuilder by copying an existing alternateNames instance.
+   * Creates a new alternateName RecordBuilder by copying an existing alternateName instance.
    * @param other The existing instance to copy.
-   * @return A new alternateNames RecordBuilder
+   * @return A new alternateName RecordBuilder
    */
-  public static com.maersk.Geography.smds.operations.MSK.alternateNames.Builder newBuilder(com.maersk.Geography.smds.operations.MSK.alternateNames other) {
+  public static com.maersk.geography.smds.operations.msk.alternateName.Builder newBuilder(com.maersk.geography.smds.operations.msk.alternateName other) {
     if (other == null) {
-      return new com.maersk.Geography.smds.operations.MSK.alternateNames.Builder();
+      return new com.maersk.geography.smds.operations.msk.alternateName.Builder();
     } else {
-      return new com.maersk.Geography.smds.operations.MSK.alternateNames.Builder(other);
+      return new com.maersk.geography.smds.operations.msk.alternateName.Builder(other);
     }
   }
 
   /**
-   * RecordBuilder for alternateNames instances.
+   * RecordBuilder for alternateName instances.
    */
   @org.apache.avro.specific.AvroGenerated
-  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<alternateNames>
-    implements org.apache.avro.data.RecordBuilder<alternateNames> {
+  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<alternateName>
+    implements org.apache.avro.data.RecordBuilder<alternateName> {
 
+    /** The alternate name of  geography object. Example: ICD PUNE */
     private java.lang.String name;
+    /** The alternate name description of  geography object. Example: ICD PUNE */
     private java.lang.String description;
+    /** The status of  geography object. Example: ACTIVE OR INACTIVE */
     private java.lang.String status;
 
     /** Creates a new Builder */
@@ -225,7 +234,7 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
      * Creates a Builder by copying an existing Builder.
      * @param other The existing Builder to copy.
      */
-    private Builder(com.maersk.Geography.smds.operations.MSK.alternateNames.Builder other) {
+    private Builder(com.maersk.geography.smds.operations.msk.alternateName.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.name)) {
         this.name = data().deepCopy(fields()[0].schema(), other.name);
@@ -242,10 +251,10 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
     }
 
     /**
-     * Creates a Builder by copying an existing alternateNames instance
+     * Creates a Builder by copying an existing alternateName instance
      * @param other The existing instance to copy.
      */
-    private Builder(com.maersk.Geography.smds.operations.MSK.alternateNames other) {
+    private Builder(com.maersk.geography.smds.operations.msk.alternateName other) {
       super(SCHEMA$, MODEL$);
       if (isValidValue(fields()[0], other.name)) {
         this.name = data().deepCopy(fields()[0].schema(), other.name);
@@ -263,6 +272,7 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
 
     /**
       * Gets the value of the 'name' field.
+      * The alternate name of  geography object. Example: ICD PUNE
       * @return The value.
       */
     public java.lang.String getName() {
@@ -272,10 +282,11 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
 
     /**
       * Sets the value of the 'name' field.
+      * The alternate name of  geography object. Example: ICD PUNE
       * @param value The value of 'name'.
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.alternateNames.Builder setName(java.lang.String value) {
+    public com.maersk.geography.smds.operations.msk.alternateName.Builder setName(java.lang.String value) {
       validate(fields()[0], value);
       this.name = value;
       fieldSetFlags()[0] = true;
@@ -284,6 +295,7 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
 
     /**
       * Checks whether the 'name' field has been set.
+      * The alternate name of  geography object. Example: ICD PUNE
       * @return True if the 'name' field has been set, false otherwise.
       */
     public boolean hasName() {
@@ -293,9 +305,10 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
 
     /**
       * Clears the value of the 'name' field.
+      * The alternate name of  geography object. Example: ICD PUNE
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.alternateNames.Builder clearName() {
+    public com.maersk.geography.smds.operations.msk.alternateName.Builder clearName() {
       name = null;
       fieldSetFlags()[0] = false;
       return this;
@@ -303,6 +316,7 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
 
     /**
       * Gets the value of the 'description' field.
+      * The alternate name description of  geography object. Example: ICD PUNE
       * @return The value.
       */
     public java.lang.String getDescription() {
@@ -312,10 +326,11 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
 
     /**
       * Sets the value of the 'description' field.
+      * The alternate name description of  geography object. Example: ICD PUNE
       * @param value The value of 'description'.
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.alternateNames.Builder setDescription(java.lang.String value) {
+    public com.maersk.geography.smds.operations.msk.alternateName.Builder setDescription(java.lang.String value) {
       validate(fields()[1], value);
       this.description = value;
       fieldSetFlags()[1] = true;
@@ -324,6 +339,7 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
 
     /**
       * Checks whether the 'description' field has been set.
+      * The alternate name description of  geography object. Example: ICD PUNE
       * @return True if the 'description' field has been set, false otherwise.
       */
     public boolean hasDescription() {
@@ -333,9 +349,10 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
 
     /**
       * Clears the value of the 'description' field.
+      * The alternate name description of  geography object. Example: ICD PUNE
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.alternateNames.Builder clearDescription() {
+    public com.maersk.geography.smds.operations.msk.alternateName.Builder clearDescription() {
       description = null;
       fieldSetFlags()[1] = false;
       return this;
@@ -343,6 +360,7 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
 
     /**
       * Gets the value of the 'status' field.
+      * The status of  geography object. Example: ACTIVE OR INACTIVE
       * @return The value.
       */
     public java.lang.String getStatus() {
@@ -352,10 +370,11 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
 
     /**
       * Sets the value of the 'status' field.
+      * The status of  geography object. Example: ACTIVE OR INACTIVE
       * @param value The value of 'status'.
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.alternateNames.Builder setStatus(java.lang.String value) {
+    public com.maersk.geography.smds.operations.msk.alternateName.Builder setStatus(java.lang.String value) {
       validate(fields()[2], value);
       this.status = value;
       fieldSetFlags()[2] = true;
@@ -364,6 +383,7 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
 
     /**
       * Checks whether the 'status' field has been set.
+      * The status of  geography object. Example: ACTIVE OR INACTIVE
       * @return True if the 'status' field has been set, false otherwise.
       */
     public boolean hasStatus() {
@@ -373,9 +393,10 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
 
     /**
       * Clears the value of the 'status' field.
+      * The status of  geography object. Example: ACTIVE OR INACTIVE
       * @return This builder.
       */
-    public com.maersk.Geography.smds.operations.MSK.alternateNames.Builder clearStatus() {
+    public com.maersk.geography.smds.operations.msk.alternateName.Builder clearStatus() {
       status = null;
       fieldSetFlags()[2] = false;
       return this;
@@ -383,9 +404,9 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
 
     @Override
     @SuppressWarnings("unchecked")
-    public alternateNames build() {
+    public alternateName build() {
       try {
-        alternateNames record = new alternateNames();
+        alternateName record = new alternateName();
         record.name = fieldSetFlags()[0] ? this.name : (java.lang.String) defaultValue(fields()[0]);
         record.description = fieldSetFlags()[1] ? this.description : (java.lang.String) defaultValue(fields()[1]);
         record.status = fieldSetFlags()[2] ? this.status : (java.lang.String) defaultValue(fields()[2]);
@@ -399,8 +420,8 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
   }
 
   @SuppressWarnings("unchecked")
-  private static final org.apache.avro.io.DatumWriter<alternateNames>
-    WRITER$ = (org.apache.avro.io.DatumWriter<alternateNames>)MODEL$.createDatumWriter(SCHEMA$);
+  private static final org.apache.avro.io.DatumWriter<alternateName>
+    WRITER$ = (org.apache.avro.io.DatumWriter<alternateName>)MODEL$.createDatumWriter(SCHEMA$);
 
   @Override public void writeExternal(java.io.ObjectOutput out)
     throws java.io.IOException {
@@ -408,8 +429,8 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
   }
 
   @SuppressWarnings("unchecked")
-  private static final org.apache.avro.io.DatumReader<alternateNames>
-    READER$ = (org.apache.avro.io.DatumReader<alternateNames>)MODEL$.createDatumReader(SCHEMA$);
+  private static final org.apache.avro.io.DatumReader<alternateName>
+    READER$ = (org.apache.avro.io.DatumReader<alternateName>)MODEL$.createDatumReader(SCHEMA$);
 
   @Override public void readExternal(java.io.ObjectInput in)
     throws java.io.IOException {
@@ -421,13 +442,7 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
   @Override public void customEncode(org.apache.avro.io.Encoder out)
     throws java.io.IOException
   {
-    if (this.name == null) {
-      out.writeIndex(0);
-      out.writeNull();
-    } else {
-      out.writeIndex(1);
-      out.writeString(this.name);
-    }
+    out.writeString(this.name);
 
     if (this.description == null) {
       out.writeIndex(0);
@@ -437,13 +452,7 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
       out.writeString(this.description);
     }
 
-    if (this.status == null) {
-      out.writeIndex(0);
-      out.writeNull();
-    } else {
-      out.writeIndex(1);
-      out.writeString(this.status);
-    }
+    out.writeString(this.status);
 
   }
 
@@ -452,12 +461,7 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
   {
     org.apache.avro.Schema.Field[] fieldOrder = in.readFieldOrderIfDiff();
     if (fieldOrder == null) {
-      if (in.readIndex() != 1) {
-        in.readNull();
-        this.name = null;
-      } else {
-        this.name = in.readString();
-      }
+      this.name = in.readString();
 
       if (in.readIndex() != 1) {
         in.readNull();
@@ -466,23 +470,13 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
         this.description = in.readString();
       }
 
-      if (in.readIndex() != 1) {
-        in.readNull();
-        this.status = null;
-      } else {
-        this.status = in.readString();
-      }
+      this.status = in.readString();
 
     } else {
       for (int i = 0; i < 3; i++) {
         switch (fieldOrder[i].pos()) {
         case 0:
-          if (in.readIndex() != 1) {
-            in.readNull();
-            this.name = null;
-          } else {
-            this.name = in.readString();
-          }
+          this.name = in.readString();
           break;
 
         case 1:
@@ -495,12 +489,7 @@ public class alternateNames extends org.apache.avro.specific.SpecificRecordBase 
           break;
 
         case 2:
-          if (in.readIndex() != 1) {
-            in.readNull();
-            this.status = null;
-          } else {
-            this.status = in.readString();
-          }
+          this.status = in.readString();
           break;
 
         default:
