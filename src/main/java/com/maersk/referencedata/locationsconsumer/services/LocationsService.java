@@ -86,9 +86,9 @@ public class LocationsService {
 
     private Mono<Void> mapAndSaveGeographyEvent(geography geography) {
 
-        final var geoID = findCode(geography.getAlternateCodes(), "GEOID");
+        final var geoID = geography.getGeoId();
 
-        Geography geo = mapGeographyEventToGeography(geography, geoID);
+        Geography geo = mapGeographyEventToGeography(geography);
 
         final var alternateNames = mapToAlternateNames(geography.getAlternateNames(), geoID);
 
@@ -100,9 +100,9 @@ public class LocationsService {
                 .then();
     }
 
-    private Geography mapGeographyEventToGeography(geography geography, String geoID) {
+    private Geography mapGeographyEventToGeography(geography geography) {
         return Geography.builder()
-                .geoRowId(geoID)
+                .geoRowId(geography.getGeoId())
                 .geoType(geography.getGeoType())
                 .name(geography.getName())
                 .status(geography.getStatus())
@@ -127,13 +127,6 @@ public class LocationsService {
                 .olsonTimeZone(geography.getOlsonTimezone())
                 .bdaType(geography.getBdaType())
                 .hsudName(geography.getHsudName())
-//                .alternateNames(mapToAlternateName(geography.getAlternateNames()))
-//                .alternateCodes(mapToAlternateCode(geography.getAlternateCodes()))
-//                .countries(mapToCountry(geography.getCountry()))
-//                .parents(mapToParent(geography.getParent()))
-//                .subCityParents(mapToSubCityParent(geography.getSubCityParent()))
-//                .businessDefinedAreas(mapToBusinessDefinedArea(geography.getBda()))
-//                .businessDefinedAreaLocations(mapToBusinessDefinedAreaLocation(geography.getBdaLocations()))
                 .build();
     }
 
