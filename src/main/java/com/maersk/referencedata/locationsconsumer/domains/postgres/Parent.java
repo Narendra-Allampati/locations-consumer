@@ -13,5 +13,5 @@ public class Parent {
     private String name;
     private String type;
     private String bdaType;
-    private List<AlternateCode> alternateCodeList;
+    private List<AlternateCodePostgres> alternateCodeList;
 }

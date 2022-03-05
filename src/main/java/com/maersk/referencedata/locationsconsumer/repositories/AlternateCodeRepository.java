@@ -1,10 +1,7 @@
 package com.maersk.referencedata.locationsconsumer.repositories;
 
-import com.maersk.referencedata.locationsconsumer.domains.postgres.AlternateCode;
-import org.springframework.data.r2dbc.repository.R2dbcRepository;
+import com.maersk.referencedata.locationsconsumer.domains.neo4j.AlternateCodeEntity;
+import org.springframework.data.neo4j.repository.ReactiveNeo4jRepository;
 
-/**
- * @author Anders Clausen on 17/11/2021.
- */
-public interface AlternateCodeRepository extends R2dbcRepository<AlternateCode, Long> {
+public interface AlternateCodeRepository extends ReactiveNeo4jRepository<AlternateCodeEntity, String> {
 }

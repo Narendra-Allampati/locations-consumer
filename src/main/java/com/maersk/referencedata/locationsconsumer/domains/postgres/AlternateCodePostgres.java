@@ -5,16 +5,16 @@ package com.maersk.referencedata.locationsconsumer.domains.postgres;
  */
 
 import lombok.Builder;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
+//import org.springframework.data.annotation.Id;
+//import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.UUID;
 
 @Builder
-@Table(value = "ALTERNATE_CODES")
-public class AlternateCode {
+//@Table(value = "ALTERNATE_CODES")
+public class AlternateCodePostgres {
 
-    @Id
+//    @Id
     private UUID id;
     private String rowId;
     private String codeType;

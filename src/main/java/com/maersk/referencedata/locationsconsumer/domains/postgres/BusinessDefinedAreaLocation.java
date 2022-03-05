@@ -12,6 +12,6 @@ public class BusinessDefinedAreaLocation {
     private String name;
     private String type;
     private String status;
-    private List<AlternateCode> alternateCodes;
+    private List<AlternateCodePostgres> alternateCodes;
 
 }

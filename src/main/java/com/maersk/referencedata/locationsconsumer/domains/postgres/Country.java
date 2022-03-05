@@ -12,5 +12,5 @@ public class Country {
 
     private String name;
     private String type;
-    private List<AlternateCode> alternateCodes;
+    private List<AlternateCodePostgres> alternateCodes;
 }

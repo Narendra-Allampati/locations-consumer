@@ -18,6 +18,7 @@ public class KafkaConfig extends KafkaReceiverBaseConfiguration<String, com.maer
     @Override
     protected ReceiverOptions<String, com.maersk.geography.smds.operations.msk.geographyMessage> kafkaReceiverOptions() {
         ReceiverOptions<String, com.maersk.geography.smds.operations.msk.geographyMessage> options = super.kafkaReceiverOptions();
-        return options.addAssignListener(receiverPartitions -> receiverPartitions.forEach(ReceiverPartition::seekToBeginning));
+        return options.addAssignListener(receiverPartitions -> receiverPartitions.forEach(receiverPartition -> receiverPartition.seek(2149718)));
+//        return options.addAssignListener(receiverPartitions -> receiverPartitions.forEach(ReceiverPartition::seekToBeginning));
     }
 }

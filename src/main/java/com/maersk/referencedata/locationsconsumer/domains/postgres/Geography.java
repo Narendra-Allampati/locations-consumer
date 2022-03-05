@@ -1,8 +1,8 @@
 package com.maersk.referencedata.locationsconsumer.domains.postgres;
 
 import lombok.Builder;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
+//import org.springframework.data.annotation.Id;
+//import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -12,10 +12,10 @@ import java.util.UUID;
  * @author Anders Clausen on 12/10/2021.
  */
 @Builder
-@Table(value = "GEOGRAPHY")
+//@Table(value = "GEOGRAPHY")
 public class Geography {
 
-    @Id
+//    @Id
 //    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private String geoRowId;
