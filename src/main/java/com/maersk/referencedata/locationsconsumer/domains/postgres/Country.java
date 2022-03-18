@@ -1,6 +1,7 @@
 package com.maersk.referencedata.locationsconsumer.domains.postgres;
 
 import lombok.Builder;
+import org.springframework.data.annotation.Id;
 
 import java.util.List;
 
@@ -9,8 +10,7 @@ import java.util.List;
  */
 @Builder
 public class Country {
-
+    @Id
+    private String rowId;
     private String name;
-    private String type;
-    private List<AlternateCodePostgres> alternateCodes;
 }

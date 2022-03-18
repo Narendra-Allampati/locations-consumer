@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appName }}
+  labels:
+    product: {{ .Values.product }}
+    k8s-app: {{ .Values.appName }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  revisionHistoryLimit: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      # maxUnavailable will set up how many pods we can add at a time
+      maxUnavailable: 50%
+      # maxSurge define how many pods can be unavailable during the rolling update
+      maxSurge: 1
+  selector:
+    matchLabels:
+      k8s-app: {{ .Values.appName }}
+  template:
+    metadata:
+      labels:
+        product: {{ .Values.product }}
+        k8s-app: {{ .Values.appName }}
+      annotations:
+        ad.datadoghq.com/security-service.check_names: '["openmetrics"]'
+        ad.datadoghq.com/security-service.init_configs: '[{}]'
+        ad.datadoghq.com/security-service.instances: '[{"prometheus_url": "http://%%host%%:8080/actuator/prometheus",
+            "namespace": "{{ .Values.datadog.namespace }}", "metrics": ["*"]}]'
+        vault.security.banzaicloud.io/vault-role: "{{ .Values.vaultRole }}"
+    spec:
+      imagePullSecrets:
+        - name: gcr-secret
+      containers:
+        - name: {{ .Values.appName }}
+          image: {{ .Values.image }}:{{ .Values.version }}
+          env:
+                - name: DD_SERVICE_NAME
+                  value: {{ .Values.datadog.serviceName }}
+                - name: DD_ENV
+                  value: {{ .Values.datadog.env }}
+                - name: DD_TAGS
+                  value: "region:{{ .Values.region }}"
+                - name: DD_LOGS_INJECTION
+                  value: "true"
+                - name: DD_LOG_LEVEL
+                  value: "debug"
+                - name: DATASOURCE_URL
+                  value: {{ .Values.datasource.url }}
+                - name: DATASOURCE_USERNAME
+                  value: {{ .Values.datasource.username }}
+                - name: DATASOURCE_PASSWORD
+                  value: {{ .Values.datasource.password }}
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+              scheme: HTTP
+            failureThreshold: 5
+            periodSeconds: 10
+            initialDelaySeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+              scheme: HTTP
+            failureThreshold: 5
+            periodSeconds: 10
+            initialDelaySeconds: 10
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}

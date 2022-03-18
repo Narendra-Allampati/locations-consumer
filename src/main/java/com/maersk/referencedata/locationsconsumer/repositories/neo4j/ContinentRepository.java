@@ -1,4 +1,4 @@
-package com.maersk.referencedata.locationsconsumer.repositories;
+package com.maersk.referencedata.locationsconsumer.repositories.neo4j;
 
 import com.maersk.referencedata.locationsconsumer.domains.neo4j.ContinentEntity;
 import org.springframework.data.neo4j.repository.ReactiveNeo4jRepository;

@@ -1,0 +1,27 @@
+appName: reference-data-locations
+product: reference-data
+region: westeurope
+replicaCount: 1
+vaultRole: reference-data-dev
+datadog:
+  env: dev
+  namespace: reference-data-dev
+  serviceName: reference-data-locations
+kafka:
+  bootstrapServers: pkc-lq8gm.westeurope.azure.confluent.cloud:9092
+  username: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/username#username
+  password: vault:synergyreferencedata-kv/data/dev/services/locations-consumer/kafka/password#password
+  schemaRegistry:
+    url: https://psrc-4kk0p.westeurope.azure.confluent.cloud/
+    username: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/schema-registry/api-key#api-key
+    password: vault:synergyreferencedata-kv/data/dev/services/locations-consumer/kafka/schema-registry/password#password
+  consumer:
+    topic: MSK.geography.facility.topic.internal.any.v1
+    consumerGroup: MSK.referenceData.referenceDataReader.consumerGroup.v1
+resources:
+  requests:
+    memory: 512Mi
+    cpu: 500m
+  limits:
+    memory: 512Mi
+    cpu: 1000m

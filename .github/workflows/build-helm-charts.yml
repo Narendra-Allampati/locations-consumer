@@ -1,0 +1,26 @@
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'helm/**'
+
+name: Build Helm chart
+
+jobs:
+  build:
+    name: Build and push Helm chart
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout repo
+      - name: Checkout common actions
+        uses: actions/checkout@v2
+        with:
+          repository: maersk-global/github-actions-commons
+          token: ${{ secrets.ACCESS_TOKEN }}
+          path: .github/actions/commons
+      - uses: ./.github/actions/commons/helm-build-push
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}

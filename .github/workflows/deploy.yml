@@ -1,125 +1,213 @@
-name: Deploy Image
-
-# Controls when the action will run.
 on:
   workflow_dispatch:
-  # Depend on another workflow
-  workflow_run:
-    workflows: ["Build Image"]
-    branches: [ main ]
-    types:
-      - completed
-
-env:
-  REGISTRY: ghcr.io
-  NAMESPACE: reference-data-dev
-  IMAGE_NAME: ghcr.io/maersk-global/locations-consumer
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+    inputs:
+      dockerImage:
+        description: Docker image
+        required: false
+      dockerImageVersion:
+        description: Docker image version
+        required: false
+      helmChart:
+        description: Helm chart
+        required: false
+      helmChartVersion:
+        description: Helm chart version
+        required: false
+name: Deploy to Kubernetes
 jobs:
-
-  on-dev-deployment-failure:
+  prepare:
+    name: Prepare deployment
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
-    steps:
-      - name: Aborting deployment
-        run: |
-          echo "Previous workflow failed so aborting deployment"
-          exit 1
-          
-  on-dev-deployment-success:
-    runs-on: ubuntu-latest
-    steps:
-      - run: |
-          echo "Version to be deployed: ${{ github.event.inputs.imageVersion }}"
-          echo "Target environment: ${{ github.event.inputs.deploymentEnvironment }}"
-          echo "Target cluster: ${{ github.event.inputs.targetCluster }}"
-
-
-  set-clusters:
-    runs-on: ubuntu-latest
-    # from https://stackoverflow.com/questions/59977364/github-actions-how-use-strategy-matrix-with-script
-    # for parallel execution of x items
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      dockerImage: ${{ steps.prepare-deployment.outputs.dockerImage }}
+      dockerImageVersion: ${{ steps.prepare-deployment.outputs.dockerImageVersion }}
+      helmChart: ${{ steps.prepare-deployment.outputs.helmChart }}
+      helmChartVersion: ${{ steps.prepare-deployment.outputs.helmChartVersion }}
     steps:
-      - id: set-matrix
-        run: |
-          if [ $GITHUB_REF == "refs/heads/main" ]; then
-            echo "::set-output name=matrix::{\"include\":[{\"cluster\":\"mcom-np-west-1\",\"environment\":\"dev\"}]}"
-          fi
+      - name: Checkout common actions
+        uses: actions/checkout@v2
+        with:
+          repository: maersk-global/github-actions-commons
+          token: ${{ secrets.ACCESS_TOKEN }}
+          path: .github/actions/commons
+      - id: prepare-deployment
+        name: Prepare deployment
+        uses: ./.github/actions/commons/prepare-deployment
+        with:
+          githubToken: ${{ secrets.ACCESS_TOKEN }}
+          dockerImage: ${{ github.event.inputs.dockerImage }}
+          helmChart: ${{ github.event.inputs.helmChart }}
 
-  deploy:
-    needs: set-clusters
-    timeout-minutes: 10
-    name: deploy
+  deploy-dev-emea:
+    name: Dev (EMEA)
+    environment: dev-emea
+    needs: prepare
     runs-on: ubuntu-latest
-    strategy:
-      matrix: ${{fromJson(needs.set-clusters.outputs.matrix)}}
-
     steps:
-      - name: Check out code
-        uses: actions/checkout@v2
-
-      - name: Print the github event name and event action
-        run: echo ${{ github.event_name }} and ${{ github.event.action }}
-
-      # Checks-out our Internal github actions repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: 'Checkout local actions'
+      - uses: actions/checkout@v2
+        name: Checkout repo
+      - name: Checkout common actions
         uses: actions/checkout@v2
         with:
-          repository: 'Maersk-Global/github-actions'
-          token: ${{ secrets.ADMIN_CHECKOUT_TOKEN }}
-          path: '.github/actions/'
-
-      - name: Get project version
-        id: projectversion
-        run: |
-          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          echo "::set-output name=version::$VERSION"
-
-      - name: Print the project latest version
-        run: echo ${{ steps.projectversion.outputs.version }}
-
-      - name: Import Secrets
-        uses: hashicorp/vault-action@v2.0.1
-        id: k8ssecrets
+          repository: maersk-global/github-actions-commons
+          token: ${{ secrets.ACCESS_TOKEN }}
+          path: .github/actions/commons
+      - name: Helm install
+        uses: ./.github/actions/commons/helm-upgrade
         with:
-          url: https://vault.maersk-digital.net
-          tlsSkipVerify: false
-          exportEnv: false
-          method: approle
-          roleId: ${{ secrets.VAULT_ROLE_ID }}
-          secretId: ${{ secrets.VAULT_ROLE_SECRET_ID }}
-          secrets: |
-            synergyreferencedata-kv/data/kubernetes/${{ matrix.cluster }}/cert cert;
-            synergyreferencedata-kv/data/kubernetes/${{ matrix.cluster }}/token token;
-            synergyreferencedata-kv/data/kubernetes/${{ matrix.cluster }}/server server;
-
-      - name: Set image and version in the deployment file before deployment
-        run: |
-          echo Setting image and version ${{ env.IMAGE_NAME }}:${{ steps.projectversion.outputs.version }}
-          cat <<EOF >>k8s/kustomization.yaml
-          commonAnnotations:
-            vault.security.banzaicloud.io/vault-role: ${{ env.NAMESPACE }}
-          images:
-            - name: application-container-image
-              newName: ${{ env.IMAGE_NAME }}
-              newTag: ${{ steps.projectversion.outputs.version }}
-          resources:
-          - deployment.yml
-          EOF
-
-      - name: Deploy to k8s cluster ${{ matrix.cluster }}
-        run: |
-          kubectl config set-credentials default --token=${{ steps.k8ssecrets.outputs.token }};
-          echo ${{ steps.k8ssecrets.outputs.cert }} | base64 -d > ./kubectl-ca.crt;
-          kubectl config set-cluster default --server=${{ steps.k8ssecrets.outputs.server }} --certificate-authority=./kubectl-ca.crt;
-          kubectl config set-context default --cluster=default --user=default --namespace=${{ env.NAMESPACE }};
-          kubectl config use-context default;
-          kubectl get ns '${{ env.NAMESPACE }}'
-          kubectl apply -k "k8s/"
-
-      - name: Check k8s rollout status
-        run: |
-          kubectl rollout status deployment/locations-geo-consumer
+          helmChart: ${{ needs.prepare.outputs.helmChart }}
+          helmChartVersion: ${{ needs.prepare.outputs.helmChartVersion }}
+          dockerImage: ${{ needs.prepare.outputs.dockerImage }}
+          dockerImageVersion: ${{ needs.prepare.outputs.dockerImageVersion }}
+          helmValues: ./helm/chart/values/westeurope/dev/values.yml
+          registryPassword: ${{ secrets.GHCR_PULL_TOKEN }}
+          k8s-cluster: mcom-np-west-1
+          k8s-namespace: reference-data-dev
+          vaultName: ${{ secrets.VAULT_NAME }}
+          vaultRoleId: ${{ secrets.VAULT_ROLE_ID }}
+          vaultRoleSecretId: ${{ secrets.VAULT_ROLE_SECRET_ID }}
+#
+#  deploy-dev-apac:
+#    name: Dev (APAC)
+#    environment: dev-apac
+#    needs: prepare
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#        name: Checkout repo
+#      - name: Checkout common actions
+#        uses: actions/checkout@v2
+#        with:
+#          repository: maersk-global/github-actions-commons
+#          token: ${{ secrets.ACCESS_TOKEN }}
+#          path: .github/actions/commons
+#      - name: Helm install
+#        uses: ./.github/actions/commons/helm-upgrade
+#        with:
+#          helmChart: ${{ needs.prepare.outputs.helmChart }}
+#          helmChartVersion: ${{ needs.prepare.outputs.helmChartVersion }}
+#          dockerImage: ${{ needs.prepare.outputs.dockerImage }}
+#          dockerImageVersion: ${{ needs.prepare.outputs.dockerImageVersion }}
+#          helmValues: ./helm/chart/values/japaneast/development/values.yml
+#          registryPassword: ${{ secrets.GHCR_PULL_TOKEN }}
+#          k8s-cluster: core-dev-japaneast-1
+#          k8s-namespace: shipmentmobile-dev
+#          vaultName: ${{ secrets.VAULT_NAME }}
+#          vaultRoleId: ${{ secrets.VAULT_ROLE_ID }}
+#          vaultRoleSecretId: ${{ secrets.VAULT_ROLE_SECRET_ID }}
+#
+#  deploy-preprod-emea:
+#    name: Preprod (EMEA)
+#    environment: preprod-emea
+#    needs: prepare
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#        name: Checkout repo
+#      - name: Checkout common actions
+#        uses: actions/checkout@v2
+#        with:
+#          repository: maersk-global/github-actions-commons
+#          token: ${{ secrets.ACCESS_TOKEN }}
+#          path: .github/actions/commons
+#      - name: Helm install
+#        uses: ./.github/actions/commons/helm-upgrade
+#        with:
+#          helmChart: ${{ needs.prepare.outputs.helmChart }}
+#          helmChartVersion: ${{ needs.prepare.outputs.helmChartVersion }}
+#          dockerImage: ${{ needs.prepare.outputs.dockerImage }}
+#          dockerImageVersion: ${{ needs.prepare.outputs.dockerImageVersion }}
+#          helmValues: ./helm/chart/values/westeurope/preprod/values.yml
+#          registryPassword: ${{ secrets.GHCR_PULL_TOKEN }}
+#          k8s-cluster: core-dev-west-1
+#          k8s-namespace: shipmentmobile-preprod
+#          vaultName: ${{ secrets.VAULT_NAME }}
+#          vaultRoleId: ${{ secrets.VAULT_ROLE_ID }}
+#          vaultRoleSecretId: ${{ secrets.VAULT_ROLE_SECRET_ID }}
+#
+#  deploy-preprod-apac:
+#    name: Preprod (APAC)
+#    environment: preprod-apac
+#    needs: prepare
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#        name: Checkout repo
+#      - name: Checkout common actions
+#        uses: actions/checkout@v2
+#        with:
+#          repository: maersk-global/github-actions-commons
+#          token: ${{ secrets.ACCESS_TOKEN }}
+#          path: .github/actions/commons
+#      - name: Helm install
+#        uses: ./.github/actions/commons/helm-upgrade
+#        with:
+#          helmChart: ${{ needs.prepare.outputs.helmChart }}
+#          helmChartVersion: ${{ needs.prepare.outputs.helmChartVersion }}
+#          dockerImage: ${{ needs.prepare.outputs.dockerImage }}
+#          dockerImageVersion: ${{ needs.prepare.outputs.dockerImageVersion }}
+#          helmValues: ./helm/chart/values/japaneast/preprod/values.yml
+#          registryPassword: ${{ secrets.GHCR_PULL_TOKEN }}
+#          k8s-cluster: core-dev-japaneast-1
+#          k8s-namespace: shipmentmobile-preprod
+#          vaultName: ${{ secrets.VAULT_NAME }}
+#          vaultRoleId: ${{ secrets.VAULT_ROLE_ID }}
+#          vaultRoleSecretId: ${{ secrets.VAULT_ROLE_SECRET_ID }}
+#
+#  deploy-prod-emea:
+#    name: Prod (EMEA)
+#    environment: prod-emea
+#    needs: prepare
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#        name: Checkout repo
+#      - name: Checkout common actions
+#        uses: actions/checkout@v2
+#        with:
+#          repository: maersk-global/github-actions-commons
+#          token: ${{ secrets.ACCESS_TOKEN }}
+#          path: .github/actions/commons
+#      - name: Helm install
+#        uses: ./.github/actions/commons/helm-upgrade
+#        with:
+#          helmChart: ${{ needs.prepare.outputs.helmChart }}
+#          helmChartVersion: ${{ needs.prepare.outputs.helmChartVersion }}
+#          dockerImage: ${{ needs.prepare.outputs.dockerImage }}
+#          dockerImageVersion: ${{ needs.prepare.outputs.dockerImageVersion }}
+#          helmValues: ./helm/chart/values/westeurope/prod/values.yml
+#          registryPassword: ${{ secrets.GHCR_PULL_TOKEN }}
+#          k8s-cluster: core-prod-west-1
+#          k8s-namespace: shipmentmobile-prod
+#          vaultName: ${{ secrets.VAULT_NAME }}
+#          vaultRoleId: ${{ secrets.VAULT_ROLE_ID }}
+#          vaultRoleSecretId: ${{ secrets.VAULT_ROLE_SECRET_ID }}
+#
+#  deploy-prod-apac:
+#    name: Prod (APAC)
+#    environment: prod-apac
+#    needs: prepare
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#        name: Checkout repo
+#      - name: Checkout common actions
+#        uses: actions/checkout@v2
+#        with:
+#          repository: maersk-global/github-actions-commons
+#          token: ${{ secrets.ACCESS_TOKEN }}
+#          path: .github/actions/commons
+#      - name: Helm install
+#        uses: ./.github/actions/commons/helm-upgrade
+#        with:
+#          helmChart: ${{ needs.prepare.outputs.helmChart }}
+#          helmChartVersion: ${{ needs.prepare.outputs.helmChartVersion }}
+#          dockerImage: ${{ needs.prepare.outputs.dockerImage }}
+#          dockerImageVersion: ${{ needs.prepare.outputs.dockerImageVersion }}
+#          helmValues: ./helm/chart/values/japaneast/prod/values.yml
+#          registryPassword: ${{ secrets.GHCR_PULL_TOKEN }}
+#          k8s-cluster: core-prod-japaneast-1
+#          k8s-namespace: shipmentmobile
+#          vaultName: ${{ secrets.VAULT_NAME }}
+#          vaultRoleId: ${{ secrets.VAULT_ROLE_ID }}
+#          vaultRoleSecretId: ${{ secrets.VAULT_ROLE_SECRET_ID }}

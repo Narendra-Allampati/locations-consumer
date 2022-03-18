@@ -1,177 +1,124 @@
-name: Build Image
-
 on:
-  push:
-  pull_request:
-    branches: [ $default-branch ]
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'pom.xml'
+      - 'src/**'
 
-env:
-  REGISTRY: ghcr.io
-  JAVA_VERSION: 11
-  # Polaris Security scan
-  WEBAPPSCAN: "true"
-  SEVERITY: "critical:0,high:3,medium:5"
-  BREAK_BUILD_ON_SEVERITY: "true"
+name: Build and push Docker image
 
 jobs:
   build:
-    name: Build Image
+    name: Maven build
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
-
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Checkout your repository code
+      - uses: actions/checkout@v2
+        name: Checkout repo
+      - name: Checkout common actions
         uses: actions/checkout@v2
+        with:
+          repository: maersk-global/github-actions-commons
+          token: ${{ secrets.ACCESS_TOKEN }}
+          path: .github/actions/commons
+      - name: Maven build
+        uses: ./.github/actions/commons/maven-build
+        with:
+          githubToken: ${{ secrets.ACCESS_TOKEN }}
+          jdkVersion: 17
+          jdkDistribution: temurin
+      - uses: actions/upload-artifact@v2
+        with:
+          name: workspace
+          path: ${{ github.workspace }}
 
-      - name: Set up JDK 11
+  sonarqube:
+    name: SonarQube scan
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: workspace
+      - name: Checkout common actions
+        uses: actions/checkout@v2
+        with:
+          repository: maersk-global/github-actions-commons
+          token: ${{ secrets.ACCESS_TOKEN }}
+          path: .github/actions/commons
+      - uses: ./.github/actions/commons/sonarqube-scan
+        with:
+          githubToken: ${{ secrets.ACCESS_TOKEN }}
+          host: ${{ secrets.MDN_SONARQUBE_HOST }}
+          token: ${{ secrets.MDN_SONARQUBE_TOKEN }}
+          jdkVersion: 17
+          jdkDistribution: temurin
+
+  blackduck:
+    name: Blackduck scan
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: workspace
+      - name: Checkout common actions
+        uses: actions/checkout@v2
+        with:
+          repository: maersk-global/github-actions-commons
+          token: ${{ secrets.ACCESS_TOKEN }}
+          path: .github/actions/commons
+      - uses: ./.github/actions/commons/blackduck-scan
+        with:
+          githubToken: ${{ secrets.ACCESS_TOKEN }}
+          url: ${{ secrets.BLACKDUCK_URL }}
+          apiToken: ${{ secrets.BLACKDUCK_API_TOKEN }}
+
+  polaris:
+    name: Polaris scan
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: workspace
+      - name: Checkout common actions
+        uses: actions/checkout@v2
+        with:
+          repository: maersk-global/github-actions-commons
+          token: ${{ secrets.ACCESS_TOKEN }}
+          path: .github/actions/commons
+      - uses: ./.github/actions/commons/polaris-scan
+        with:
+          githubToken: ${{ secrets.ACCESS_TOKEN }}
+          apiToken: ${{ secrets.POLARIS_API_TOKEN }}
+          serverUrl: ${{ secrets.POLARIS_SERVER_URL }}
+
+  docker_image:
+    name: Building a docker image
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: workspace
+      - name: Set up JDK
         uses: actions/setup-java@v2
         with:
-          java-version: '11'
-          distribution: 'adopt'
+          java-version: 17
+          distribution: temurin
           cache: 'maven'
-
-      - name: Print the repo name and github sha tag
-        run: echo $GITHUB_WORKSPACE ${{ github.sha }}
-
-        #- name: Set projects Maven version to GitHub Action GUI set version
-      - name: Print the env variable $GITHUB_RUN_ID
-        run: echo $GITHUB_RUN_ID
-
-      # Checks-out our Internal github actions repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: 'Checkout local github actions repository'
-        uses: actions/checkout@v2
-        with:
-          repository: 'Maersk-Global/github-actions'
-          token: ${{ secrets.ADMIN_CHECKOUT_TOKEN }}
-          path: '.github/actions/'
-          ref: main
-
-        # Get repository name without org-name
-      - name: Set Version for Branch
-        id: branch_version
-        run: |
-          TIMESTAMP=$(date +"%Y.%m.%d.%k.%M.%S")
-          echo REPOSITORY_NAME="$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}')" >> $GITHUB_ENV
-          if [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
-            VERSION_STRING='-DnewVersion=${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.nextIncrementalVersion}'
-          elif [[ ${{ github.ref }} == *"PR-"* ]] ; then
-            VERSION_STRING='-DnewVersion=${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}-PR-'$TIMESTMAP
-          else
-            VERSION_STRING='-DnewVersion=${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}-'$TIMESTMAP
-          fi
-          echo "::set-output name=version_str::$VERSION_STRING"
-
-        # Update the version in pom file.
-      - name: Update the version in pom file
-        id: versioning
-        run: |
-          mvn --batch-mode '${{ steps.branch_version.outputs.version_str }}' -DgenerateBackupPoms=false build-helper:parse-version versions:set
-          VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)
-          echo "::set-output name=NEW_VERSION::$VERSION"
-
       - name: Build with Maven
         run: |
-          mvn clean package spring-boot:build-image -B -e -Dspring-boot.build-image.imageName=${{ env.REGISTRY }}/maersk-global/${{ env.REPOSITORY_NAME }}:${{ steps.versioning.outputs.NEW_VERSION }}
+          mvn spring-boot:build-image -B -e -Dspring-boot.build-image.imageName=ghcr.io/maersk-global/locations-consumer:${{ github.run_id }}
+          docker images
+          docker save ghcr.io/maersk-global/locations-consumer:${{ github.run_id }} > /tmp/locations.tar
+          ls /tmp
         env:
-          GITHUB_TOKEN: ${{ secrets.ADMIN_CHECKOUT_TOKEN }}
-
-      #scan your code with Maersk SonarQube-Server (https://ado-sonar.maerskdev.net/) to detects bugs, vulnerabilities, and code smells
-      - name: SonarQube - Perform static analysis of code
-        uses: ./.github/actions/SonarQube
-        if: github.ref == 'refs/heads/main' #can be revisited to confirm for all branches but for time being can skip if it is not main branch
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v2
         with:
-          host: ${{ secrets.MDN_SONARQUBE_HOST }}
-          login: ${{ secrets.MDN_SONARQUBE_TOKEN }}
-          extra_sonar_args: >
-            -Dsonar.projectKey=locations-consumer-key1
-            -Dsonar.projectName="${{ env.REPOSITORY_NAME }}"
-            -Dsonar.java.source=11.0.4
-            -Dsonar.sources=src/main/java
-            -Dsonar.java.binaries=target/classes
-        env:
-          JAVA_HOME: ''
-
-        # checks if polaris.yml file exists in the current repository otherwise the build is made to fail(optional)
-      - name: Polaris Scan - Break the build if polaris.yml doesnt exist
-        shell: pwsh
-        if: github.ref == 'refs/heads/main' #can be revisited to confirm for all branches but for time being can skip if it is not main branch
-        run: |
-          $polarisfilepath=Test-Path "$env:GITHUB_WORKSPACE/polaris.yml" -PathType Leaf
-          $polarisfilepath
-          if(!($polarisfilepath))
-          {
-            Write-Host("polaris.yml not found .Exiting!")
-            exit 1
-          }
-          else
-          {
-            & "$env:GITHUB_WORKSPACE/.github/actions/polaris_scan/docker_append.ps1"
-          }
-
-        # Polaris Group Assignment Preperation and Assigning it to project .
-        # break the build if the severity conditions doesnt falls below the parameters (optional )
-      - name: Polaris Scan and Group Assignment
-        uses: ./.github/actions/polaris_scan
-        if: github.ref == 'refs/heads/main' #can be revisited to confirm for all branches but for time being can skip if it is not main branch
-        with:
-          polaris_token: ${{ secrets.POLARIS_API_TOKEN }}
-          webapp_scan: '${{ env.WEBAPPSCAN }}'
-          polaris_server: '${{ env.POLARIS_SERVER_URL }}'
-          severity: '${{ env.SEVERITY }}'
-          break_build: '${{ env.BREAK_BUILD_ON_SEVERITY }}'
-
-        # Scanning the local docker image using Trivy - (Twistlock)
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        if: github.ref == 'refs/heads/main' #can be revisited to confirm for all branches but for time being can skip if it is not main branch
-        with:
-          image-ref: "${{ env.REGISTRY }}/maersk-global/${{ env.REPOSITORY_NAME }}:${{ steps.versioning.outputs.NEW_VERSION }}"
-          format: 'table'
-          exit-code: '0'
-          severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
-
-        # Docker Push to Registry.
-      - name: 'Login to registry'
-        uses: azure/docker-login@v1
-        with:
-          login-server: ${{ env.REGISTRY }}
-          username: ${GITHUB_ACTOR}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: 'Docker Push image to registry'
-        run: |
-          docker push ${{ env.REGISTRY }}/maersk-global/${{ env.REPOSITORY_NAME }}:${{ steps.versioning.outputs.NEW_VERSION }}
-
-      # Optional, want to use Git Build tag,  replace $default-branch with your default branch
-      - name: 'Git Workflow update tag'
-        run: |
-          git config --global user.email "mdn-automation@maersk.com"
-          git config --global user.name "MDN Automation"
-          git tag -a v${{ steps.versioning.outputs.NEW_VERSION}} -m "v${{ steps.versioning.outputs.NEW_VERSION }}"
-        if: github.ref == 'refs/heads/main'
-
-      - name: 'Commit and Push to branch'
-        uses: './.github/actions/push-to-protected-branch'
-        with:
-          admin_token: ${{ secrets.ADMIN_CHECKOUT_TOKEN }}
-          commit_message: updating version to ${{ steps.versioning.outputs.NEW_VERSION }}
-          push_tags: true
-        if: github.ref == 'refs/heads/main'
-
-  notify:
-    name: Teams Notify
-    runs-on: ubuntu-latest
-    needs: ['build']
-    if: ${{ failure() }}
-    steps:
-      - name: Teams notification
-        uses: jdcargile/ms-teams-notification@v1.2
-        with:
-          github-token: ${{ github.token }}
-          ms-teams-webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_DEVELOPMENT_TEAM_URI }}
-          notification-summary: GitHub Actions build has failed
-          notification-color: dc3545
+          name: 'docker-image'
+          path: /tmp/locations.tar

@@ -1,6 +1,7 @@
 package com.maersk.referencedata.locationsconsumer.domains.postgres;
 
 import lombok.Builder;
+import org.springframework.data.annotation.Id;
 
 import java.util.List;
 
@@ -9,9 +10,9 @@ import java.util.List;
  */
 @Builder
 public class BusinessDefinedAreaLocation {
+    @Id
+    private String rowId;
     private String name;
     private String type;
     private String status;
-    private List<AlternateCodePostgres> alternateCodes;
-
 }

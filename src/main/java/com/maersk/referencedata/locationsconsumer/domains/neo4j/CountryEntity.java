@@ -1,6 +1,6 @@
 package com.maersk.referencedata.locationsconsumer.domains.neo4j;
 
-import com.maersk.referencedata.locationsconsumer.domains.postgres.AlternateCodePostgres;
+import com.maersk.referencedata.locationsconsumer.domains.postgres.AlternateCode;
 import lombok.Builder;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
@@ -17,7 +17,7 @@ public class CountryEntity {
 
     private final String name;
 
-    private List<AlternateCodePostgres> alternateCodes;
+    private List<AlternateCode> alternateCodes;
 
 //    @Relationship(type = "RESIDES_IN", direction = Relationship.Direction.INCOMING)
 //    private List<CityEntity> cities = new ArrayList<>();
