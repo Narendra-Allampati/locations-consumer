@@ -13,7 +13,6 @@ import org.springframework.data.relational.core.mapping.Table;
 public class AlternateCode {
 
     @Id
-    private String rowId;
-    private String codeType;
     private String code;
+    private String codeType;
 }

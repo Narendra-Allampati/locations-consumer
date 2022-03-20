@@ -23,11 +23,11 @@ import com.maersk.referencedata.locationsconsumer.domains.postgres.Geography;
 import com.maersk.referencedata.locationsconsumer.domains.postgres.Parent;
 import com.maersk.referencedata.locationsconsumer.domains.postgres.SubCityParent;
 import com.maersk.referencedata.locationsconsumer.mappers.GeographyMapper;
+import com.maersk.referencedata.locationsconsumer.domains.postgres.AlternateCodeLink;
+import com.maersk.referencedata.locationsconsumer.model.AlternateCodeWrapper;
 import com.maersk.referencedata.locationsconsumer.model.BdaLocationWithAlternateCodes;
 import com.maersk.referencedata.locationsconsumer.model.BdaWithAlternateCodes;
-import com.maersk.referencedata.locationsconsumer.model.CountryWithAlternateCodes;
-import com.maersk.referencedata.locationsconsumer.model.ParentWithAlternateCodes;
-import com.maersk.referencedata.locationsconsumer.model.SubCityParentWithAlternateCodes;
+import com.maersk.referencedata.locationsconsumer.repositories.postgres.AlternateCodeLinksRepository;
 import com.maersk.referencedata.locationsconsumer.repositories.postgres.AlternateCodeRepository;
 import com.maersk.referencedata.locationsconsumer.repositories.postgres.AlternateNameRepository;
 import com.maersk.referencedata.locationsconsumer.repositories.postgres.BusinessDefinedAreaLocationRepository;
@@ -47,7 +47,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.kafka.receiver.KafkaReceiver;
 import reactor.kafka.receiver.ReceiverRecord;
-import reactor.util.function.Tuples;
 
 import java.util.Collections;
 import java.util.List;
@@ -66,6 +65,7 @@ public class LocationsService {
     private final KafkaReceiver<String, geographyMessage> kafkaReceiver;
 
     private final AlternateCodeRepository alternateCodeRepository;
+    private final AlternateCodeLinksRepository alternateCodeLinksRepository;
     private final AlternateNameRepository alternateNameRepository;
     private final BusinessDefinedAreaRepository businessDefinedAreaRepository;
     private final BusinessDefinedAreaLocationRepository businessDefinedAreaLocationRepository;
@@ -118,37 +118,18 @@ public class LocationsService {
 
         final var alternateNames = mapToAlternateNames(geography.getAlternateNames(), geoID);
 
-        final var alternateCodes = mapToAlternateCodes(geography.getAlternateCodes(), geoID);
-
-        Optional<CountryWithAlternateCodes> countryWithAlternateCodes = mapToCountryWithAlternateCodes(geography.getCountry());
-
-        Optional<ParentWithAlternateCodes> parentWithAlternateCodes = mapToParentWithAlternateCodes(geography.getParent());
-
-        List<SubCityParentWithAlternateCodes> subCityParentWithAlternateCodes = mapToSubCityParentsWithAlternateCodes(geography.getSubCityParents());
+        final var alternateCodesWrappers = mapToAlternateCodes(geography.getAlternateCodes(), geoID);
+        List<AlternateCodeLink> alternateCodeLinks = alternateCodesWrappers.stream().map(AlternateCodeWrapper::getAlternateCodesLinks).toList();
+        List<AlternateCode> alternateCodes = alternateCodesWrappers.stream().map(AlternateCodeWrapper::getAlternateCodes).toList();
 
         List<BdaWithAlternateCodes> bdaWithAlternateCodes = mapToBdaWithAlternateCodes(geography.getBdas());
 
         List<BdaLocationWithAlternateCodes> bdaLocationWithAlternateCodes = mapToBdaLocationsWithAlternateCodes(geography.getBdaLocations());
 
-        List<SubCityParent> subCityParents = subCityParentWithAlternateCodes.stream()
-                .map(SubCityParentWithAlternateCodes::getSubCityParent).toList();
-
-        List<BusinessDefinedArea> businessDefinedAreas = bdaWithAlternateCodes.stream()
-                .map(BdaWithAlternateCodes::getBusinessDefinedArea).toList();
-
-        List<BusinessDefinedAreaLocation> businessDefinedAreaLocations = bdaLocationWithAlternateCodes.stream()
-                .map(BdaLocationWithAlternateCodes::getBusinessDefinedAreaLocation).toList();
-
         return Flux.merge(geographyRepository.save(geo).then()
                         , alternateNameRepository.saveAll(alternateNames).then()
                         , alternateCodeRepository.saveAll(alternateCodes).then()
-                        , countryRepository.saveAll(Mono.justOrEmpty(countryWithAlternateCodes)
-                                .map(CountryWithAlternateCodes::getCountry)).then()
-                        , parentRepository.saveAll(Mono.justOrEmpty(parentWithAlternateCodes)
-                                .map(ParentWithAlternateCodes::getParent)).then()
-                        , subCityParentRepository.saveAll(subCityParents).then()
-                        , businessDefinedAreaRepository.saveAll(businessDefinedAreas).then()
-                        , businessDefinedAreaLocationRepository.saveAll(businessDefinedAreaLocations).then())
+                        , alternateCodeLinksRepository.saveAll(alternateCodeLinks).then())
                 .then();
     }
 
@@ -165,7 +146,7 @@ public class LocationsService {
                             .build();
                     return new BdaWithAlternateCodes(businessDefinedArea, mapToBDAAlternateCodes(alternateCodes, geoID));
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<BdaLocationWithAlternateCodes> mapToBdaLocationsWithAlternateCodes(List<bdaLocation> bdaLocations) {
@@ -182,44 +163,42 @@ public class LocationsService {
                     return new BdaLocationWithAlternateCodes(businessDefinedAreaLocation,
                             mapToBDALocationAlternateCodes(alternateCodes, geoID));
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    private List<SubCityParentWithAlternateCodes> mapToSubCityParentsWithAlternateCodes(List<subCityParent> subCityParents) {
+    private List<SubCityParent> mapToSubCityParents(List<subCityParent> subCityParents) {
         return Optional.ofNullable(subCityParents)
                 .orElse(Collections.emptyList())
                 .stream()
                 .map(scp -> {
-                    SubCityParent subCityParent = SubCityParent.builder().name(scp.getName()).type(scp.getType()).bdaType(scp.getBdaType()).build();
                     List<subCityParentAlternateCode> alternateCodes = scp.getAlternateCodes();
                     String geoID = GeographyMapper.findCodeFromSubCityParentAlternateCodes(alternateCodes, GEO_ID);
-                    return new SubCityParentWithAlternateCodes(subCityParent, mapToSubCityParentAlternateCodes(alternateCodes, geoID));
+                    return SubCityParent.builder().rowId(geoID).name(scp.getName()).type(scp.getType()).build();
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    private Optional<ParentWithAlternateCodes> mapToParentWithAlternateCodes(parent parentAvro) {
+    private Optional<Parent> mapToParent(parent parentAvro) {
         return Optional.ofNullable(parentAvro)
                 .map(pa -> {
-                    Parent parent = Parent.builder().name(pa.getName()).type(pa.getType()).build();
                     List<parentAlternateCode> alternateCodes = pa.getAlternateCodes();
                     String geoID = GeographyMapper.findCodeFromParentAlternateCodes(alternateCodes, GEO_ID);
-                    return new ParentWithAlternateCodes(parent, mapToParentAlternateCodes(alternateCodes, geoID));
+                    return Parent.builder().rowId(geoID).name(pa.getName()).type(pa.getType()).build();
                 });
     }
 
-    private Optional<CountryWithAlternateCodes> mapToCountryWithAlternateCodes(country countryAvro) {
+    private Optional<Country> mapToCountry(country countryAvro) {
         return Optional.ofNullable(countryAvro)
                 .map(ca -> {
                     List<countryAlternateCode> alternateCodes = ca.getAlternateCodes();
                     String geoID = GeographyMapper.findCodeFromCountryAlternateCodes(alternateCodes, GEO_ID);
-                    Country country = Country.builder().rowId(geoID).name(ca.getName()).build();
-                    return new CountryWithAlternateCodes(country, mapToCountryAlternateCodes(alternateCodes, geoID));
+                    return Country.builder().rowId(geoID).name(ca.getName()).build();
                 });
     }
 
     private Geography mapGeographyEventToGeography(geography geography) {
-        return Geography.builder()
+
+        Geography geo = Geography.builder()
                 .geoId(geography.getGeoId())
                 .geoType(geography.getGeoType())
                 .name(geography.getName())
@@ -246,81 +225,39 @@ public class LocationsService {
                 .bdaType(geography.getBdaType())
                 .hsudName(geography.getHsudName())
                 .build();
+
+        Optional<Country> countryOptional = mapToCountry(geography.getCountry());
+        if (countryOptional.isPresent()) {
+            Country country = countryOptional.get();
+            geo.setCountryId(country.getRowId());
+            geo.setCountryName(country.getName());
+        }
+
+        Optional<Parent> parentOptional = mapToParent(geography.getParent());
+        if (parentOptional.isPresent()) {
+            Parent parent = parentOptional.get();
+            geo.setParentId(parent.getRowId());
+            geo.setParentName(parent.getName());
+            geo.setParentType(parent.getType());
+        }
+
+        List<SubCityParent> subCityParents = mapToSubCityParents(geography.getSubCityParents());
+        if (!subCityParents.isEmpty()) {
+            SubCityParent subCityParent = subCityParents.get(0);
+            geo.setSubCityParentId(subCityParent.getRowId());
+            geo.setSubCityParentName(geo.getSubCityParentName());
+            geo.setSubCityParentType(geo.getSubCityParentType());
+        }
+
+        return geo;
     }
-//
-//    private List<BusinessDefinedAreaLocation> mapToBusinessDefinedAreaLocations(List<bdaLocation> bdaLocations) {
-//        // TODO refactor to cleaner code
-//        if (null == bdaLocations) {
-//            return Collections.emptyList();
-//        }
-//
-//        return bdaLocations.stream().map(location ->
-//                        BusinessDefinedAreaLocation.builder()
-//                                .name(location.getName())
-//                                .status(location.getStatus())
-//                                .type(location.getType())
-//                                .alternateCodes(mapToBDALocationAlternateCodes(location.getAlternateCodes()))
-//                                .build()
-//                )
-//                .collect(Collectors.toList());
-//    }
-//
-//    private List<BusinessDefinedArea> mapToBusinessDefinedAreas(List<bda> bdas) {
-//
-//        return Optional.ofNullable(bdas)
-//                .orElse(Collections.emptyList()).stream().map(bda ->
-//                        BusinessDefinedArea.builder()
-//                                .name(bda.getName())
-//                                .bdaType(bda.getBdaType())
-//                                .alternateCodes(mapToBDAAlternateCodes(bda.getAlternateCodes()))
-//                                .build()
-//                )
-//                .collect(Collectors.toList());
-//    }
-//
-//    private List<SubCityParent> mapToSubCityParents(List<subCityParent> subCityParents) {
-//        return Optional.ofNullable(subCityParents)
-//                .orElse(Collections.emptyList()).stream().map(subCityParent ->
-//                        SubCityParent.builder()
-//                                .name(subCityParent.getName())
-//                                .type(subCityParent.getType())
-//                                .alternateCodes(mapToSubCityParentAlternateCodes(subCityParent.getAlternateCodes()))
-//                                .build()
-//                )
-//                .collect(Collectors.toList());
-//    }
-//
-//    private List<Parent> mapToParents(List<parent> parents) {
-//        return Optional.ofNullable(parents)
-//                .orElse(Collections.emptyList()).stream().map(parent ->
-//                        Parent.builder()
-//                                .name(parent.getName())
-//                                .bdaType(parent.getBdaType())
-//                                .alternateCodeList(mapToParentAlternateCodes(parent.getAlternateCodes()))
-//                                .build()
-//                )
-//                .collect(Collectors.toList());
-//    }
-//
-//    private List<Country> mapToCountrys(List<country> countries) {
-//        return Optional.ofNullable(countries)
-//                .orElse(Collections.emptyList()).stream().map(country ->
-//                        Country.builder()
-//                                .name(country.getName())
-//                                .type(country.getType())
-//                                .alternateCodes(mapToCountryAlternateCodes(country.getAlternateCodes()))
-//                                .build()
-//                )
-//                .collect(Collectors.toList());
-//    }
 
     private List<AlternateCode> mapToBDALocationAlternateCodes(List<bdaLocationAlternateCode> alternateCodes, String geoId) {
         return alternateCodes
                 .stream().map(alternateCode ->
                         AlternateCode.builder()
-                                .rowId(geoId)
-                                .codeType(alternateCode.getCodeType())
                                 .code(alternateCode.getCode())
+                                .codeType(alternateCode.getCodeType())
                                 .build()
                 )
                 .collect(Collectors.toList());
@@ -330,9 +267,8 @@ public class LocationsService {
         return alternateCodes
                 .stream().map(alternateCode ->
                         AlternateCode.builder()
-                                .rowId(geoId)
-                                .codeType(alternateCode.getCodeType())
                                 .code(alternateCode.getCode())
+                                .codeType(alternateCode.getCodeType())
                                 .build()
                 )
                 .collect(Collectors.toList());
@@ -342,48 +278,52 @@ public class LocationsService {
         return alternateCodes
                 .stream().map(alternateCode ->
                         AlternateCode.builder()
-                                .rowId(geoId)
-                                .codeType(alternateCode.getCodeType())
                                 .code(alternateCode.getCode())
+                                .codeType(alternateCode.getCodeType())
                                 .build()
                 )
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<AlternateCode> mapToParentAlternateCodes(List<parentAlternateCode> alternateCodes, String geoId) {
         return alternateCodes
                 .stream().map(alternateCode ->
                         AlternateCode.builder()
-                                .rowId(geoId)
-                                .codeType(alternateCode.getCodeType())
                                 .code(alternateCode.getCode())
+                                .codeType(alternateCode.getCodeType())
                                 .build()
                 )
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<AlternateCode> mapToCountryAlternateCodes(List<countryAlternateCode> alternateCodes, String geoId) {
         return alternateCodes
                 .stream().map(alternateCode ->
                         AlternateCode.builder()
-                                .rowId(geoId)
-                                .codeType(alternateCode.getCodeType())
                                 .code(alternateCode.getCode())
+                                .codeType(alternateCode.getCodeType())
                                 .build()
                 )
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    private List<AlternateCode> mapToAlternateCodes(List<alternateCode> alternateCodes, String geoID) {
+    private List<AlternateCodeWrapper> mapToAlternateCodes(List<alternateCode> alternateCodes, String geoID) {
         return alternateCodes
                 .stream()
-                .map(alternateCode ->
-                        AlternateCode.builder()
-                                .rowId(geoID)
-                                .codeType(alternateCode.getCodeType())
-                                .code(alternateCode.getCode())
-                                .build()
-                )
+                .map(alternateCode -> {
+                    AlternateCode ac = AlternateCode.builder()
+                            .code(alternateCode.getCode())
+                            .codeType(alternateCode.getCodeType())
+                            .build();
+                    AlternateCodeLink acl = AlternateCodeLink.builder()
+                            .geoId(geoID)
+                            .alternateCodeId(alternateCode.getCode())
+                            .build();
+                    return AlternateCodeWrapper.builder()
+                            .alternateCodes(ac)
+                            .alternateCodesLinks(acl)
+                            .build();
+                })
                 .toList();
     }
 
@@ -398,158 +338,6 @@ public class LocationsService {
                                 .build()
 
                 )
-                .collect(Collectors.toList());
+                .toList();
     }
-//
-//    private ZonedDateTime mapLongToZonedDateTime(Long epoch) {
-//        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(epoch), ZoneId.of(TIME_ZONE_UTC));
-//    }
-//
-//    private Mono<Void> storeEvent(ReceiverRecord<String, geographyMessage> geographyRecord) {
-//        getMappedObject(geographyRecord.value());
-//        return Mono.empty();
-//    }
-//
-//    private Geography getMappedObject(geographyMessage geographyMessage) {
-//        return GeographyMapper.mapAvroToDomainModel(geographyMessage);
-//    }
-
-
-    //    private final AlternateCodeRepository alternateCodeRepository;
-//    private final BusinessDefinedAreasRepository businessDefinedAreasRepository;
-//    private final CitiesRepository citiesRepository;
-//    private final CitySubAreaRepository citySubAreaRepository;
-//    private final ContinentRepository continentRepository;
-//    private final CountriesRepository countriesRepository;
-//    private final PostalCodeRepository postalCodeRepository;
-//    private final StateProvinceRepository stateProvinceRepository;
-
-//    private Mono<Void> mapAndSaveGeographyEventNeo4j(geography geography) {
-//
-//        final var geoType = geography.getGeoType();
-//
-//        if (geoType.equals("Business Defined Area")) {
-//            return businessDefinedAreasRepository.save(mapToBusinessDefinedAreaEntity(geography))
-//                    .then();
-//        } else if (geoType.equals("City")) {
-//            return Mono.zip(saveAlternateCodes(geography.getAlternateCodes()),
-//                            citiesRepository.save(mapToCityEntity(geography)))
-//                    .then();
-//        } else if (geoType.equals("Continent")) {
-//            return Mono.zip(saveAlternateCodes(geography.getAlternateCodes()),
-//                            continentRepository.save(mapToContinentEntity(geography)))
-//                    .then();
-//        } else if (geoType.equals("Country")) {
-//            return Mono.zip(saveAlternateCodes(geography.getAlternateCodes()),
-//                            countriesRepository.save(mapToCountryEntity(geography)))
-//                    .then();
-//        } else if (geoType.equals("Postal Code")) {
-//            return Mono.empty();
-////            return postalCodeRepository.save(mapToPostalCodeEntity(geography))
-////                    .then();
-//        } else if (geoType.equals("CitySubArea")) {
-//            return citySubAreaRepository.save(mapToCitySubAreaEntity(geography))
-//                    .then();
-//        } else if (geoType.equals("State/Prov")) {
-//            return stateProvinceRepository.save(mapToStateProvinceEntity(geography))
-//                    .then();
-//        } else {
-//            log.error(geoType);
-//            return Mono.empty();
-//        }
-//    }
-
-//    private Mono<List<AlternateCodeEntity>> saveAlternateCodes(List<alternateCode> alternateCodes) {
-//        return alternateCodeRepository.saveAll(mapToAlternateCodeEntities(alternateCodes))
-//                .collectList();
-//    }
-//
-//    private List<AlternateCodeEntity> mapToAlternateCodeEntities(List<alternateCode> alternateCodes) {
-//        return alternateCodes
-//                .stream()
-//                .map(alternateCode ->
-//                        AlternateCodeEntity.builder()
-//                                .id(alternateCode.getCodeType() + alternateCode.getCode())
-//                                .codeType(alternateCode.getCodeType())
-//                                .code(alternateCode.getCode())
-//                                .build()
-//                )
-//                .toList();
-//    }
-//
-//    private CitySubAreaEntity mapToCitySubAreaEntity(geography geography) {
-//        return CitySubAreaEntity.builder()
-//                .geoId(geography.getGeoId())
-//                .build();
-//    }
-//
-//    private PostalCodeEntity mapToPostalCodeEntity(geography geography) {
-//        return PostalCodeEntity.builder()
-//                .geoId(geography.getGeoId())
-//                .name(geography.getName())
-//                .build();
-//    }
-//
-//    private ContinentEntity mapToContinentEntity(geography geography) {
-//        return ContinentEntity.builder()
-//                .geoId(geography.getGeoId())
-//                .name(geography.getName())
-//                .alternateCodeEntities(mapToAlternateCodeEntities(geography.getAlternateCodes()))
-//                .build();
-//    }
-//
-//    private StateProvinceEntity mapToStateProvinceEntity(geography geography) {
-//        return StateProvinceEntity.builder()
-//                .geoId(geography.getGeoId())
-//                .name(geography.getName())
-//                .build();
-//    }
-//
-//    private BusinessDefinedAreaEntity mapToBusinessDefinedAreaEntity(geography geography) {
-//        return BusinessDefinedAreaEntity.builder()
-//                .geoId(geography.getGeoId())
-//                .name(geography.getName())
-//                .build();
-//    }
-//
-//    private CountryEntity mapToCountryEntity(geography geography) {
-//        return CountryEntity.builder()
-//                .geoId(geography.getGeoId())
-//                .name(geography.getName())
-//                .alternateCodeEntities(mapToAlternateCodeEntities(geography.getAlternateCodes()))
-//                .build();
-//    }
-//
-//    private CityEntity mapToCityEntity(geography geography) {
-//        country country = geography.getCountries().get(0);
-//        Optional<countryAlternateCode> geoId = country.getAlternateCodes().stream().filter(e -> e.getCodeType().equals("GEOID")).findFirst();
-//        return CityEntity.builder()
-//                .geoId(geography.getGeoId())
-//                .name(geography.getName())
-//                .country(CountryEntity.builder().geoId(geoId.get().getCode()).name(country.getName()).build())
-//                .status(geography.getStatus())
-//                .validFrom(geography.getValidFrom())
-//                .validTo(geography.getValidTo())
-//                .longitude(geography.getLongitude())
-//                .latitude(geography.getLatitude())
-//                .timeZone(geography.getTimeZone())
-//                .daylightSavingTime(geography.getDaylightSavingTime())
-//                .utcOffsetMinutes(geography.getUtcOffsetMinutes())
-//                .daylightSavingStart(geography.getDaylightSavingStart())
-//                .daylightSavingEnd(geography.getDaylightSavingEnd())
-//                .daylightSavingShiftMinutes(geography.getDaylightSavingShiftMinutes())
-//                .description(geography.getDescription())
-//                .workaroundReason(geography.getWorkaroundReason())
-//                .restricted(geography.getRestricted())
-//                .postalCodeMandatoryFlag(geography.getPostalCodeMandatory())
-//                .stateProvinceMandatory(geography.getStateProvinceMandatory())
-//                .dialingCode(geography.getDialingCode())
-//                .dialingCodeDescription(geography.getDialingCodeDescription())
-//                .portFlag(geography.getPortFlag())
-//                .olsonTimeZone(geography.getOlsonTimezone())
-//                .bdaType(geography.getBdaType())
-//                .hsudName(geography.getHsudName())
-//                .alternateCodeEntities(mapToAlternateCodeEntities(geography.getAlternateCodes()))
-//                .build();
-//    }
 }

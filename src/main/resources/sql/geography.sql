@@ -1,6 +1,5 @@
 CREATE TABLE GEOGRAPHY
 (
-	ID										uuid,
     GEO_ROW_ID                              VARCHAR (14),
     GEO_TYPE                                VARCHAR (20),
     NAME                                   	VARCHAR (512),
@@ -12,8 +11,8 @@ CREATE TABLE GEOGRAPHY
     TIME_ZONE                               VARCHAR (20),
     DAYLIGHT_SAVING_TIME                   	VARCHAR (20),
     UTC_OFFSET_MINUTES                     	VARCHAR (20),
-    DAYLIGHT_SAVING_START                   VARCHAR (25),
-    DAYLIGHT_SAVING_END                     VARCHAR (25),
+    DAYLIGHT_SAVING_START                   TIMESTAMP,
+    DAYLIGHT_SAVING_END                     TIMESTAMP,
     DAYLIGHT_SAVING_SHIFT_MINUTES    		VARCHAR (20),
     DESCRIPTION                             VARCHAR (512),
     WORKAROUND_REASON                  		VARCHAR (512),
@@ -25,4 +24,12 @@ CREATE TABLE GEOGRAPHY
     PORT_FLAG                               VARCHAR (20),
     OLSON_TIME_ZONE                         VARCHAR (20),
     BDA_TYPE                                VARCHAR (20),
-    HSUD_NAME                            	VARCHAR (512));
+    HSUD_NAME                            	VARCHAR (512),
+    COUNTRY_ROW_ID                          VARCHAR (14),
+    COUNTRY_NAME                            VARCHAR (512),
+    PARENT_ID                               VARCHAR (14),
+    PARENT_NAME                             VARCHAR (512),
+    PARENT_TYPE                             VARCHAR (20),
+    SUB_CITY_PARENT_ID                      VARCHAR (14),
+    SUB_CITY_PARENT_NAME                    VARCHAR (512),
+    SUB_CITY_PARENT_TYPE                    VARCHAR (20));

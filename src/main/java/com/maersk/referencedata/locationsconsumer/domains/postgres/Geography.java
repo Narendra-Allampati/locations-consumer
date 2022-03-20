@@ -1,6 +1,7 @@
 package com.maersk.referencedata.locationsconsumer.domains.postgres;
 
 import lombok.Builder;
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -10,6 +11,7 @@ import java.time.LocalDate;
  * @author Anders Clausen on 12/10/2021.
  */
 @Builder
+@Data
 @Table(value = "GEOGRAPHY")
 public class Geography {
 
@@ -39,12 +41,13 @@ public class Geography {
     private String olsonTimeZone;
     private String bdaType;
     private String hsudName;
-//    private List<AlternateName> alternateNames;
-//    private List<AlternateCode> alternateCodes;
-//    private List<Country> countries;
-//    private List<Parent> parents;
-//    private List<SubCityParent> subCityParents;
-//    private List<BusinessDefinedArea> businessDefinedAreas;
-//    private List<BusinessDefinedAreaLocation> businessDefinedAreaLocations;
+    private String countryId;
+    private String countryName;
+    private String parentId;
+    private String parentName;
+    private String parentType;
+    private String subCityParentId;
+    private String subCityParentName;
+    private String subCityParentType;
 }
 
