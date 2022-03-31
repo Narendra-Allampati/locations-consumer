@@ -1,0 +1,752 @@
+{
+  "namespace": "com.maersk.facility.smds.operations.msk",
+  "type": "record",
+  "name": "facilityMessage",
+  "fields": [
+    {
+      "name": "facility",
+      "type": {
+        "type": "record",
+        "doc": "Facility Entity Information which includes  operational,commercial and customer facilities with their respective Information",
+        "name": "facility",
+        "fields": [
+          {
+            "doc": "The facility Id of facility object. Example: 0LRKODU676387",
+            "name": "facilityId",
+            "type": "string"
+          },
+          {
+            "doc": "The name of facility. Example: NEW BALANCE ROYER",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "doc": "The type of facility. Example: OperationalFacility,CommercialFacility & CustomerFacility",
+            "name": "type",
+            "type": "string"
+          },
+          {
+            "doc": "The facility owned  external party or not. Example: true or false",
+            "name": "extOwned",
+            "type": "boolean"
+          },
+          {
+            "doc": "Facility Status. Example: Active,InActive and Pending",
+            "name": "status",
+            "type": "string"
+          },
+          {
+            "doc": "The facility exposed external party or not.Example: true or false",
+            "name": "extExposed",
+            "type": "boolean"
+          },
+          {
+            "doc": "URL stands for Uniform Resource Locator and is the protocol for specifying an address on the Internet to facility.Example: http://marpacifico.com/",
+            "name": "url",
+            "type": [
+              "null",
+              "string"
+            ],
+            "default": null
+          },
+          {
+            "doc": "doDAAC stands for department of defence activity address code. This attribute is used for US military shipments for both parties and location involved. Example :AXD123  ",
+            "name": "doDAAC",
+            "type": [
+              "null",
+              "string"
+            ],
+            "default": null
+          },
+          {
+            "name": "address",
+            "type": {
+              "type": "record",
+              "name": "address",
+              "doc": "Facility Address",
+              "fields": [
+                {
+                  "doc": "The facility address house number information.Example: 39",
+                  "name": "houseNumber",
+                  "type": [
+                    "null",
+                    "string"
+                  ],
+                  "default": null
+                },
+                {
+                  "doc": "The facility address street information.Example: RUE DES RIVIERES SAINT AGNAN",
+                  "name": "street",
+                  "type": [
+                    "null",
+                    "string"
+                  ],
+                  "default": null
+                },
+                {
+                  "doc": "The facility address city information.Example: Cosne Cours sur Loire",
+                  "name": "city",
+                  "type": "string"
+                },
+                {
+                  "doc": "The facility address postal code information.Example: 58200",
+                  "name": "postalCode",
+                  "type": [
+                    "null",
+                    "string"
+                  ],
+                  "default": null
+                },
+                {
+                  "doc": "The facility address pobox information.Example: 284",
+                  "name": "poBox",
+                  "type": [
+                    "null",
+                    "string"
+                  ],
+                  "default": null
+                },
+                {
+                  "doc": "The facility address district information.Example: visakhapatnam",
+                  "name": "district",
+                  "type": [
+                    "null",
+                    "string"
+                  ],
+                  "default": null
+                },
+                {
+                  "doc": "The facility address state or teritory information.Example: new jersey",
+                  "name": "territory",
+                  "type": [
+                    "null",
+                    "string"
+                  ],
+                  "default": null
+                },
+                {
+                  "doc": "The facility address country information.Example: India",
+                  "name": "countryName",
+                  "type": "string"
+                },
+                {
+                  "doc": "The facility address country code information.Example: IN",
+                  "name": "countryCode",
+                  "type": "string"
+                },
+                {
+                  "doc": "The facility address line2 information.Example: COSNES COURS SUR LOIRE",
+                  "name": "addressLine2",
+                  "type": [
+                    "null",
+                    "string"
+                  ],
+                  "default": null
+                },
+                {
+                  "doc": "The facility address line3 information.Example: COSNES COURS SUR LOIRE",
+                  "name": "addressLine3",
+                  "type": [
+                    "null",
+                    "string"
+                  ],
+                  "default": null
+                },
+                {
+                  "doc": "The facility address latitude information.Example: -26.241661",
+                  "name": "latitude",
+                  "type": [
+                    "null",
+                    "string"
+                  ],
+                  "default": null
+                },
+                {
+                  "doc": "The facility address longitude information.Example: -48.636938",
+                  "name": "longitude",
+                  "type": [
+                    "null",
+                    "string"
+                  ],
+                  "default": null
+                },
+                {
+                  "doc": "Checks the facility address Quality.Example: Check or Do Not Check",
+                  "name": "addressQualityCheckIndicator",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          {
+            "name": "parent",
+            "type": {
+              "type": "record",
+              "name": "parent",
+              "doc": "Facility Parent Detail",
+              "fields": [
+                {
+                  "doc": "The facility parent name.Example: Silandro",
+                  "name": "name",
+                  "type": "string"
+                },
+                {
+                  "doc": "The facility parent type(city,state/teritory or country).Example: City",
+                  "name": "type",
+                  "type": "string"
+                },
+                {
+                  "name": "alternateCodes",
+                  "type": {
+                    "type": "array",
+                    "items": {
+                      "name": "parentAlternateCode",
+                      "doc": "Parent AlternateCode details",
+                      "type": "record",
+                      "fields": [
+                        {
+                          "doc": "The alternate code type of  parent object. Example: GEOID",
+                          "name": "codeType",
+                          "type": "string"
+                        },
+                        {
+                          "doc": "The alternate code value of  parent object. Example: 0AEJZHTGIMJK0",
+                          "name": "code",
+                          "type": "string"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "name": "facilityDetail",
+            "type": [
+              "null",
+              {
+                "type": "record",
+                "name": "facilityDetail",
+                "doc": "Facility Detail",
+                "fields": [
+                  {
+                    "doc": "The Weight Limit in kgs for cranes at the Terminal Yard.This attribute is applicable for operational facility only. Example: 10",
+                    "name": "weightLimitCraneKg",
+                    "type": [
+                      "null",
+                      "string"
+                    ],
+                    "default": null
+                  },
+                  {
+                    "doc": "The Weight Limit in kgs for trucks at the Terminal Yard. This attribute is applicable for operational facility only. Example: 4",
+                    "name": "weightLimitYardKg",
+                    "type": [
+                      "null",
+                      "string"
+                    ],
+                    "default": null
+                  },
+                  {
+                    "doc": "The opertaional facility vessel agent exists or not.This attribute is applicable for operational facility only. Example: YES OR NO",
+                    "name": "vesselAgent",
+                    "type": [
+                      "null",
+                      "string"
+                    ],
+                    "default": null
+                  },
+                  {
+                    "doc": "The opertaional facility global positioning  system  exists or not.This attribute is applicable for operational facility only. Example: YES OR NO",
+                    "name": "gpsFlag",
+                    "type": [
+                      "null",
+                      "string"
+                    ],
+                    "default": null
+                  },
+                  {
+                    "doc": "The opertaional facility global system for mobile communication system  exists or not.This attribute is applicable for operational facility only. Example: YES OR NO",
+                    "name": "gsmFlag",
+                    "type": [
+                      "null",
+                      "string"
+                    ],
+                    "default": null
+                  },
+                  {
+                    "doc": "The opertaional facility ocean freight pricing  exists or not.This attribute is applicable for operational facility only. Example: YES OR NO",
+                    "name": "oceanFreightPricing",
+                    "type": [
+                      "null",
+                      "string"
+                    ],
+                    "default": null
+                  },
+                  {
+                    "doc": "The opertaional facility brand information.This attribute is applicable for commercial facility only. Example: Maersk Line",
+                    "name": "brand",
+                    "type": [
+                      "null",
+                      "string"
+                    ],
+                    "default": null
+                  },
+                  {
+                    "doc": "The commercial facility type information.This attribute is applicable for commercial facility only. Example: Brand Office",
+                    "name": "commFacilityType",
+                    "type": [
+                      "null",
+                      "string"
+                    ],
+                    "default": null
+                  },
+                  {
+                    "doc": "The commercial facility export enquieries information.This attribute is applicable for commercial facility only. Example: mcc@beeseng.com",
+                    "name": "exportEnquiriesEmail",
+                    "type": [
+                      "null",
+                      "string"
+                    ],
+                    "default": null
+                  },
+                  {
+                    "doc": "The commercial facility import enquieries information.This attribute is applicable for commercial facility only. Example: mcc@beeseng.com",
+                    "name": "importEnquiriesEmail",
+                    "type": [
+                      "null",
+                      "string"
+                    ],
+                    "default": null
+                  },
+                  {
+                    "doc": "The commercial facility function information.This attribute is applicable for commercial facility only. Example: Export /import",
+                    "name": "facilityFunction",
+                    "type": [
+                      "null",
+                      "string"
+                    ],
+                    "default": null
+                  },
+                  {
+                    "doc": "The commercial facility function description information.This attribute is applicable for commercial facility only. Example: Both export and import enquiries",
+                    "name": "facilityFunctionDesc",
+                    "type": [
+                      "null",
+                      "string"
+                    ],
+                    "default": null
+                  },
+                  {
+                    "doc": "The commercial facility international dial code information.This attribute is applicable for commercial facility only. Example:  +673",
+                    "name": "internationalDialCode",
+                    "type": [
+                      "null",
+                      "string"
+                    ],
+                    "default": null
+                  },
+                  {
+                    "doc": "The commercial facility telephone information.This attribute is applicable for commercial facility only. Example:  2220033",
+                    "name": "telephoneNumber",
+                    "type": [
+                      "null",
+                      "string"
+                    ],
+                    "default": null
+                  },
+                  {
+                    "name": "facilityTypes",
+                    "type": [
+                      "null",
+                      {
+                        "type": "array",
+                        "items": {
+                          "name": "OpsFacilityType",
+                          "doc": "Ops Facility Types",
+                          "type": "record",
+                          "fields": [
+                            {
+                              "doc": "The operational facility alternate code information.This attribute is applicable for operational facility only. Example: FCT_TYPE.RAILHEAD",
+                              "name": "code",
+                              "type": "string"
+                            },
+                            {
+                              "doc": "The operational facility alternate name information.This attribute is applicable for operational facility only. Example: Railhead",
+                              "name": "name",
+                              "type": "string"
+                            },
+                            {
+                              "doc": "The operational facility master type information.This attribute is applicable for operational facility only. Example: Facility Type",
+                              "name": "masterType",
+                              "type": "string"
+                            },
+                            {
+                              "doc": "The operational facility valid through date.This attribute is applicable for operational facility only. Example: 31-12-99",
+                              "name": "validThroughDate",
+                              "type": {
+                                "type": "int",
+                                "logicalType": "date"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ],
+                    "default": null
+                  }
+                ]
+              }
+            ],
+            "default": null
+          },
+          {
+            "name": "alternateCodes",
+            "type": {
+              "type": "array",
+              "items": {
+                "name": "alternateCode",
+                "doc": "AlternateCodes Details",
+                "type": "record",
+                "fields": [
+                  {
+                    "doc": "The alternate code type of  facility object. Example: GEOID",
+                    "name": "codeType",
+                    "type": "string"
+                  },
+                  {
+                    "doc": "The alternate code value of  parent object. Example: Z00UVMOWNH9H0",
+                    "name": "code",
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "openingHours",
+            "type": [
+              "null",
+              {
+                "type": "array",
+                "items": {
+                  "name": "openingHour",
+                  "doc": "Facility OpeningHours",
+                  "type": "record",
+                  "fields": [
+                    {
+                      "doc": "The operational and commercial facility opening day information. Example: Monday",
+                      "name": "day",
+                      "type": "string"
+                    },
+                    {
+                      "doc": "The operational and commercial facility opening time hours information. Example: 8",
+                      "name": "openTimeHours",
+                      "type": "string"
+                    },
+                    {
+                      "doc": "The operational and commercial facility opening time minutes information. Example: 30",
+                      "name": "openTimeMinutes",
+                      "type": "string"
+                    },
+                    {
+                      "doc": "The operational and commercial facility closing time hours information. Example: 17",
+                      "name": "closeTimeHours",
+                      "type": "string"
+                    },
+                    {
+                      "doc": "The operational and commercial facility closing time minutes information. Example: 30",
+                      "name": "closeTimeMinutes",
+                      "type": "string"
+                    }
+                  ]
+                }
+              }
+            ],
+            "default": null
+          },
+          {
+            "name": "transportModes",
+            "type": [
+              "null",
+              {
+                "type": "array",
+                "items": {
+                  "name": "transportMode",
+                  "doc": "Facility TransportModes",
+                  "type": "record",
+                  "fields": [
+                    {
+                      "doc": "The facility mode of transport information. This attribute is applicable only for operational facility. Example: BARGE",
+                      "name": "modeOfTransport",
+                      "type": "string"
+                    },
+                    {
+                      "doc": "The facility transport mode code information. This attribute is applicable only for operational facility. Example: BAR",
+                      "name": "transportCode",
+                      "type": "string"
+                    },
+                    {
+                      "doc": "The facility transport mode description information. This attribute is applicable only for operational facility. Example: BAR-BARGE",
+                      "name": "transportDescription",
+                      "type": "string"
+                    },
+                    {
+                      "doc": "The facility transport mode valid thru date. This attribute is applicable only for operational facility. Example: 31-12-99",
+                      "name": "validThroughDate",
+                      "type": {
+                        "type": "int",
+                        "logicalType": "date"
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "default": null
+          },
+          {
+            "name": "facilityServices",
+            "type": [
+              "null",
+              {
+                "type": "array",
+                "items": {
+                  "name": "facilityService",
+                  "doc": "FacilityServices Details",
+                  "type": "record",
+                  "fields": [
+                    {
+                      "doc": "The operational and commercial facility service name information. Example: General Enquiry",
+                      "name": "serviceName",
+                      "type": "string"
+                    },
+                    {
+                      "doc": "The operational and commercial facility service code information. Example: COMM",
+                      "name": "serviceCode",
+                      "type": "string"
+                    },
+                    {
+                      "doc": "The operational and commercial facility service description information. Example: General information regarding bookings",
+                      "name": "serviceDescription",
+                      "type": "string"
+                    },
+                    {
+                      "doc": "The operational and commercial facility valid through date. Example: 31-12-99",
+                      "name": "validThroughDate",
+                      "type": {
+                        "type": "int",
+                        "logicalType": "date"
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "default": null
+          },
+          {
+            "name": "fences",
+            "type": [
+              "null",
+              {
+                "type": "array",
+                "items": {
+                  "name": "fence",
+                  "doc": "Facility Fence Details",
+                  "type": "record",
+                  "fields": [
+                    {
+                      "doc": "The facility fence name information. Example: Primary Geo Fence",
+                      "name": "name",
+                      "type": "string"
+                    },
+                    {
+                      "doc": "The facility fence type information. Example: Primary",
+                      "name": "fenceType",
+                      "type": "string"
+                    }
+                  ]
+                }
+              }
+            ],
+            "default": null
+          },
+          {
+            "name": "bdas",
+            "type": [
+              "null",
+              {
+                "type": "array",
+                "items": {
+                  "name": "bda",
+                  "doc": "BDA details",
+                  "type": "record",
+                  "fields": [
+                    {
+                      "doc": "The business defined area  of facility object. Example: North India",
+                      "name": "name",
+                      "type": "string"
+                    },
+                    {
+                      "doc": "The type of object. Example: Business Defined Area",
+                      "name": "type",
+                      "type": "string"
+                    },
+                    {
+                      "doc": "The business defined area type of facility object. Example: FINANCIAL,POOL",
+                      "name": "bdaType",
+                      "type": "string"
+                    },
+                    {
+                      "name": "alternateCodes",
+                      "type": {
+                        "type": "array",
+                        "items": {
+                          "name": "bdaAlternateCode",
+                          "doc": "BDA AlternateCode details",
+                          "type": "record",
+                          "fields": [
+                            {
+                              "doc": "The  alternate code type of business defined area. Example: RKTS,RKST,GEOID",
+                              "name": "codeType",
+                              "type": "string"
+                            },
+                            {
+                              "doc": "The  alternate code value of business defined area. Example: INPNQ00",
+                              "name": "code",
+                              "type": "string"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "default": null
+          },
+          {
+            "name": "contactDetails",
+            "type": [
+              "null",
+              {
+                "type": "array",
+                "items": {
+                  "name": "contactDetail",
+                  "doc": "Facility Contact Details",
+                  "type": "record",
+                  "fields": [
+                    {
+                      "doc": "The  facility contact person first name. Example: Frank",
+                      "name": "firstName",
+                      "type": "string"
+                    },
+                    {
+                      "doc": "The  facility contact person last name. Example: Vanoutryve",
+                      "name": "lastName",
+                      "type": "string"
+                    },
+                    {
+                      "doc": "The  facility contact person job title. Example: Commercial Manager",
+                      "name": "jobTitle",
+                      "type": [
+                        "null",
+                        "string"
+                      ],
+                      "default": null
+                    },
+                    {
+                      "doc": "The  facility contact person job department. Example: Commercial Area",
+                      "name": "department",
+                      "type": [
+                        "null",
+                        "string"
+                      ],
+                      "default": null
+                    },
+                    {
+                      "doc": "The  facility contact person telephone international dialing code. Example: BE    +32",
+                      "name": "internationalDialingCdPhone",
+                      "type": "string"
+                    },
+                    {
+                      "doc": "The  facility contact person phone extension. Example: 129",
+                      "name": "extension",
+                      "type": [
+                        "null",
+                        "string"
+                      ],
+                      "default": null
+                    },
+                    {
+                      "doc": "The  facility contact person phone number. Example: 2245190912",
+                      "name": "phoneNumber",
+                      "type": "string"
+                    },
+                    {
+                      "doc": "The  facility contact person mobile international dialing code. Example: TR    +90",
+                      "name": "internationalDialingCdMobile",
+                      "type": [
+                        "null",
+                        "string"
+                      ],
+                      "default": null
+                    },
+                    {
+                      "doc": "The  facility contact person mobile number. Example: 5326541544",
+                      "name": "mobileNumber",
+                      "type": [
+                        "null",
+                        "string"
+                      ],
+                      "default": null
+                    },
+                    {
+                      "doc": "The  facility contact person fax international dialing code. Example: TR    +90",
+                      "name": "internaltionalDialingCodeFax",
+                      "type": [
+                        "null",
+                        "string"
+                      ],
+                      "default": null
+                    },
+                    {
+                      "doc": "The  facility contact person fax number. Example: 2245190400",
+                      "name": "faxNumber",
+                      "type": [
+                        "null",
+                        "string"
+                      ],
+                      "default": null
+                    },
+                    {
+                      "doc": "The  facility contact person email address. Example: arcan@gemline.com.tr",
+                      "name": "emailAddress",
+                      "type": [
+                        "null",
+                        "string"
+                      ],
+                      "default": null
+                    },
+                    {
+                      "doc": "The  facility contact person valid through date. Example: 31-12-99",
+                      "name": "validThroughDate",
+                      "type": {
+                        "type": "int",
+                        "logicalType": "date"
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "default": null
+          }
+        ]
+      }
+    }
+  ]
+}

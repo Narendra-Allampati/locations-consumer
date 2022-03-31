@@ -14,28 +14,28 @@ import com.maersk.geography.smds.operations.msk.parent;
 import com.maersk.geography.smds.operations.msk.parentAlternateCode;
 import com.maersk.geography.smds.operations.msk.subCityParent;
 import com.maersk.geography.smds.operations.msk.subCityParentAlternateCode;
-import com.maersk.referencedata.locationsconsumer.domains.postgres.AlternateCode;
-import com.maersk.referencedata.locationsconsumer.domains.postgres.AlternateName;
-import com.maersk.referencedata.locationsconsumer.domains.postgres.BusinessDefinedArea;
-import com.maersk.referencedata.locationsconsumer.domains.postgres.BusinessDefinedAreaLocation;
-import com.maersk.referencedata.locationsconsumer.domains.postgres.Country;
-import com.maersk.referencedata.locationsconsumer.domains.postgres.Geography;
-import com.maersk.referencedata.locationsconsumer.domains.postgres.Parent;
-import com.maersk.referencedata.locationsconsumer.domains.postgres.SubCityParent;
+import com.maersk.referencedata.locationsconsumer.domains.locations.AlternateCode;
+import com.maersk.referencedata.locationsconsumer.domains.locations.AlternateName;
+import com.maersk.referencedata.locationsconsumer.domains.locations.BusinessDefinedArea;
+import com.maersk.referencedata.locationsconsumer.domains.locations.BusinessDefinedAreaLocation;
+import com.maersk.referencedata.locationsconsumer.domains.locations.Country;
+import com.maersk.referencedata.locationsconsumer.domains.locations.Geography;
+import com.maersk.referencedata.locationsconsumer.domains.locations.Parent;
+import com.maersk.referencedata.locationsconsumer.domains.locations.SubCityParent;
 import com.maersk.referencedata.locationsconsumer.mappers.GeographyMapper;
-import com.maersk.referencedata.locationsconsumer.domains.postgres.AlternateCodeLink;
-import com.maersk.referencedata.locationsconsumer.model.AlternateCodeWrapper;
-import com.maersk.referencedata.locationsconsumer.model.BdaLocationWithAlternateCodes;
-import com.maersk.referencedata.locationsconsumer.model.BdaWithAlternateCodes;
-import com.maersk.referencedata.locationsconsumer.repositories.postgres.AlternateCodeLinksRepository;
-import com.maersk.referencedata.locationsconsumer.repositories.postgres.AlternateCodeRepository;
-import com.maersk.referencedata.locationsconsumer.repositories.postgres.AlternateNameRepository;
-import com.maersk.referencedata.locationsconsumer.repositories.postgres.BusinessDefinedAreaLocationRepository;
-import com.maersk.referencedata.locationsconsumer.repositories.postgres.BusinessDefinedAreaRepository;
-import com.maersk.referencedata.locationsconsumer.repositories.postgres.CountryRepository;
-import com.maersk.referencedata.locationsconsumer.repositories.postgres.GeographyRepository;
-import com.maersk.referencedata.locationsconsumer.repositories.postgres.ParentRepository;
-import com.maersk.referencedata.locationsconsumer.repositories.postgres.SubCityParentRepository;
+import com.maersk.referencedata.locationsconsumer.domains.locations.GeoAlternateCodeLink;
+import com.maersk.referencedata.locationsconsumer.model.locations.AlternateCodeWrapper;
+import com.maersk.referencedata.locationsconsumer.model.locations.BdaLocationWithAlternateCodes;
+import com.maersk.referencedata.locationsconsumer.model.locations.BdaWithAlternateCodes;
+import com.maersk.referencedata.locationsconsumer.repositories.locations.GeoAlternateCodeLinksRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.locations.AlternateCodeRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.locations.AlternateNameRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.locations.BusinessDefinedAreaLocationRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.locations.BusinessDefinedAreaRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.locations.CountryRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.locations.GeographyRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.locations.ParentRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.locations.SubCityParentRepository;
 import com.maersk.shared.kafka.serialization.KafkaDeserializerUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +52,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -62,10 +63,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class LocationsService {
 
-    private final KafkaReceiver<String, geographyMessage> kafkaReceiver;
+    private final KafkaReceiver<String, geographyMessage> locationsKafkaReceiver;
 
     private final AlternateCodeRepository alternateCodeRepository;
-    private final AlternateCodeLinksRepository alternateCodeLinksRepository;
+    private final GeoAlternateCodeLinksRepository geoAlternateCodeLinksRepository;
     private final AlternateNameRepository alternateNameRepository;
     private final BusinessDefinedAreaRepository businessDefinedAreaRepository;
     private final BusinessDefinedAreaLocationRepository businessDefinedAreaLocationRepository;
@@ -75,20 +76,20 @@ public class LocationsService {
     private final SubCityParentRepository subCityParentRepository;
 
     private static final String GEO_ID = "GEOID";
-    private static final String TIME_ZONE_UTC = "UTC";
 
     @EventListener(ApplicationStartedEvent.class)
     public Disposable startKafkaConsumer() {
-        return kafkaReceiver
+        return locationsKafkaReceiver
                 .receive()
+//                .take(3)
                 .doOnNext(event -> log.info("Received event: key {}, value {}", event.key(), event.value()))
                 .doOnError(error -> log.error("Error receiving Geography record", error))
-                .concatMap(this::handleSubscriptionResponseEvent)
+                .concatMap(this::handleLocationEvent)
                 .doOnNext(event -> event.receiverOffset().acknowledge())
                 .subscribe();
     }
 
-    private Mono<ReceiverRecord<String, geographyMessage>> handleSubscriptionResponseEvent(ReceiverRecord<String, geographyMessage> geographyRecord) {
+    private Mono<ReceiverRecord<String, geographyMessage>> handleLocationEvent(ReceiverRecord<String, geographyMessage> geographyRecord) {
         try {
             return Mono.just(geographyRecord)
                     .map(KafkaDeserializerUtils::extractDeserializerError)
@@ -119,7 +120,7 @@ public class LocationsService {
         final var alternateNames = mapToAlternateNames(geography.getAlternateNames(), geoID);
 
         final var alternateCodesWrappers = mapToAlternateCodes(geography.getAlternateCodes(), geoID);
-        List<AlternateCodeLink> alternateCodeLinks = alternateCodesWrappers.stream().map(AlternateCodeWrapper::getAlternateCodesLinks).toList();
+        List<GeoAlternateCodeLink> geoAlternateCodeLinks = alternateCodesWrappers.stream().map(AlternateCodeWrapper::getAlternateCodesLinks).toList();
         List<AlternateCode> alternateCodes = alternateCodesWrappers.stream().map(AlternateCodeWrapper::getAlternateCodes).toList();
 
         List<BdaWithAlternateCodes> bdaWithAlternateCodes = mapToBdaWithAlternateCodes(geography.getBdas());
@@ -129,7 +130,7 @@ public class LocationsService {
         return Flux.merge(geographyRepository.save(geo).then()
                         , alternateNameRepository.saveAll(alternateNames).then()
                         , alternateCodeRepository.saveAll(alternateCodes).then()
-                        , alternateCodeLinksRepository.saveAll(alternateCodeLinks).then())
+                        , geoAlternateCodeLinksRepository.saveAll(geoAlternateCodeLinks).then())
                 .then();
     }
 
@@ -199,6 +200,7 @@ public class LocationsService {
     private Geography mapGeographyEventToGeography(geography geography) {
 
         Geography geo = Geography.builder()
+                .isNew(true)
                 .geoId(geography.getGeoId())
                 .geoType(geography.getGeoType())
                 .name(geography.getName())
@@ -312,10 +314,13 @@ public class LocationsService {
                 .stream()
                 .map(alternateCode -> {
                     AlternateCode ac = AlternateCode.builder()
+                            .isNew(true)
                             .code(alternateCode.getCode())
                             .codeType(alternateCode.getCodeType())
                             .build();
-                    AlternateCodeLink acl = AlternateCodeLink.builder()
+                    GeoAlternateCodeLink acl = GeoAlternateCodeLink.builder()
+                            .isNew(true)
+                            .id(UUID.randomUUID())
                             .geoId(geoID)
                             .alternateCodeId(alternateCode.getCode())
                             .build();
@@ -331,7 +336,9 @@ public class LocationsService {
         return Optional.ofNullable(alternateNames)
                 .orElse(Collections.emptyList()).stream().map(alternateName ->
                         AlternateName.builder()
-                                .rowId(geoID)
+                                .isNew(true)
+                                .id(UUID.randomUUID())
+                                .geoId(geoID)
                                 .name(alternateName.getName())
                                 .status(alternateName.getStatus())
                                 .description(alternateName.getDescription())
