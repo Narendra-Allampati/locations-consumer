@@ -12,6 +12,7 @@ import java.util.List;
 @Builder
 @Data
 public class Country {
+
     private String rowId;
     private String name;
 }

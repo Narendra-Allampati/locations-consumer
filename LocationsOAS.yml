@@ -1,0 +1,250 @@
+# this is the spec for the locations service.
+swagger: '2.0'
+info:
+  title: Location Service
+  description: This is a service providing information on all the locations Maersk and its subsidaries operate around the globe.
+  version: "3.0.5"
+  license:
+    name: Maersk
+    url: https://api.maersk.com
+host: api.maersk.com
+basePath: /
+schemes:
+  - https
+tags:
+  - name: locations
+    description: A comprehensive list of all locations Maersk and Maersk brands operate from and to. The list includes countries, cities, terminals, ports, depots and more
+paths:
+  /locations:
+    get:
+      tags:
+        - locations
+      summary: List of all locations based on filters
+      description: 'Provides the list of all locations based on filters with name, type of location (example: country, city, site etc)'
+      operationId: getLocations
+      produces:
+        - application/stream+json
+        - application/json
+        - text/event-stream
+      parameters:
+        - in: query
+          name: maerskRkstCode
+          type: string
+          description: Maersk RKST system location code
+          pattern: '[a-zA-Z0-9]{4,10}'
+        - in: query
+          name: maerskRktsCode
+          type: string
+          description: Maersk RKTS system location code
+          pattern: '[a-zA-Z0-9&()./=*_?-]{3,10}'
+        - in: query
+          name: unLocCode
+          type: string
+          description: United Nations Code for Trade and Transport Locations
+          pattern: '[a-zA-Z]{2}[a-zA-Z0-9]{3}'
+        - in: query
+          name: type
+          type: string
+          description: Location type e.g. City, Depot, Rail Terminal, Customer Location
+          pattern: '[a-zA-Z ]{4,50}'
+        - in: query
+          name: brand
+          type: string
+          description: Brand code
+          pattern: '[a-zA-Z]{4}'
+        - in: query
+          name: cityName
+          type: string
+          description: search based on city name prefix or exact name. For prefix search e.g. Durban, for exact search e.g. Durban|exact
+          pattern: "^([-a-zA-Z0-9[]()€-ɏ]+(?:. |-| |'|’))*[a-zA-Z0-9[]()€-ɏ]{0,50}$"
+        - in: query
+          name: countryName
+          type: string
+          description: Country name prefix
+          pattern: "^([a-zA-Z[]()€-ɏ]+(?:. |-| |'|’))*[a-zA-Z[]()€-ɏ]{0,50}$"
+        - in: query
+          name: countryCode
+          type: string
+          description: Country Code
+          pattern: '[a-zA-Z]{2}'
+        - in: query
+          name: regionCode
+          type: string
+          description: Region Code
+          pattern: '[a-zA-Z0-9]{2,5}'
+        - in: query
+          name: pageToken
+          type: string
+          description: The pagination token
+        - in: query
+          name: sort
+          type: string
+          description: consumer specified sort field and order e.g. cityName|asc, cityName|desc
+          pattern: :(cityName)[|](asc|desc)
+        - in: query
+          name: pageSize
+          type: integer
+          minimum: 10
+          maximum: 100
+          description: Specifies the number of data sets to be sent in the reponse, default value is 25
+          pattern: '(100|[1-9][0-9])'
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: '#/definitions/locations'
+          headers:
+            nextPageToken:
+              description: Page token representing the next page of data if not all items have been returned. To fetch the next page of data the pageToken query request parameter should be set with this value.
+              type: string
+        400:
+          description: Bad Request.
+          schema:
+            $ref: '#/definitions/ApiError'
+        404:
+          description: No locations found.
+          schema:
+            $ref: '#/definitions/ApiError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ApiError'
+      deprecated: false
+  /locations/{maerskGeoLocationId}:
+    get:
+      tags:
+        - locationsByGeoId
+      summary: Get a Location based on Maersk Geo location ID
+      description: 'Provides a location  name based on Maersk Geo location ID, with type of location (example: country, city, site etc)'
+      operationId: getLocationsByMaerskGeoId
+      produces:
+        - application/json
+      parameters:
+        - name: maerskGeoLocationId
+          in: path
+          description: Maersk Geo location ID
+          required: true
+          type: string
+          pattern: '[a-zA-Z0-9]{13}'
+        - name: alias
+          in: query
+          description: Flag to indicate if the locations should contain the list of associated aliases in the response
+          required: false
+          type: string
+          enum: [yes, no]
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: '#/definitions/locations'
+        400:
+          description: Bad Request.
+          schema:
+            $ref: '#/definitions/ApiError'
+        404:
+          description: No locations found.
+          schema:
+            $ref: '#/definitions/ApiError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ApiError'
+      deprecated: false
+definitions:
+  ApiError:
+    type: object
+    required:
+      - method
+      - requestUri
+      - status
+      - timestamp
+      - message
+      - debugMessage
+    properties:
+      method:
+        type: string
+        description: The request method type e.g. GET, POST.
+      requestUri:
+        type: string
+        description: The request URI.
+      status:
+        type: string
+        description: The textual representation of the response status.
+      timestamp:
+        type: string
+        description: The date and time (dd-MM-yyyy hh:mm:ss) the error occured.
+      message:
+        type: string
+        description:  High level error message.
+      debugMessage:
+        type: string
+        description: Detailed error message.
+      subErrors:
+        type: array
+        items:
+          $ref: '#/definitions/ApiValidationError'
+        description: The list of invalid fields in the request.
+  ApiValidationError:
+    type: object
+    required:
+      - field
+      - rejectedValue
+      - message
+    properties:
+      field:
+        type: string
+        description: The field that has failed validation.
+      rejectedValue:
+        type: string
+        description: The value that has failed validation.
+      message:
+        type: string
+        description: The reason and advice for failed validation.
+  locations:
+    title: Location
+    type: object
+    properties:
+      type:
+        type: string
+        description: Location type e.g. City, Depot, Rail Terminal, Customer Location, Alternate Aliases
+      maerskGeoLocationId:
+        type: string
+        description: Maersk geo location Id
+      maerskRkstCode:
+        type: string
+        description: Maersk RKST system location code
+      maerskRktsCode:
+        type: string
+        description: Maersk RKTS system location code
+      unLocCode:
+        type: string
+        description: United Nations Code for Trade and Transport Locations
+      countryName:
+        type: string
+      countryCode:
+        type: string
+      cityName:
+        type: string
+      regionCode:
+        type: string
+      regionName:
+        type: string
+      siteName:
+        type: string
+      timezoneId:
+        type: string
+        description: Time zone identifier, e.g. Europe/Copenhagen, BST
+      brands:
+        type: array
+        items:
+          type: string
+      brandNames:
+        type: array
+        items:
+          type: string
+      countryGeoId:
+        type: string
+      alternateAliases:
+        type: array
+        items:
+          type: string

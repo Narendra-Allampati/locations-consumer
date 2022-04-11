@@ -1,0 +1,7 @@
+CREATE TABLE TRANSPORT_MODES
+(
+    ID                             VARCHAR (50),
+    MODE_OF_TRANSPORT              VARCHAR (50),
+    TRANSPORT_CODE                 VARCHAR (100),
+    TRANSPORT_DESCRIPTION          VARCHAR (100),
+    VALID_THROUGH_DATE             TIMESTAMP);

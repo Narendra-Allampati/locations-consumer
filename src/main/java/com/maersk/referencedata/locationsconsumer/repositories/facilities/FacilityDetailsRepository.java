@@ -6,5 +6,5 @@ import org.springframework.data.r2dbc.repository.R2dbcRepository;
 /**
  * @author Anders Clausen on 20/11/2021.
  */
-public interface FacilityDetailsRepository  extends R2dbcRepository<FacilityDetail, Long> {
+public interface FacilityDetailsRepository  extends R2dbcRepository<FacilityDetail, String> {
 }

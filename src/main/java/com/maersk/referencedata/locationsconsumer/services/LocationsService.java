@@ -81,8 +81,8 @@ public class LocationsService {
     public Disposable startKafkaConsumer() {
         return locationsKafkaReceiver
                 .receive()
-//                .take(3)
-                .doOnNext(event -> log.info("Received event: key {}, value {}", event.key(), event.value()))
+//                .take(1)
+                .doOnNext(event -> log.debug("Received event: key {}, value {}", event.key(), event.value()))
                 .doOnError(error -> log.error("Error receiving Geography record", error))
                 .concatMap(this::handleLocationEvent)
                 .doOnNext(event -> event.receiverOffset().acknowledge())
@@ -90,36 +90,52 @@ public class LocationsService {
     }
 
     private Mono<ReceiverRecord<String, geographyMessage>> handleLocationEvent(ReceiverRecord<String, geographyMessage> geographyRecord) {
-        try {
-            return Mono.just(geographyRecord)
-                    .map(KafkaDeserializerUtils::extractDeserializerError)
-                    .<com.maersk.geography.smds.operations.msk.geographyMessage>handle((tuple, sink) -> {
-                        if (tuple.getT2().isEmpty() && Objects.nonNull(tuple.getT1().value())) {
-                            sink.next(tuple.getT1().value());
-                        } else {
-                            log.error("Error while processing geographyMessage " + tuple.getT2().get());
-                        }
-                    })
-                    .flatMap(geographyMessage -> mapAndSaveGeographyEvent(geographyMessage.getGeography()))
-                    .doOnError(ex -> log.warn("Error processing event {}", geographyRecord.key(), ex))
-                    .doOnError(ex -> log.error("Error processing event after all retries {}", geographyRecord.key(), ex))
-                    .onErrorResume(ex -> Mono.empty())
-                    .doOnNext(__ -> log.info("Successfully processed event"))
-                    .then(Mono.just(geographyRecord));
-        } catch (Exception ex) {
-            log.error("Error processing event {}", geographyRecord.key(), ex);
-            return Mono.just(geographyRecord);
-        }
+
+        return Mono.just(geographyRecord)
+                .map(KafkaDeserializerUtils::extractDeserializerError)
+                .<com.maersk.geography.smds.operations.msk.geographyMessage>handle((tuple, sink) -> {
+                    if (tuple.getT2().isEmpty() && Objects.nonNull(tuple.getT1().value())) {
+                        sink.next(tuple.getT1().value());
+                    } else {
+                        log.error("Error while processing geographyMessage " + tuple.getT2().get());
+                    }
+                })
+                .flatMap(geographyMessage -> createOrUpdate(geographyMessage.getGeography()))
+//                .doOnError(ex -> log.warn("Error processing event {}", geographyRecord.key(), ex))
+                .doOnError(ex -> log.error("Error processing event after all retries {} and value {}", geographyRecord.key(), geographyRecord.value(), ex))
+                .onErrorResume(ex -> Mono.empty())
+                .then(Mono.just(geographyRecord));
+
     }
 
-    private Mono<Void> mapAndSaveGeographyEvent(geography geography) {
-        Geography geo = mapGeographyEventToGeography(geography);
+    private Mono<Void> createOrUpdate(geography geography) {
+        return geographyRepository.findById(geography.getGeoId())
+                .flatMap(geographyFromDB -> {
+                    if (geographyFromDB == null) {
+                        return saveGeography(geography);
+                    } else {
+                        return updateGeography(geography);
+                    }
+                });
+    }
+
+    private Mono<Void> saveGeography(geography geography) {
+        return mapAndSaveGeographyEvent(geography, true);
+    }
+
+    private Mono<Void> updateGeography(geography geography) {
+        return mapAndSaveGeographyEvent(geography, false);
+    }
+
+    private Mono<Void> mapAndSaveGeographyEvent(geography geography, boolean isNew) {
 
         String geoID = geography.getGeoId();
 
-        final var alternateNames = mapToAlternateNames(geography.getAlternateNames(), geoID);
+        Geography geo = mapGeographyEventToGeography(geography, isNew);
 
-        final var alternateCodesWrappers = mapToAlternateCodes(geography.getAlternateCodes(), geoID);
+        final var alternateNames = mapToAlternateNames(geography.getAlternateNames(), geoID, isNew);
+
+        final var alternateCodesWrappers = mapToAlternateCodes(geography.getAlternateCodes(), geoID, isNew);
         List<GeoAlternateCodeLink> geoAlternateCodeLinks = alternateCodesWrappers.stream().map(AlternateCodeWrapper::getAlternateCodesLinks).toList();
         List<AlternateCode> alternateCodes = alternateCodesWrappers.stream().map(AlternateCodeWrapper::getAlternateCodes).toList();
 
@@ -197,10 +213,10 @@ public class LocationsService {
                 });
     }
 
-    private Geography mapGeographyEventToGeography(geography geography) {
+    private Geography mapGeographyEventToGeography(geography geography, boolean isNew) {
 
         Geography geo = Geography.builder()
-                .isNew(true)
+                .isNew(isNew)
                 .geoId(geography.getGeoId())
                 .geoType(geography.getGeoType())
                 .name(geography.getName())
@@ -309,17 +325,17 @@ public class LocationsService {
                 .toList();
     }
 
-    private List<AlternateCodeWrapper> mapToAlternateCodes(List<alternateCode> alternateCodes, String geoID) {
+    private List<AlternateCodeWrapper> mapToAlternateCodes(List<alternateCode> alternateCodes, String geoID, boolean isNew) {
         return alternateCodes
                 .stream()
                 .map(alternateCode -> {
                     AlternateCode ac = AlternateCode.builder()
-                            .isNew(true)
+                            .isNew(isNew)
                             .code(alternateCode.getCode())
                             .codeType(alternateCode.getCodeType())
                             .build();
                     GeoAlternateCodeLink acl = GeoAlternateCodeLink.builder()
-                            .isNew(true)
+                            .isNew(isNew)
                             .id(UUID.randomUUID())
                             .geoId(geoID)
                             .alternateCodeId(alternateCode.getCode())
@@ -332,11 +348,11 @@ public class LocationsService {
                 .toList();
     }
 
-    private List<AlternateName> mapToAlternateNames(List<alternateName> alternateNames, String geoID) {
+    private List<AlternateName> mapToAlternateNames(List<alternateName> alternateNames, String geoID, boolean isNew) {
         return Optional.ofNullable(alternateNames)
                 .orElse(Collections.emptyList()).stream().map(alternateName ->
                         AlternateName.builder()
-                                .isNew(true)
+                                .isNew(isNew)
                                 .id(UUID.randomUUID())
                                 .geoId(geoID)
                                 .name(alternateName.getName())

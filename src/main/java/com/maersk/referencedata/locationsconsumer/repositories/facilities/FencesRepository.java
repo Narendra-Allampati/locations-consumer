@@ -6,5 +6,5 @@ import org.springframework.data.r2dbc.repository.R2dbcRepository;
 /**
  * @author Anders Clausen on 20/11/2021.
  */
-public interface FencesRepository extends R2dbcRepository<Fence, Long> {
+public interface FencesRepository extends R2dbcRepository<Fence, String> {
 }

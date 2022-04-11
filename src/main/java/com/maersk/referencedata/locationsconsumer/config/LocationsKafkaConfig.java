@@ -5,6 +5,8 @@ import com.maersk.geography.smds.operations.msk.geographyMessage;
 import com.maersk.shared.kafka.configuration.MetricAwareKafkaConsumerFactory;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import io.micrometer.core.instrument.Metrics;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +19,7 @@ import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.util.ObjectUtils;
 import reactor.kafka.receiver.KafkaReceiver;
 import reactor.kafka.receiver.ReceiverOptions;
+import reactor.kafka.receiver.ReceiverPartition;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -24,10 +27,15 @@ import java.util.List;
 import java.util.Map;
 
 @Configuration
+@Getter
+@Slf4j
 public class LocationsKafkaConfig {
-    private static final Logger log = LoggerFactory.getLogger(LocationsKafkaConfig.class);
     @Value("${kafka.bootstrap-servers}")
     private String bootstrapServers;
+    @Value("${kafka.consumer.facilities.client-id}")
+    private String facilitiesClientId;
+    @Value("${kafka.consumer.locations.client-id}")
+    private String locationsClientId;
     @Value("${kafka.client-id}")
     private String clientId;
     @Value("${kafka.username:}")
@@ -72,17 +80,23 @@ public class LocationsKafkaConfig {
 
     @Bean
     KafkaReceiver<String, geographyMessage> locationsKafkaReceiver() {
-        MetricAwareKafkaConsumerFactory<String, geographyMessage> metricAwareProducerFactory = new MetricAwareKafkaConsumerFactory(this.consumerFactoryListener);
-        ReceiverOptions<String, geographyMessage> options = ReceiverOptions.create(this.kafkaConsumerProperties());
-        options.pollTimeout(Duration.ofMillis(this.pollTimeout)).subscription(List.of(consumerLocationsTopicName));
+        MetricAwareKafkaConsumerFactory<String, geographyMessage> metricAwareProducerFactory = new MetricAwareKafkaConsumerFactory<>(this.consumerFactoryListener);
+        Map<String, Object> stringObjectMap = this.kafkaConsumerProperties();
+        stringObjectMap.put("client.id", locationsClientId);
+        ReceiverOptions<String, geographyMessage> options = ReceiverOptions.create(stringObjectMap);
+        options = options.addAssignListener(receiverPartitions -> receiverPartitions.forEach(ReceiverPartition::seekToBeginning));
+        options = options.pollTimeout(Duration.ofMillis(this.pollTimeout)).subscription(List.of(consumerLocationsTopicName));
         return KafkaReceiver.create(metricAwareProducerFactory, options);
     }
 
     @Bean
     KafkaReceiver<String, facilityMessage> facilityKafkaReceiver() {
         MetricAwareKafkaConsumerFactory<String, facilityMessage> metricAwareProducerFactory = new MetricAwareKafkaConsumerFactory(this.consumerFactoryListener);
-        ReceiverOptions<String, facilityMessage> options = ReceiverOptions.create(this.kafkaConsumerProperties());
-        options.pollTimeout(Duration.ofMillis(this.pollTimeout)).subscription(List.of(this.consumerFacilitiesTopicName));
+        Map<String, Object> stringObjectMap = this.kafkaConsumerProperties();
+        stringObjectMap.put("client.id", facilitiesClientId);
+        ReceiverOptions<String, facilityMessage> options = ReceiverOptions.create(stringObjectMap);
+        options = options.addAssignListener(receiverPartitions -> receiverPartitions.forEach(ReceiverPartition::seekToBeginning));
+        options = options.pollTimeout(Duration.ofMillis(this.pollTimeout)).subscription(List.of(this.consumerFacilitiesTopicName));
         return KafkaReceiver.create(metricAwareProducerFactory, options);
     }
 
@@ -102,7 +116,7 @@ public class LocationsKafkaConfig {
         kafkaPropertiesMap.put("basic.auth.user.info", this.schemaRegistryUsername + ":" + this.schemaRegistryPassword);
         kafkaPropertiesMap.put("specific.avro.reader", true);
         kafkaPropertiesMap.put("group.id", this.consumerGroup);
-        kafkaPropertiesMap.put("client.id", this.clientId);
+//        kafkaPropertiesMap.put("client.id", this.clientId);
         if (!ObjectUtils.isEmpty(this.username)) {
             kafkaPropertiesMap.put("security.protocol", this.securityProtocol);
             kafkaPropertiesMap.put("sasl.mechanism", this.saslMechanism);

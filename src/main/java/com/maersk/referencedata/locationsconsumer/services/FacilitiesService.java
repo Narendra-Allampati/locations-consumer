@@ -17,16 +17,21 @@ import com.maersk.referencedata.locationsconsumer.domains.facilities.Facility;
 import com.maersk.referencedata.locationsconsumer.domains.facilities.FacilityAlternateCodeLink;
 import com.maersk.referencedata.locationsconsumer.domains.facilities.FacilityDetail;
 import com.maersk.referencedata.locationsconsumer.domains.facilities.FacilityService;
+import com.maersk.referencedata.locationsconsumer.domains.facilities.FacilityType;
+import com.maersk.referencedata.locationsconsumer.domains.facilities.FacilityTypeLink;
 import com.maersk.referencedata.locationsconsumer.domains.facilities.Fence;
 import com.maersk.referencedata.locationsconsumer.domains.facilities.OpeningHour;
 import com.maersk.referencedata.locationsconsumer.domains.facilities.TransportMode;
 import com.maersk.referencedata.locationsconsumer.domains.locations.Parent;
+import com.maersk.referencedata.locationsconsumer.model.facilities.FacilityTypeWrapper;
 import com.maersk.referencedata.locationsconsumer.repositories.facilities.AddressesRepository;
 import com.maersk.referencedata.locationsconsumer.repositories.facilities.ContactDetailsRepository;
 import com.maersk.referencedata.locationsconsumer.repositories.facilities.FacilitiesRepository;
 import com.maersk.referencedata.locationsconsumer.repositories.facilities.FacilityAlternateCodeLinksRepository;
 import com.maersk.referencedata.locationsconsumer.repositories.facilities.FacilityDetailsRepository;
 import com.maersk.referencedata.locationsconsumer.repositories.facilities.FacilityServicesRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.facilities.FacilityTypeLinksRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.facilities.FacilityTypesRepository;
 import com.maersk.referencedata.locationsconsumer.repositories.facilities.FencesRepository;
 import com.maersk.referencedata.locationsconsumer.repositories.facilities.OpeningHoursRepository;
 import com.maersk.referencedata.locationsconsumer.repositories.facilities.ParentsRepository;
@@ -47,7 +52,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * @author Anders Clausen on 20/03/2022.
@@ -65,6 +69,8 @@ public class FacilitiesService {
     private final FacilityAlternateCodeLinksRepository facilityAlternateCodeLinksRepository;
     private final FacilityDetailsRepository facilityDetailsRepository;
     private final FacilityServicesRepository facilityServicesRepository;
+    private final FacilityTypesRepository facilityTypesRepository;
+    private final FacilityTypeLinksRepository facilityTypeLinksRepository;
     private final FencesRepository fencesRepository;
     private final OpeningHoursRepository openingHoursRepository;
     private final ParentsRepository parentsRepository;
@@ -74,7 +80,8 @@ public class FacilitiesService {
     public Disposable startKafkaConsumer() {
         return facilityKafkaReceiver
                 .receive()
-                .doOnNext(event -> log.info("Received event: key {}, value {}", event.key(), event.value()))
+                .take(0)
+//                .doOnNext(event -> log.info("Received event: key {}, value {}", event.key(), event.value()))
                 .doOnError(error -> log.error("Error receiving Facility record", error))
                 .flatMap(this::handleFacilityEvent)
                 .subscribe(event -> event.receiverOffset().acknowledge());
@@ -85,21 +92,90 @@ public class FacilitiesService {
                 .map(KafkaDeserializerUtils::extractDeserializerError)
                 .<facilityMessage>handle((tuple, sink) -> {
                     if (tuple.getT2().isEmpty() && Objects.nonNull(tuple.getT1().value())) {
-                        log.info("Message received for offset {}", tuple.getT1().receiverOffset().offset());
                         sink.next(tuple.getT1().value());
                     } else {
-                        log.error("Error while processing Facility " + tuple.getT2().get());
+                        if (tuple.getT2().isPresent()) {
+                            log.error("Error while processing Facility " + tuple.getT2().get());
+                        } else {
+                            log.error("I guess T1 is empty too");
+                        }
                     }
                 })
-                .flatMap(facilityMessage -> mapAndSaveFacilityEvent(facilityMessage.getFacility()))
+                .flatMap(facilityMessage -> createOrUpdateFacility(facilityMessage.getFacility()))
+                .doOnError(ex -> log.error("Error processing event after all retries {} and value {}", event.key(), event.value(), ex))
+                .onErrorResume(ex -> Mono.empty())
                 .then(Mono.just(event));
     }
 
-    private Mono<Void> mapAndSaveFacilityEvent(facility facilityEvent) {
+    private Mono<Void> createOrUpdateFacility(facility facilityEvent) {
+        return facilitiesRepository.findById(facilityEvent.getFacilityId())
+                .flatMap(facilityFromDB -> {
+                    if (facilityFromDB == null) {
+                        return saveFacility(facilityEvent);
+                    } else {
+                        return updateFacility(facilityEvent);
+                    }
+                });
+    }
+
+    private Mono<Void> saveFacility(facility facilityEvent) {
+        return mapAndSaveFacilityEvent(facilityEvent, true);
+    }
+
+    private Mono<Void> updateFacility(facility facilityEvent) {
+        return mapAndSaveFacilityEvent(facilityEvent, false);
+    }
+
+    private Mono<Void> mapAndSaveFacilityEvent(facility facilityEvent, boolean isNew) {
 
         String facilityId = facilityEvent.getFacilityId();
 
-        final var facility = Facility.builder()
+        final var facility = mapToFacility(facilityEvent, isNew);
+
+        final var address = mapToAddress(facilityEvent.getAddress(), facilityId, isNew);
+
+        // TODO This one has a list of alternateCodes but do we need them?
+//        final var parent = mapToParent(facilityEvent.getParent());
+
+        List<FacilityAlternateCodeLink> facilityAlternateCodeLinks = mapToAlternateCodeLinks(facilityEvent.getAlternateCodes(), facilityId);
+
+        final var facilityDetail = mapToFacilityDetail(facilityEvent.getFacilityDetail(), facilityId, isNew);
+
+        final var facilityTypeWrappers = mapToFacilityTypes(facilityEvent.getFacilityDetail(), facilityId, isNew);
+        List<FacilityType> facilityTypes = facilityTypeWrappers.map(this::getFacilityTypesAsList).orElse(Collections.emptyList());
+        List<FacilityTypeLink> facilityTypeLinks = facilityTypeWrappers.map(this::getFacilityTypeLinksAsList).orElse(Collections.emptyList());
+
+        final var openingHours = mapToFacilityOpeningHours(facilityEvent.getOpeningHours(), facilityId, isNew);
+
+        final var transportModes = mapToTransportModes(facilityEvent.getTransportModes(), facilityId, isNew);
+
+        final var facilityServices = mapToFacilityServices(facilityEvent.getFacilityServices(), facilityId, isNew);
+
+        final var fences = mapToFences(facilityEvent.getFences(), facilityId, isNew);
+
+//        // this one has a list of alternateCodes as optional
+//        final var businessDefinedAreas = mapToBusinessDefinedAreas(facilityEvent.getBda());
+
+        final var contactDetails = mapToContactDetails(facilityEvent.getContactDetails(), facilityId, isNew);
+
+        return Flux.merge(facilitiesRepository.save(facility),
+                        addressesRepository.save(address),
+//                        parentsRepository.save(parent),
+//                        facilityAlternateCodeLinksRepository.saveAll(facilityAlternateCodeLinks),
+                        facilityDetailsRepository.saveAll(Mono.justOrEmpty(facilityDetail)),
+                        facilityTypesRepository.saveAll(facilityTypes),
+//                        facilityTypeLinksRepository.saveAll(facilityTypeLinks),
+                        openingHoursRepository.saveAll(openingHours).collectList(),
+                        transportModesRepository.saveAll(transportModes).collectList(),
+                        facilityServicesRepository.saveAll(facilityServices).collectList(),
+                        fencesRepository.saveAll(fences).collectList(),
+                        contactDetailsRepository.saveAll(contactDetails).collectList())
+                .then();
+    }
+
+    private Facility mapToFacility(facility facilityEvent, boolean isNew) {
+        return Facility.builder()
+                .isNew(isNew)
                 .id(facilityEvent.getFacilityId())
                 .name(facilityEvent.getName())
                 .type(facilityEvent.getType())
@@ -107,44 +183,10 @@ public class FacilitiesService {
                 .status(facilityEvent.getStatus())
                 .extExposed(facilityEvent.getExtExposed())
                 .url(facilityEvent.getUrl())
-                .doDAAC(facilityEvent.getDoDAAC())
+                .departmentOfDefenceActivityAddressCode(facilityEvent.getDoDAAC())
+                .parentName(facilityEvent.getParent().getName())
+                .parentType(facilityEvent.getParent().getType())
                 .build();
-
-        final var address = mapToAddress(facilityEvent.getAddress(), facilityId);
-
-        // TODO This one has a list of alternateCodes but do we need them?
-        final var parent = mapToParent(facilityEvent.getParent());
-
-        List<FacilityAlternateCodeLink> facilityAlternateCodeLinks = mapToAlternateCodeLinks(facilityEvent.getAlternateCodes(), facilityId);
-
-        final var facilityDetail = mapToFacilityDetail(facilityEvent.getFacilityDetail(), facilityId);
-
-        final var facilityTypes = mapToFacilityTypes(facilityEvent.getFacilityDetail());
-
-        final var openingHours = mapToFacilityOpeningHours(facilityEvent.getOpeningHours(), facilityId);
-
-        final var transportModes = mapToTransportModes(facilityEvent.getTransportModes(), facilityId);
-
-        final var facilityServices = mapToFacilityServices(facilityEvent.getFacilityServices(), facilityId);
-
-        final var fences = mapToFences(facilityEvent.getFences(), facilityId);
-
-//        // this one has a list of alternateCodes as optional
-//        final var businessDefinedAreas = mapToBusinessDefinedAreas(facilityEvent.getBda());
-
-        final var contactDetails = mapToContactDetails(facilityEvent.getContactDetails(), facilityId);
-
-        return Flux.merge(facilitiesRepository.save(facility),
-                        addressesRepository.save(address),
-                        parentsRepository.save(parent),
-                        facilityAlternateCodeLinksRepository.saveAll(facilityAlternateCodeLinks),
-                        facilityDetailsRepository.saveAll(Mono.justOrEmpty(facilityDetail)),
-                        openingHoursRepository.saveAll(openingHours).collectList(),
-                        transportModesRepository.saveAll(transportModes).collectList(),
-                        facilityServicesRepository.saveAll(facilityServices).collectList(),
-                        fencesRepository.saveAll(fences).collectList(),
-                        contactDetailsRepository.saveAll(contactDetails).collectList())
-                .then();
     }
 
     private List<FacilityAlternateCodeLink> mapToAlternateCodeLinks(List<alternateCode> alternateCodes, String facilityId) {
@@ -156,9 +198,10 @@ public class FacilitiesService {
                 .toList();
     }
 
-    private Address mapToAddress(address addressEvent, String facilityId) {
+    private Address mapToAddress(address addressEvent, String facilityId, boolean isNew) {
         return
                 Address.builder()
+                        .isNew(isNew)
                         .id(facilityId)
                         .houseNumber(addressEvent.getHouseNumber())
                         .street(addressEvent.getStreet())
@@ -184,10 +227,11 @@ public class FacilitiesService {
                 .build();
     }
 
-    private Optional<FacilityDetail> mapToFacilityDetail(facilityDetail facilityDetail, String facilityId) {
+    private Optional<FacilityDetail> mapToFacilityDetail(facilityDetail facilityDetail, String facilityId, boolean isNew) {
         return Optional.ofNullable(facilityDetail)
                 .map(fd ->
                         FacilityDetail.builder()
+                                .isNew(isNew)
                                 .id(facilityId)
                                 .weightLimitCraneKG(fd.getWeightLimitCraneKg())
                                 .weightLimitYardKG(fd.getWeightLimitYardKg())
@@ -200,31 +244,56 @@ public class FacilitiesService {
                                 .exportEnquiriesEmail(fd.getExportEnquiriesEmail())
                                 .importEnquiriesEmail(fd.getImportEnquiriesEmail())
                                 .facilityFunction(fd.getFacilityFunction())
-                                .facilityFunctionDesc(fd.getFacilityFunctionDesc())
+                                .facilityFunctionDescription(fd.getFacilityFunctionDesc())
                                 .internationalDialCode(fd.getInternationalDialCode())
                                 .telephoneNumber(fd.getTelephoneNumber())
                                 .build());
     }
 
-    private List<FacilityType> mapToFacilityTypes(facilityDetail facilityDetail) {
-        return Optional.ofNullable(facilityDetail)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(x -> {
-                    final var opsFacilityTypes = x.getFacilityType();
-                    if (opsFacilityTypes == null) {
-                        return;
-                    } else {
-                        FacilityType.builder()
-                                .code(opsFacilityTypes.)
-                    }
-                });
+    private Optional<List<FacilityTypeWrapper>> mapToFacilityTypes(facilityDetail fd, String facilityId, boolean isNew) {
+        return Optional.ofNullable(fd)
+                .map(facilityDetail::getFacilityTypes)
+                .map(facilityTypes -> facilityTypes.stream()
+                        .map(type -> {
+                            FacilityType facilityType = FacilityType.builder()
+                                    .isNew(isNew)
+                                    .id(facilityId)
+                                    .code(type.getCode())
+                                    .name(type.getName())
+                                    .masterType(type.getMasterType())
+                                    .validThroughDate(type.getValidThroughDate())
+                                    .build();
+
+                            FacilityTypeLink facilityTypeLink = FacilityTypeLink.builder()
+                                    .facilityId(facilityId)
+                                    .opsFacilityTypeCode(type.getCode())
+                                    .build();
+
+                            return FacilityTypeWrapper.builder()
+                                    .facilityType(facilityType)
+                                    .facilityTypeLink(facilityTypeLink)
+                                    .build();
+                        }).toList()
+                );
     }
 
-    private List<OpeningHour> mapToFacilityOpeningHours(List<openingHour> openingHours, String facilityId) {
+    private List<FacilityTypeLink> getFacilityTypeLinksAsList(List<FacilityTypeWrapper> facilityTypeWrappers) {
+        return facilityTypeWrappers.stream()
+                .map(FacilityTypeWrapper::getFacilityTypeLink)
+                .toList();
+    }
+
+    private List<FacilityType> getFacilityTypesAsList(List<FacilityTypeWrapper> facilityTypeWrappers) {
+        return facilityTypeWrappers.stream()
+                .map(FacilityTypeWrapper::getFacilityType)
+                .toList();
+    }
+
+    private List<OpeningHour> mapToFacilityOpeningHours(List<openingHour> openingHours, String facilityId, boolean isNew) {
         return Optional.ofNullable(openingHours)
                 .orElse(Collections.emptyList()).stream().map(oh ->
                         OpeningHour.builder()
+                                .isNew(isNew)
                                 .id(facilityId)
                                 .day(oh.getDay())
                                 .openTimeHours(oh.getOpenTimeHours())
@@ -233,13 +302,14 @@ public class FacilitiesService {
                                 .closeTimeMinutes(oh.getCloseTimeMinutes())
                                 .build()
                 )
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    private List<TransportMode> mapToTransportModes(List<transportMode> transportModes, String facilityId) {
+    private List<TransportMode> mapToTransportModes(List<transportMode> transportModes, String facilityId, boolean isNew) {
         return Optional.ofNullable(transportModes)
                 .orElse(Collections.emptyList()).stream().map(tm ->
                         TransportMode.builder()
+                                .isNew(isNew)
                                 .id(facilityId)
                                 .modeOfTransport(tm.getModeOfTransport())
                                 .transportCode(tm.getTransportCode())
@@ -247,13 +317,14 @@ public class FacilitiesService {
                                 .validThroughDate(tm.getValidThroughDate())
                                 .build()
                 )
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    private List<FacilityService> mapToFacilityServices(List<facilityService> facilityServices, String facilityId) {
+    private List<FacilityService> mapToFacilityServices(List<facilityService> facilityServices, String facilityId, boolean isNew) {
         return Optional.ofNullable(facilityServices)
                 .orElse(Collections.emptyList()).stream().map(fs ->
                         FacilityService.builder()
+                                .isNew(isNew)
                                 .id(facilityId)
                                 .serviceName(fs.getServiceName())
                                 .serviceCode(fs.getServiceCode())
@@ -261,40 +332,42 @@ public class FacilitiesService {
                                 .validThroughDate(fs.getValidThroughDate())
                                 .build()
                 )
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    private List<Fence> mapToFences(List<fence> fences, String facilityId) {
+    private List<Fence> mapToFences(List<fence> fences, String facilityId, boolean isNew) {
         return Optional.ofNullable(fences)
                 .orElse(Collections.emptyList()).stream().map(fence ->
                         Fence.builder()
+                                .isNew(isNew)
                                 .id(facilityId)
                                 .name(fence.getName())
                                 .fenceType(fence.getFenceType())
                                 .build()
                 )
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    private List<ContactDetail> mapToContactDetails(List<contactDetail> contactDetails, String facilityId) {
+    private List<ContactDetail> mapToContactDetails(List<contactDetail> contactDetails, String facilityId, boolean isNew) {
         return Optional.ofNullable(contactDetails)
                 .orElse(Collections.emptyList()).stream().map(contactDetail ->
                         ContactDetail.builder()
+                                .isNew(isNew)
                                 .id(facilityId)
                                 .firstName(contactDetail.getFirstName())
                                 .lastName(contactDetail.getLastName())
                                 .jobTitle(contactDetail.getJobTitle())
                                 .department(contactDetail.getDepartment())
-                                .internationalDialingCdPhone(contactDetail.getInternationalDialingCdPhone())
+                                .internationalDialingCodePhone(contactDetail.getInternationalDialingCdPhone())
                                 .extension(contactDetail.getExtension())
                                 .phoneNumber(contactDetail.getPhoneNumber())
-                                .internationalDialingCdMobile(contactDetail.getInternationalDialingCdMobile())
+                                .internationalDialingCodeMobile(contactDetail.getInternationalDialingCdMobile())
                                 .mobileNumber(contactDetail.getMobileNumber())
-                                .internationalDialingCdFax(contactDetail.getInternaltionalDialingCodeFax())
+                                .internationalDialingCodeFax(contactDetail.getInternaltionalDialingCodeFax())
                                 .emailAddress(contactDetail.getEmailAddress())
                                 .validThroughDate(contactDetail.getValidThroughDate())
                                 .build()
                 )
-                .collect(Collectors.toList());
+                .toList();
     }
 }

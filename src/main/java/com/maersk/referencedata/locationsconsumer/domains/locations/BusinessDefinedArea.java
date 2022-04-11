@@ -10,6 +10,7 @@ import java.util.List;
  */
 @Builder
 public class BusinessDefinedArea {
+
     @Id
     private String rowId;
     private String name;

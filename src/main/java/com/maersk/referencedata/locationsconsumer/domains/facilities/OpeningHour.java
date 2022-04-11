@@ -1,7 +1,10 @@
 package com.maersk.referencedata.locationsconsumer.domains.facilities;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -10,9 +13,10 @@ import java.util.UUID;
 /**
  * @author Anders Clausen on 20/11/2021.
  */
+@AllArgsConstructor
 @Builder
 @Table(value = "OPENING_HOURS")
-public class OpeningHour implements Persistable<Long> {
+public class OpeningHour implements Persistable<String> {
 
     @Id
     private String id;
@@ -22,13 +26,21 @@ public class OpeningHour implements Persistable<Long> {
     private String closeTimeHours;
     private String closeTimeMinutes;
 
+    @PersistenceConstructor
+    public OpeningHour() {
+    }
+
+    @Transient
+    private boolean isNew;
+
     @Override
-    public Long getId() {
-        return null;
+    public String getId() {
+        return this.id;
     }
 
     @Override
+    @Transient
     public boolean isNew() {
-        return false;
+        return this.isNew || this.id == null;
     }
 }
