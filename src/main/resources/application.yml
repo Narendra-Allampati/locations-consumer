@@ -1,31 +1,41 @@
 #KAFKA_BOOTSTRAP_SERVERS: "localhost:9092"
-KAFKA_BOOTSTRAP_SERVERS:
-KAFKA_TOPIC:
-KAFKA_USERNAME:
-KAFKA_PASSWORD:
-KAFKA_CONSUMER_GROUP:
+KAFKA_BOOTSTRAP_SERVERS: "pkc-lq8gm.westeurope.azure.confluent.cloud:9092"
+KAFKA_LOCATIONS_TOPIC: MSK.geography.gda.topic.internal.any.v2
+KAFKA_FACILITIES_TOPIC: MSK.geography.facility.topic.internal.any.v2
+# preprod
+#KAFKA_USERNAME: DONOUESM3BKJO7ZW
+#KAFKA_PASSWORD: ouDnEHcLMwtzYP0EsuXKSGanIz5znUc61Qry7xjyyTVphM0gOvabrPtT3817x1AR
+# prod
+KAFKA_USERNAME: 26GHNKUQEFRRRBWM
+KAFKA_PASSWORD: nRJlLgwfW7PfERACIbVZa8DIuRRaFykyNk9+WNJ1Z1WXd4ZlaJGLddeZuWbB5ctf
+KAFKA_CONSUMER_GROUP: MSK.referenceData.referenceDataReader.consumerGroup.v1
 
-KAFKA_SCHEMA_REGISTRY_URL:
-KAFKA_SCHEMA_REGISTRY_API_KEY:
-KAFKA_SCHEMA_REGISTRY_PASSWORD:
+KAFKA_SCHEMA_REGISTRY_URL: "https://psrc-4kk0p.westeurope.azure.confluent.cloud/"
+# preprod
+#KAFKA_SCHEMA_REGISTRY_API_KEY: I2WOGC3S6UQMR3KT
+#KAFKA_SCHEMA_REGISTRY_PASSWORD: vk4Th6eSdHoSVhdagDMtQVnqbkWAFCUdoNGcrylSmQMP9uYZwPVIKJy5zNFY5HDk
+# prod
+KAFKA_SCHEMA_REGISTRY_API_KEY: KJTPSPWASUGMN3QJ
+KAFKA_SCHEMA_REGISTRY_PASSWORD: P0v7ZH0CxZHeZXPYjfmImFSyMIQHhsZS/otyi+/ZJv9wxr+mblcu0JxSzfurRfLq
 
 PROFILE: local
 
 OTEL_COLLECTOR_ADDRESS: "http://localhost:4317"
 
-#POSTGRES_HOST: https://localhost:5432
+POSTGRES_HOST: https://localhost:5432
+POSTGRES_DB: postgres
 #POSTGRES_DB: reference-data-locations
-#POSTGRES_USER: postgres
-#POSTGRES_PWD: postgres
+POSTGRES_USER: postgres
+POSTGRES_PWD: postgres
 ## Scheme identifies whether SSL is disabled (r2dbc) or Enabled (r2dbcs)
-#POSTGRES_SCHEME: r2dbc
+POSTGRES_SCHEME: r2dbc
 
 kafka:
   bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
   login-module: org.apache.kafka.common.security.plain.PlainLoginModule
   security-protocol: SASL_SSL
   sasl-mechanism: PLAIN
-  client-id: subscription-response-consumer
+  client-id: locations-consumer-client-id
   username: ${KAFKA_USERNAME}
   password: ${KAFKA_PASSWORD}
   schema-registry:
@@ -33,7 +43,12 @@ kafka:
     username: ${KAFKA_SCHEMA_REGISTRY_API_KEY}
     password: ${KAFKA_SCHEMA_REGISTRY_PASSWORD}
   consumer:
-    topic: ${KAFKA_TOPIC}
+    facilities:
+      client-id: facilities-consumer
+      topic: ${KAFKA_FACILITIES_TOPIC}
+    locations:
+      client-id: locations-consumer
+      topic: ${KAFKA_LOCATIONS_TOPIC}
     consumer-group: ${KAFKA_CONSUMER_GROUP}
     offset-auto-reset: earliest
     concurrency: 1
@@ -48,17 +63,17 @@ spring:
   application:
     name: locations-consumer
   data:
-#    r2dbc:
-#      repositories:
-#        enabled: true
-#  r2dbc:
-#    #  r2dbc:a-driver:pipes://localhost:3306/my_database?locale=en_US
-#    #  \___/ \______/ \___/   \____________/\__________/\___________/
-#    #  |       |      |           |           |           |
-#    #  scheme  driver  protocol  authority    path        query
-#    url: ${POSTGRES_SCHEME}:postgresql:${POSTGRES_HOST}/${POSTGRES_DB}?locale=en_GB
-#    username: ${POSTGRES_USER}
-#    password: ${POSTGRES_PWD}
+    r2dbc:
+      repositories:
+        enabled: true
+  r2dbc:
+    #  r2dbc:a-driver:pipes://localhost:3306/my_database?locale=en_US
+    #  \___/ \______/ \___/   \____________/\__________/\___________/
+    #  |       |      |           |           |           |
+    #  scheme  driver  protocol  authority    path        query
+    url: ${POSTGRES_SCHEME}:postgresql:${POSTGRES_HOST}/${POSTGRES_DB}?locale=en_GB
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PWD}
   profiles:
     active: ${PROFILE}
   sleuth:
@@ -66,11 +81,6 @@ spring:
       exporter:
         otlp:
           endpoint: ${OTEL_COLLECTOR_ADDRESS}
-  neo4j:
-    uri: bolt://localhost:7687
-    authentication:
-      username: neo4j
-      password: secret
 management:
   health:
     kafka:
@@ -99,12 +109,3 @@ management:
 #  level:
 #    io.r2dbc.postgresql.QUERY: DEBUG
 #    io.r2dbc.postgresql.PARAM: DEBUG
-
-#logging:
-#  level:
-#    org.springframework.data.neo4j.cypher: trace
-#    root: INFO
-#    org.neo4j.driver.GraphDatabase: DEBUG
-#    org.neo4j.driver.Driver: DEBUG
-#    org.neo4j.driver.OutboundMessageHandler: DEBUG
-#    org.neo4j.driver.InboundMessageDispatcher: DEBUG

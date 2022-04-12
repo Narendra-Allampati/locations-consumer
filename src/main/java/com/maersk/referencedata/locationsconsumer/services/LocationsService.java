@@ -37,8 +37,10 @@ import com.maersk.referencedata.locationsconsumer.repositories.locations.Geograp
 import com.maersk.referencedata.locationsconsumer.repositories.locations.ParentRepository;
 import com.maersk.referencedata.locationsconsumer.repositories.locations.SubCityParentRepository;
 import com.maersk.shared.kafka.serialization.KafkaDeserializerUtils;
+import com.maersk.shared.kafka.utilities.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -47,7 +49,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.kafka.receiver.KafkaReceiver;
 import reactor.kafka.receiver.ReceiverRecord;
+import reactor.util.retry.Retry;
 
+import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -81,12 +85,15 @@ public class LocationsService {
     public Disposable startKafkaConsumer() {
         return locationsKafkaReceiver
                 .receive()
-//                .take(1)
+                .doOnError(error -> log.warn("Error receiving Geography record, exception -> {}, retry will be attempted",
+                        error.getLocalizedMessage(), error))
+                .retryWhen(Retry.indefinitely().filter(Validator::isRetriableKafkaError))
+                .doOnError(error -> log.warn("Error thrown whilst processing geography records, error isn't a " +
+                        "known retriable error, will attempt to retry processing records , exception -> {}", error.getLocalizedMessage(), error))
+                .retryWhen(Retry.fixedDelay(100, Duration.ofMinutes(1)))
                 .doOnNext(event -> log.debug("Received event: key {}, value {}", event.key(), event.value()))
-                .doOnError(error -> log.error("Error receiving Geography record", error))
                 .concatMap(this::handleLocationEvent)
-                .doOnNext(event -> event.receiverOffset().acknowledge())
-                .subscribe();
+                .subscribe(result -> result.receiverOffset().acknowledge());
     }
 
     private Mono<ReceiverRecord<String, geographyMessage>> handleLocationEvent(ReceiverRecord<String, geographyMessage> geographyRecord) {
@@ -101,22 +108,15 @@ public class LocationsService {
                     }
                 })
                 .flatMap(geographyMessage -> createOrUpdate(geographyMessage.getGeography()))
-//                .doOnError(ex -> log.warn("Error processing event {}", geographyRecord.key(), ex))
-                .doOnError(ex -> log.error("Error processing event after all retries {} and value {}", geographyRecord.key(), geographyRecord.value(), ex))
+                .doOnError(ex -> log.warn("Error processing event after all retries {} and value {}", geographyRecord.key(), geographyRecord.value(), ex))
                 .onErrorResume(ex -> Mono.empty())
                 .then(Mono.just(geographyRecord));
-
     }
 
     private Mono<Void> createOrUpdate(geography geography) {
         return geographyRepository.findById(geography.getGeoId())
-                .flatMap(geographyFromDB -> {
-                    if (geographyFromDB == null) {
-                        return saveGeography(geography);
-                    } else {
-                        return updateGeography(geography);
-                    }
-                });
+                .flatMap(geographyFromDB -> updateGeography(geography))
+                .switchIfEmpty(saveGeography(geography));
     }
 
     private Mono<Void> saveGeography(geography geography) {
@@ -124,7 +124,10 @@ public class LocationsService {
     }
 
     private Mono<Void> updateGeography(geography geography) {
-        return mapAndSaveGeographyEvent(geography, false);
+//        return alternateNameRepository.deleteById(geography.getGeoId())
+        return geographyRepository.deleteById(geography.getGeoId());
+
+//                .map(mapAndSaveGeographyEvent(geography, false));
     }
 
     private Mono<Void> mapAndSaveGeographyEvent(geography geography, boolean isNew) {
