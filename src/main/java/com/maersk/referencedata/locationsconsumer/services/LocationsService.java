@@ -21,6 +21,7 @@ import com.maersk.referencedata.locationsconsumer.domains.locations.BusinessDefi
 import com.maersk.referencedata.locationsconsumer.domains.locations.Country;
 import com.maersk.referencedata.locationsconsumer.domains.locations.Geography;
 import com.maersk.referencedata.locationsconsumer.domains.locations.Parent;
+import com.maersk.referencedata.locationsconsumer.domains.locations.PostalCode;
 import com.maersk.referencedata.locationsconsumer.domains.locations.SubCityParent;
 import com.maersk.referencedata.locationsconsumer.mappers.GeographyMapper;
 import com.maersk.referencedata.locationsconsumer.domains.locations.GeoAlternateCodeLink;
@@ -35,6 +36,7 @@ import com.maersk.referencedata.locationsconsumer.repositories.locations.Busines
 import com.maersk.referencedata.locationsconsumer.repositories.locations.CountryRepository;
 import com.maersk.referencedata.locationsconsumer.repositories.locations.GeographyRepository;
 import com.maersk.referencedata.locationsconsumer.repositories.locations.ParentRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.locations.PostalCodeRepository;
 import com.maersk.referencedata.locationsconsumer.repositories.locations.SubCityParentRepository;
 import com.maersk.shared.kafka.serialization.KafkaDeserializerUtils;
 import com.maersk.shared.kafka.utilities.Validator;
@@ -77,9 +79,11 @@ public class LocationsService {
     private final CountryRepository countryRepository;
     private final GeographyRepository geographyRepository;
     private final ParentRepository parentRepository;
+    private final PostalCodeRepository postalCodeRepository;
     private final SubCityParentRepository subCityParentRepository;
 
     private static final String GEO_ID = "GEOID";
+    private static final String POSTAL_CODE = "Postal Code";
 
     @EventListener(ApplicationStartedEvent.class)
     public Disposable startKafkaConsumer() {
@@ -124,17 +128,22 @@ public class LocationsService {
     }
 
     private Mono<Void> updateGeography(geography geography) {
-//        return alternateNameRepository.deleteById(geography.getGeoId())
-        return geographyRepository.deleteById(geography.getGeoId());
-
-//                .map(mapAndSaveGeographyEvent(geography, false));
+        if (POSTAL_CODE.equals(geography.getGeoType())) {
+            return postalCodeRepository.deleteById(geography.getGeoId())
+                    .then(saveGeography(geography));
+        } else {
+            return geographyRepository.deleteById(geography.getGeoId())
+                    .then(saveGeography(geography));
+        }
     }
 
     private Mono<Void> mapAndSaveGeographyEvent(geography geography, boolean isNew) {
 
         String geoID = geography.getGeoId();
 
-        Geography geo = mapGeographyEventToGeography(geography, isNew);
+        Optional<Geography> geo = mapGeographyEventToGeography(geography, isNew);
+
+        Optional<PostalCode> postalCode = mapGeographyEventToPostalCode(geography, isNew);
 
         final var alternateNames = mapToAlternateNames(geography.getAlternateNames(), geoID, isNew);
 
@@ -146,7 +155,8 @@ public class LocationsService {
 
         List<BdaLocationWithAlternateCodes> bdaLocationWithAlternateCodes = mapToBdaLocationsWithAlternateCodes(geography.getBdaLocations());
 
-        return Flux.merge(geographyRepository.save(geo).then()
+        return Flux.merge(geographyRepository.saveAll(Mono.justOrEmpty(geo)).then()
+                        , postalCodeRepository.saveAll(Mono.justOrEmpty(postalCode)).then()
                         , alternateNameRepository.saveAll(alternateNames).then()
                         , alternateCodeRepository.saveAll(alternateCodes).then()
                         , geoAlternateCodeLinksRepository.saveAll(geoAlternateCodeLinks).then())
@@ -216,8 +226,84 @@ public class LocationsService {
                 });
     }
 
-    private Geography mapGeographyEventToGeography(geography geography, boolean isNew) {
+    private Optional<PostalCode> mapGeographyEventToPostalCode(geography geography, boolean isNew) {
 
+        if (POSTAL_CODE.equals(geography.getGeoType())) {
+            var postalCode = buildPostalCode(geography, isNew);
+            return Optional.of(postalCode);
+        }
+
+        return Optional.empty();
+    }
+
+    private PostalCode buildPostalCode(geography geography, boolean isNew) {
+        PostalCode postalCode = PostalCode.builder()
+                .isNew(isNew)
+                .geoId(geography.getGeoId())
+                .geoType(geography.getGeoType())
+                .name(geography.getName())
+                .status(geography.getStatus())
+                .validFrom(geography.getValidFrom())
+                .validTo(geography.getValidTo())
+                .longitude(geography.getLongitude())
+                .latitude(geography.getLatitude())
+                .timeZone(geography.getTimeZone())
+                .daylightSavingTime(geography.getDaylightSavingTime())
+                .utcOffsetMinutes(geography.getUtcOffsetMinutes())
+                .daylightSavingStart(geography.getDaylightSavingStart())
+                .daylightSavingEnd(geography.getDaylightSavingEnd())
+                .daylightSavingShiftMinutes(geography.getDaylightSavingShiftMinutes())
+                .description(geography.getDescription())
+                .workaroundReason(geography.getWorkaroundReason())
+                .restricted(geography.getRestricted())
+                .postalCodeMandatory(geography.getPostalCodeMandatory())
+                .stateProvinceMandatory(geography.getStateProvinceMandatory())
+                .dialingCode(geography.getDialingCode())
+                .dialingCodeDescription(geography.getDialingCodeDescription())
+                .portFlag(geography.getPortFlag())
+                .olsonTimeZone(geography.getOlsonTimezone())
+                .bdaType(geography.getBdaType())
+                .hsudName(geography.getHsudName())
+                .build();
+
+        Optional<Country> countryOptional = mapToCountry(geography.getCountry());
+        if (countryOptional.isPresent()) {
+            Country country = countryOptional.get();
+            postalCode.setCountryId(country.getRowId());
+            postalCode.setCountryName(country.getName());
+        }
+
+        Optional<Parent> parentOptional = mapToParent(geography.getParent());
+        if (parentOptional.isPresent()) {
+            Parent parent = parentOptional.get();
+            postalCode.setParentId(parent.getRowId());
+            postalCode.setParentName(parent.getName());
+            postalCode.setParentType(parent.getType());
+        }
+
+        List<SubCityParent> subCityParents = mapToSubCityParents(geography.getSubCityParents());
+        if (!subCityParents.isEmpty()) {
+            SubCityParent subCityParent = subCityParents.get(0);
+            postalCode.setSubCityParentId(subCityParent.getRowId());
+            postalCode.setSubCityParentName(postalCode.getSubCityParentName());
+            postalCode.setSubCityParentType(postalCode.getSubCityParentType());
+        }
+
+        return postalCode;
+    }
+
+    private Optional<Geography> mapGeographyEventToGeography(geography geography, boolean isNew) {
+
+        // Only build the Geography object if it is not of type Postal code
+        if (!POSTAL_CODE.equals(geography.getGeoType())) {
+            Geography geo = buildGeography(geography, isNew);
+            return Optional.of(geo);
+        }
+
+        return Optional.empty();
+    }
+
+    private Geography buildGeography(geography geography, boolean isNew) {
         Geography geo = Geography.builder()
                 .isNew(isNew)
                 .geoId(geography.getGeoId())
@@ -342,6 +428,7 @@ public class LocationsService {
                             .id(UUID.randomUUID())
                             .geoId(geoID)
                             .alternateCodeId(alternateCode.getCode())
+                            .alternateCodeType(alternateCode.getCodeType())
                             .build();
                     return AlternateCodeWrapper.builder()
                             .alternateCodes(ac)

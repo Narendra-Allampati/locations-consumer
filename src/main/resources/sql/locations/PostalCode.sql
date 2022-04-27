@@ -1,4 +1,4 @@
-CREATE TABLE GEOGRAPHY
+CREATE TABLE POSTAL_CODE
 (
     GEO_ID                                  VARCHAR (14),
     GEO_TYPE                                VARCHAR (50),
@@ -32,4 +32,5 @@ CREATE TABLE GEOGRAPHY
     PARENT_TYPE                             VARCHAR (100),
     SUB_CITY_PARENT_ID                      VARCHAR (14),
     SUB_CITY_PARENT_NAME                    VARCHAR (512),
-    SUB_CITY_PARENT_TYPE                    VARCHAR (100));
+    SUB_CITY_PARENT_TYPE                    VARCHAR (100),
+    CONSTRAINT POSTAL_CODE_ID_PK PRIMARY KEY (GEO_ID));

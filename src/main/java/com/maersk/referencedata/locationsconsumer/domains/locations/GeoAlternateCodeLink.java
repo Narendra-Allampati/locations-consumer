@@ -21,6 +21,7 @@ public class GeoAlternateCodeLink implements Persistable<UUID> {
     private UUID id;
     private String geoId;
     private String alternateCodeId;
+    private String alternateCodeType;
 
     @PersistenceConstructor
     public GeoAlternateCodeLink() {
