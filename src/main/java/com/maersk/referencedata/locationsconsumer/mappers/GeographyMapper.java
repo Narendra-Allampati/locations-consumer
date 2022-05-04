@@ -16,6 +16,8 @@ import java.util.UUID;
 @UtilityClass
 public class GeographyMapper {
 
+    private static final String GEO_ID = "GEO_ID";
+
     public String findCodeFromCountryAlternateCodes(List<countryAlternateCode> alternateCodes, String type) {
         // TODO Do I really want to set a random UUID?
         return alternateCodes.stream()
@@ -25,7 +27,7 @@ public class GeographyMapper {
                 .orElse(UUID.randomUUID().toString());
     }
 
-    public String findCodeFromParentAlternateCodes(List<parentAlternateCode> alternateCodes, String type) {
+    public String findCodeFromGeoParentAlternateCodes(List<parentAlternateCode> alternateCodes, String type) {
         // TODO Do I really want to set a random UUID?
         return alternateCodes.stream()
                 .filter(value -> type.equals(value.getCodeType()))
@@ -59,5 +61,13 @@ public class GeographyMapper {
                 .findFirst()
                 .map(bdaAlternateCode::getCode)
                 .orElse(UUID.randomUUID().toString());
+    }
+
+    public static String findGeoIdFromFacilityParentAlternateCodes(List<com.maersk.facility.smds.operations.msk.parentAlternateCode> alternateCodes) {
+        return alternateCodes.stream()
+                .filter(value -> GEO_ID.equals(value.getCodeType()))
+                .findFirst()
+                .map(com.maersk.facility.smds.operations.msk.parentAlternateCode::getCode)
+                .orElseThrow();
     }
 }

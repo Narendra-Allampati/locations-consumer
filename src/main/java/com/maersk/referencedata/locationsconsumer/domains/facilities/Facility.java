@@ -25,6 +25,7 @@ public class Facility implements Persistable<String> {
     private boolean extExposed;
     private String url;
     private String departmentOfDefenceActivityAddressCode;
+    private String parentId;
     private String parentName;
     private String parentType;
 

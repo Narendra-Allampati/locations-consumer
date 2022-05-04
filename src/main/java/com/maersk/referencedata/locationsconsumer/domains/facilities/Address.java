@@ -20,6 +20,7 @@ public class Address implements Persistable<String> {
 
     @Id
     private String id;
+    private String facilityId;
     private String houseNumber;
     private String street;
     private String city;

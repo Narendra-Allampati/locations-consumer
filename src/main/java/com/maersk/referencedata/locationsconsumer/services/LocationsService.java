@@ -39,7 +39,7 @@ import com.maersk.referencedata.locationsconsumer.repositories.locations.ParentR
 import com.maersk.referencedata.locationsconsumer.repositories.locations.PostalCodeRepository;
 import com.maersk.referencedata.locationsconsumer.repositories.locations.SubCityParentRepository;
 import com.maersk.shared.kafka.serialization.KafkaDeserializerUtils;
-import com.maersk.shared.kafka.utilities.Validator;
+import com.maersk.shared.kafka.utilities.ErrorHandlingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -91,7 +91,7 @@ public class LocationsService {
                 .receive()
                 .doOnError(error -> log.warn("Error receiving Geography record, exception -> {}, retry will be attempted",
                         error.getLocalizedMessage(), error))
-                .retryWhen(Retry.indefinitely().filter(Validator::isRetriableKafkaError))
+                .retryWhen(Retry.indefinitely().filter(ErrorHandlingUtils::isRetriableKafkaError))
                 .doOnError(error -> log.warn("Error thrown whilst processing geography records, error isn't a " +
                         "known retriable error, will attempt to retry processing records , exception -> {}", error.getLocalizedMessage(), error))
                 .retryWhen(Retry.fixedDelay(100, Duration.ofMinutes(1)))
@@ -212,7 +212,7 @@ public class LocationsService {
         return Optional.ofNullable(parentAvro)
                 .map(pa -> {
                     List<parentAlternateCode> alternateCodes = pa.getAlternateCodes();
-                    String geoID = GeographyMapper.findCodeFromParentAlternateCodes(alternateCodes, GEO_ID);
+                    String geoID = GeographyMapper.findCodeFromGeoParentAlternateCodes(alternateCodes, GEO_ID);
                     return Parent.builder().rowId(geoID).name(pa.getName()).type(pa.getType()).build();
                 });
     }

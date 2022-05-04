@@ -18,6 +18,7 @@ public class FacilityDetail implements Persistable<String> {
 
     @Id
     private String id;
+    private String facilityId;
     private String weightLimitCraneKG;
     private String weightLimitYardKG;
     private String vesselAgent;

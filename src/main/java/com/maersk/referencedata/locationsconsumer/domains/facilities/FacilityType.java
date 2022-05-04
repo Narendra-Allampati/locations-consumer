@@ -21,6 +21,7 @@ public class FacilityType implements Persistable<String> {
 
     @Id
     private String id;
+    private String facilityId;
     private String code;
     private String name;
     private String masterType;

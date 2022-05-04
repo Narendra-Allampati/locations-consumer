@@ -20,6 +20,7 @@ public class OpeningHour implements Persistable<String> {
 
     @Id
     private String id;
+    private String facilityId;
     private String day;
     private String openTimeHours;
     private String openTimeMinutes;

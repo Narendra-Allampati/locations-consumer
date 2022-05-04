@@ -21,6 +21,7 @@ public class FacilityService implements Persistable<String> {
 
     @Id
     private String id;
+    private String facilityId;
     private String serviceName;
     private String serviceCode;
     private String serviceDescription;

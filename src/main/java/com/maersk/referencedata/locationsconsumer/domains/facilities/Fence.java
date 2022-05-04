@@ -20,6 +20,7 @@ public class Fence implements Persistable<String> {
 
     @Id
     private String id;
+    private String facilityId;
     private String name;
     private String fenceType;
 

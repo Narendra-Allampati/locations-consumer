@@ -1,6 +1,7 @@
 CREATE TABLE CONTACT_DETAILS
 (
     ID                                  VARCHAR (50),
+    FACILITY_ID                         VARCHAR (50),
     FIRST_NAME                          VARCHAR (100),
     LAST_NAME                           VARCHAR (100),
     JOB_TITLE                           VARCHAR (100),
@@ -13,4 +14,8 @@ CREATE TABLE CONTACT_DETAILS
     INTERNATIONAL_DIALING_CODE_FAX      VARCHAR (100),
     FAX_NUMBER                          VARCHAR (100),
     EMAIL_ADDRESS                       VARCHAR (100),
-    VALID_THROUGH_DATE                  VARCHAR (100));
+    VALID_THROUGH_DATE                  VARCHAR (100),
+    CONSTRAINT CONTACT_DETAILS_PK PRIMARY KEY (ID),
+    CONSTRAINT FACILITY_FK FOREIGN KEY(FACILITY_ID)
+    REFERENCES FACILITIES(ID)
+    ON DELETE CASCADE);

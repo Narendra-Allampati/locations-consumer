@@ -8,5 +8,7 @@ CREATE TABLE FACILITIES
     EXT_EXPOSED                                     VARCHAR (100),
     URL                                             VARCHAR (500),
     DEPARTMENT_OF_DEFENCE_ACTIVITY_ADDRESS_CODE     VARCHAR (100),
+    PARENT_ID                                       VARCHAR (50),
     PARENT_NAME                                     VARCHAR (100),
-    PARENT_TYPE                                     VARCHAR (100));
+    PARENT_TYPE                                     VARCHAR (100),
+    CONSTRAINT FACILITY_ID_PK PRIMARY KEY (ID));

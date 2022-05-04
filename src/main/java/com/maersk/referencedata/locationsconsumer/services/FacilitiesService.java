@@ -23,6 +23,7 @@ import com.maersk.referencedata.locationsconsumer.domains.facilities.Fence;
 import com.maersk.referencedata.locationsconsumer.domains.facilities.OpeningHour;
 import com.maersk.referencedata.locationsconsumer.domains.facilities.TransportMode;
 import com.maersk.referencedata.locationsconsumer.domains.locations.Parent;
+import com.maersk.referencedata.locationsconsumer.mappers.GeographyMapper;
 import com.maersk.referencedata.locationsconsumer.model.facilities.FacilityTypeWrapper;
 import com.maersk.referencedata.locationsconsumer.repositories.facilities.AddressesRepository;
 import com.maersk.referencedata.locationsconsumer.repositories.facilities.ContactDetailsRepository;
@@ -48,10 +49,9 @@ import reactor.core.publisher.Mono;
 import reactor.kafka.receiver.KafkaReceiver;
 import reactor.kafka.receiver.ReceiverRecord;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+
+import static com.maersk.referencedata.locationsconsumer.mappers.GeographyMapper.findGeoIdFromFacilityParentAlternateCodes;
 
 /**
  * @author Anders Clausen on 20/03/2022.
@@ -109,54 +109,50 @@ public class FacilitiesService {
 
     private Mono<Void> createOrUpdateFacility(facility facilityEvent) {
         return facilitiesRepository.findById(facilityEvent.getFacilityId())
-                .flatMap(facilityFromDB -> {
-                    if (facilityFromDB == null) {
-                        return saveFacility(facilityEvent);
-                    } else {
-                        return updateFacility(facilityEvent);
-                    }
-                });
+                .flatMap(facilityFromDB -> updateFacility(facilityEvent))
+                .switchIfEmpty(saveFacility(facilityEvent));
     }
 
     private Mono<Void> saveFacility(facility facilityEvent) {
-        return mapAndSaveFacilityEvent(facilityEvent, true);
+        return mapAndSaveFacilityEvent(facilityEvent);
     }
 
     private Mono<Void> updateFacility(facility facilityEvent) {
-        return mapAndSaveFacilityEvent(facilityEvent, false);
+        return facilitiesRepository.deleteById(facilityEvent.getFacilityId())
+                .then(mapAndSaveFacilityEvent(facilityEvent));
     }
 
-    private Mono<Void> mapAndSaveFacilityEvent(facility facilityEvent, boolean isNew) {
+    private Mono<Void> mapAndSaveFacilityEvent(facility facilityEvent) {
 
         String facilityId = facilityEvent.getFacilityId();
 
-        final var facility = mapToFacility(facilityEvent, isNew);
+        final var facility = mapToFacility(facilityEvent);
 
-        final var address = mapToAddress(facilityEvent.getAddress(), facilityId, isNew);
+        final var address = mapToAddress(facilityEvent.getAddress(), facilityId);
 
         // TODO This one has a list of alternateCodes but do we need them?
 //        final var parent = mapToParent(facilityEvent.getParent());
 
         List<FacilityAlternateCodeLink> facilityAlternateCodeLinks = mapToAlternateCodeLinks(facilityEvent.getAlternateCodes(), facilityId);
 
-        final var facilityDetail = mapToFacilityDetail(facilityEvent.getFacilityDetail(), facilityId, isNew);
+        final var facilityDetail = mapToFacilityDetail(facilityEvent.getFacilityDetail(), facilityId);
 
-        final var facilityTypeWrappers = mapToFacilityTypes(facilityEvent.getFacilityDetail(), facilityId, isNew);
+        final var facilityTypeWrappers = mapToFacilityTypes(facilityEvent.getFacilityDetail(), facilityId);
         List<FacilityType> facilityTypes = facilityTypeWrappers.map(this::getFacilityTypesAsList).orElse(Collections.emptyList());
         List<FacilityTypeLink> facilityTypeLinks = facilityTypeWrappers.map(this::getFacilityTypeLinksAsList).orElse(Collections.emptyList());
 
-        final var openingHours = mapToFacilityOpeningHours(facilityEvent.getOpeningHours(), facilityId, isNew);
+        final var openingHours = mapToFacilityOpeningHours(facilityEvent.getOpeningHours(), facilityId);
 
-        final var transportModes = mapToTransportModes(facilityEvent.getTransportModes(), facilityId, isNew);
+        final var transportModes = mapToTransportModes(facilityEvent.getTransportModes(), facilityId);
 
-        final var facilityServices = mapToFacilityServices(facilityEvent.getFacilityServices(), facilityId, isNew);
+        final var facilityServices = mapToFacilityServices(facilityEvent.getFacilityServices(), facilityId);
 
-        final var fences = mapToFences(facilityEvent.getFences(), facilityId, isNew);
+        final var fences = mapToFences(facilityEvent.getFences(), facilityId);
 
 //        // this one has a list of alternateCodes as optional
 //        final var businessDefinedAreas = mapToBusinessDefinedAreas(facilityEvent.getBda());
 
-        final var contactDetails = mapToContactDetails(facilityEvent.getContactDetails(), facilityId, isNew);
+        final var contactDetails = mapToContactDetails(facilityEvent.getContactDetails(), facilityId);
 
         return Flux.merge(facilitiesRepository.save(facility),
                         addressesRepository.save(address),
@@ -173,9 +169,9 @@ public class FacilitiesService {
                 .then();
     }
 
-    private Facility mapToFacility(facility facilityEvent, boolean isNew) {
+    private Facility mapToFacility(facility facilityEvent) {
         return Facility.builder()
-                .isNew(isNew)
+                .isNew(true)
                 .id(facilityEvent.getFacilityId())
                 .name(facilityEvent.getName())
                 .type(facilityEvent.getType())
@@ -184,6 +180,7 @@ public class FacilitiesService {
                 .extExposed(facilityEvent.getExtExposed())
                 .url(facilityEvent.getUrl())
                 .departmentOfDefenceActivityAddressCode(facilityEvent.getDoDAAC())
+                .parentId(findGeoIdFromFacilityParentAlternateCodes(facilityEvent.getParent().getAlternateCodes()))
                 .parentName(facilityEvent.getParent().getName())
                 .parentType(facilityEvent.getParent().getType())
                 .build();
@@ -198,11 +195,12 @@ public class FacilitiesService {
                 .toList();
     }
 
-    private Address mapToAddress(address addressEvent, String facilityId, boolean isNew) {
+    private Address mapToAddress(address addressEvent, String facilityId) {
         return
                 Address.builder()
-                        .isNew(isNew)
-                        .id(facilityId)
+                        .isNew(true)
+                        .id(UUID.randomUUID().toString())
+                        .facilityId(facilityId)
                         .houseNumber(addressEvent.getHouseNumber())
                         .street(addressEvent.getStreet())
                         .city(addressEvent.getCity())
@@ -227,12 +225,13 @@ public class FacilitiesService {
                 .build();
     }
 
-    private Optional<FacilityDetail> mapToFacilityDetail(facilityDetail facilityDetail, String facilityId, boolean isNew) {
+    private Optional<FacilityDetail> mapToFacilityDetail(facilityDetail facilityDetail, String facilityId) {
         return Optional.ofNullable(facilityDetail)
                 .map(fd ->
                         FacilityDetail.builder()
-                                .isNew(isNew)
-                                .id(facilityId)
+                                .isNew(true)
+                                .id(UUID.randomUUID().toString())
+                                .facilityId(facilityId)
                                 .weightLimitCraneKG(fd.getWeightLimitCraneKg())
                                 .weightLimitYardKG(fd.getWeightLimitYardKg())
                                 .vesselAgent(fd.getVesselAgent())
@@ -250,20 +249,22 @@ public class FacilitiesService {
                                 .build());
     }
 
-    private Optional<List<FacilityTypeWrapper>> mapToFacilityTypes(facilityDetail fd, String facilityId, boolean isNew) {
+    private Optional<List<FacilityTypeWrapper>> mapToFacilityTypes(facilityDetail fd, String facilityId) {
         return Optional.ofNullable(fd)
                 .map(facilityDetail::getFacilityTypes)
                 .map(facilityTypes -> facilityTypes.stream()
                         .map(type -> {
                             FacilityType facilityType = FacilityType.builder()
-                                    .isNew(isNew)
-                                    .id(facilityId)
+                                    .isNew(true)
+                                    .id(UUID.randomUUID().toString())
+                                    .facilityId(facilityId)
                                     .code(type.getCode())
                                     .name(type.getName())
                                     .masterType(type.getMasterType())
                                     .validThroughDate(type.getValidThroughDate())
                                     .build();
 
+                            // TODO remove link object and wrapper class. Not needed
                             FacilityTypeLink facilityTypeLink = FacilityTypeLink.builder()
                                     .facilityId(facilityId)
                                     .opsFacilityTypeCode(type.getCode())
@@ -289,12 +290,13 @@ public class FacilitiesService {
                 .toList();
     }
 
-    private List<OpeningHour> mapToFacilityOpeningHours(List<openingHour> openingHours, String facilityId, boolean isNew) {
+    private List<OpeningHour> mapToFacilityOpeningHours(List<openingHour> openingHours, String facilityId) {
         return Optional.ofNullable(openingHours)
                 .orElse(Collections.emptyList()).stream().map(oh ->
                         OpeningHour.builder()
-                                .isNew(isNew)
-                                .id(facilityId)
+                                .isNew(true)
+                                .id(UUID.randomUUID().toString())
+                                .facilityId(facilityId)
                                 .day(oh.getDay())
                                 .openTimeHours(oh.getOpenTimeHours())
                                 .openTimeMinutes(oh.getOpenTimeMinutes())
@@ -305,12 +307,13 @@ public class FacilitiesService {
                 .toList();
     }
 
-    private List<TransportMode> mapToTransportModes(List<transportMode> transportModes, String facilityId, boolean isNew) {
+    private List<TransportMode> mapToTransportModes(List<transportMode> transportModes, String facilityId) {
         return Optional.ofNullable(transportModes)
                 .orElse(Collections.emptyList()).stream().map(tm ->
                         TransportMode.builder()
-                                .isNew(isNew)
-                                .id(facilityId)
+                                .isNew(true)
+                                .id(UUID.randomUUID().toString())
+                                .facilityId(facilityId)
                                 .modeOfTransport(tm.getModeOfTransport())
                                 .transportCode(tm.getTransportCode())
                                 .transportDescription(tm.getTransportDescription())
@@ -320,12 +323,13 @@ public class FacilitiesService {
                 .toList();
     }
 
-    private List<FacilityService> mapToFacilityServices(List<facilityService> facilityServices, String facilityId, boolean isNew) {
+    private List<FacilityService> mapToFacilityServices(List<facilityService> facilityServices, String facilityId) {
         return Optional.ofNullable(facilityServices)
                 .orElse(Collections.emptyList()).stream().map(fs ->
                         FacilityService.builder()
-                                .isNew(isNew)
-                                .id(facilityId)
+                                .isNew(true)
+                                .id(UUID.randomUUID().toString())
+                                .facilityId(facilityId)
                                 .serviceName(fs.getServiceName())
                                 .serviceCode(fs.getServiceCode())
                                 .serviceDescription(fs.getServiceDescription())
@@ -335,12 +339,13 @@ public class FacilitiesService {
                 .toList();
     }
 
-    private List<Fence> mapToFences(List<fence> fences, String facilityId, boolean isNew) {
+    private List<Fence> mapToFences(List<fence> fences, String facilityId) {
         return Optional.ofNullable(fences)
                 .orElse(Collections.emptyList()).stream().map(fence ->
                         Fence.builder()
-                                .isNew(isNew)
-                                .id(facilityId)
+                                .isNew(true)
+                                .id(UUID.randomUUID().toString())
+                                .facilityId(facilityId)
                                 .name(fence.getName())
                                 .fenceType(fence.getFenceType())
                                 .build()
@@ -348,12 +353,13 @@ public class FacilitiesService {
                 .toList();
     }
 
-    private List<ContactDetail> mapToContactDetails(List<contactDetail> contactDetails, String facilityId, boolean isNew) {
+    private List<ContactDetail> mapToContactDetails(List<contactDetail> contactDetails, String facilityId) {
         return Optional.ofNullable(contactDetails)
                 .orElse(Collections.emptyList()).stream().map(contactDetail ->
                         ContactDetail.builder()
-                                .isNew(isNew)
-                                .id(facilityId)
+                                .isNew(true)
+                                .id(UUID.randomUUID().toString())
+                                .facilityId(facilityId)
                                 .firstName(contactDetail.getFirstName())
                                 .lastName(contactDetail.getLastName())
                                 .jobTitle(contactDetail.getJobTitle())

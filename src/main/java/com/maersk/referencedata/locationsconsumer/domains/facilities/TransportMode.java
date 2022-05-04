@@ -21,6 +21,7 @@ public class TransportMode implements Persistable<String> {
 
     @Id
     private String id;
+    private String facilityId;
     private String modeOfTransport;
     private String transportCode;
     private String transportDescription;

@@ -20,6 +20,7 @@ public class ContactDetail implements Persistable<String> {
 
     @Id
     private String id;
+    private String facilityId;
     private String firstName;
     private String lastName;
     private String jobTitle;

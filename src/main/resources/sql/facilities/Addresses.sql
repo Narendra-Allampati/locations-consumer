@@ -1,6 +1,7 @@
 CREATE TABLE ADDRESSES
 (
     ID                                  VARCHAR (50),
+    FACILITY_ID                         VARCHAR (50),
     HOUSE_NUMBER                        VARCHAR (500),
     STREET                              VARCHAR (500),
     CITY                                VARCHAR (100),
@@ -14,4 +15,8 @@ CREATE TABLE ADDRESSES
     ADDRESS_LINE3                       VARCHAR (100),
     LATITUDE                            VARCHAR (100),
     LONGITUDE                           VARCHAR (100),
-    ADDRESS_QUALITY_CHECK_INDICATOR     VARCHAR (100));
+    ADDRESS_QUALITY_CHECK_INDICATOR     VARCHAR (100),
+    CONSTRAINT ADDRESSES_PK PRIMARY KEY (ID),
+    CONSTRAINT FACILITY_FK FOREIGN KEY(FACILITY_ID)
+    REFERENCES FACILITIES(ID)
+    ON DELETE CASCADE);
