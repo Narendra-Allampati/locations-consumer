@@ -89,13 +89,14 @@ public class LocationsService {
     public Disposable startKafkaConsumer() {
         return locationsKafkaReceiver
                 .receive()
+                .take(10000)
                 .doOnError(error -> log.warn("Error receiving Geography record, exception -> {}, retry will be attempted",
                         error.getLocalizedMessage(), error))
                 .retryWhen(Retry.indefinitely().filter(ErrorHandlingUtils::isRetriableKafkaError))
                 .doOnError(error -> log.warn("Error thrown whilst processing geography records, error isn't a " +
                         "known retriable error, will attempt to retry processing records , exception -> {}", error.getLocalizedMessage(), error))
                 .retryWhen(Retry.fixedDelay(100, Duration.ofMinutes(1)))
-                .doOnNext(event -> log.debug("Received event: key {}, value {}", event.key(), event.value()))
+                .doOnNext(event -> log.debug("Received geo event: key {}, value {}", event.key(), event.value()))
                 .concatMap(this::handleLocationEvent)
                 .subscribe(result -> result.receiverOffset().acknowledge());
     }
@@ -112,22 +113,28 @@ public class LocationsService {
                     }
                 })
                 .flatMap(geographyMessage -> createOrUpdate(geographyMessage.getGeography()))
-                .doOnError(ex -> log.warn("Error processing event after all retries {} and value {}", geographyRecord.key(), geographyRecord.value(), ex))
+                .doOnError(ex -> log.warn("Error processing event {} and value {}", geographyRecord.key(), geographyRecord.value(), ex))
                 .onErrorResume(ex -> Mono.empty())
                 .then(Mono.just(geographyRecord));
     }
 
-    private Mono<Void> createOrUpdate(geography geography) {
+    private Mono<String> createOrUpdate(geography geography) {
+        if (POSTAL_CODE.equals(geography.getGeoType())) {
+            return postalCodeRepository.findById(geography.getGeoId())
+                    .flatMap(geographyFromDB -> updateGeography(geography))
+                    .switchIfEmpty(saveGeography(geography));
+        }
+
         return geographyRepository.findById(geography.getGeoId())
                 .flatMap(geographyFromDB -> updateGeography(geography))
                 .switchIfEmpty(saveGeography(geography));
     }
 
-    private Mono<Void> saveGeography(geography geography) {
+    private Mono<String> saveGeography(geography geography) {
         return mapAndSaveGeographyEvent(geography, true);
     }
 
-    private Mono<Void> updateGeography(geography geography) {
+    private Mono<String> updateGeography(geography geography) {
         if (POSTAL_CODE.equals(geography.getGeoType())) {
             return postalCodeRepository.deleteById(geography.getGeoId())
                     .then(saveGeography(geography));
@@ -137,7 +144,7 @@ public class LocationsService {
         }
     }
 
-    private Mono<Void> mapAndSaveGeographyEvent(geography geography, boolean isNew) {
+    private Mono<String> mapAndSaveGeographyEvent(geography geography, boolean isNew) {
 
         String geoID = geography.getGeoId();
 
@@ -147,20 +154,21 @@ public class LocationsService {
 
         final var alternateNames = mapToAlternateNames(geography.getAlternateNames(), geoID, isNew);
 
-        final var alternateCodesWrappers = mapToAlternateCodes(geography.getAlternateCodes(), geoID, isNew);
-        List<GeoAlternateCodeLink> geoAlternateCodeLinks = alternateCodesWrappers.stream().map(AlternateCodeWrapper::getAlternateCodesLinks).toList();
-        List<AlternateCode> alternateCodes = alternateCodesWrappers.stream().map(AlternateCodeWrapper::getAlternateCodes).toList();
+//        final var alternateCodesWrappers = mapToAlternateCodesWrapper(geography.getAlternateCodes(), geoID, isNew);
+//        List<GeoAlternateCodeLink> geoAlternateCodeLinks = alternateCodesWrappers.stream().map(AlternateCodeWrapper::getAlternateCodesLinks).toList();
+//        List<AlternateCode> alternateCodes = alternateCodesWrappers.stream().map(AlternateCodeWrapper::getAlternateCodes).toList();
+        List<AlternateCode> alternateCodes = mapToAlternateCodes(geography.getAlternateCodes(), geoID, isNew);
 
         List<BdaWithAlternateCodes> bdaWithAlternateCodes = mapToBdaWithAlternateCodes(geography.getBdas());
 
         List<BdaLocationWithAlternateCodes> bdaLocationWithAlternateCodes = mapToBdaLocationsWithAlternateCodes(geography.getBdaLocations());
 
-        return Flux.merge(geographyRepository.saveAll(Mono.justOrEmpty(geo)).then()
+        return Flux.concat(geographyRepository.saveAll(Mono.justOrEmpty(geo)).then()
                         , postalCodeRepository.saveAll(Mono.justOrEmpty(postalCode)).then()
                         , alternateNameRepository.saveAll(alternateNames).then()
-                        , alternateCodeRepository.saveAll(alternateCodes).then()
-                        , geoAlternateCodeLinksRepository.saveAll(geoAlternateCodeLinks).then())
-                .then();
+                        , alternateCodeRepository.saveAll(alternateCodes).then())
+//                        , geoAlternateCodeLinksRepository.saveAll(geoAlternateCodeLinks).then())
+                .then(Mono.just("1"));
     }
 
     private List<BdaWithAlternateCodes> mapToBdaWithAlternateCodes(List<bda> bdas) {
@@ -295,12 +303,12 @@ public class LocationsService {
     private Optional<Geography> mapGeographyEventToGeography(geography geography, boolean isNew) {
 
         // Only build the Geography object if it is not of type Postal code
-        if (!POSTAL_CODE.equals(geography.getGeoType())) {
-            Geography geo = buildGeography(geography, isNew);
-            return Optional.of(geo);
+        if (POSTAL_CODE.equals(geography.getGeoType())) {
+            return Optional.empty();
         }
+        Geography geo = buildGeography(geography, isNew);
+        return Optional.of(geo);
 
-        return Optional.empty();
     }
 
     private Geography buildGeography(geography geography, boolean isNew) {
@@ -414,7 +422,22 @@ public class LocationsService {
                 .toList();
     }
 
-    private List<AlternateCodeWrapper> mapToAlternateCodes(List<alternateCode> alternateCodes, String geoID, boolean isNew) {
+    private List<AlternateCode> mapToAlternateCodes(List<alternateCode> alternateCodes, String geoID, boolean isNew) {
+        return alternateCodes
+                .stream()
+                .map(alternateCode ->
+                        AlternateCode.builder()
+                                .isNew(isNew)
+                                .id(UUID.randomUUID())
+                                .geoId(geoID)
+                                .code(alternateCode.getCode())
+                                .codeType(alternateCode.getCodeType())
+                                .build()
+                )
+                .toList();
+    }
+
+    private List<AlternateCodeWrapper> mapToAlternateCodesWrapper(List<alternateCode> alternateCodes, String geoID, boolean isNew) {
         return alternateCodes
                 .stream()
                 .map(alternateCode -> {

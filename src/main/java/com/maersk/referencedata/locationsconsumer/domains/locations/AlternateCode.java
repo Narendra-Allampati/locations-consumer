@@ -17,9 +17,11 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @Table(value = "ALTERNATE_CODES")
-public class AlternateCode implements Persistable<String> {
+public class AlternateCode implements Persistable<UUID> {
 
     @Id
+    private UUID id;
+    private String geoId;
     private String code;
     private String codeType;
 
@@ -31,8 +33,8 @@ public class AlternateCode implements Persistable<String> {
     private boolean isNew;
 
     @Override
-    public String getId() {
-        return this.code;
+    public UUID getId() {
+        return this.id;
     }
 
     @Override

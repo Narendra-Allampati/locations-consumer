@@ -38,6 +38,7 @@ import com.maersk.referencedata.locationsconsumer.repositories.facilities.Openin
 import com.maersk.referencedata.locationsconsumer.repositories.facilities.ParentsRepository;
 import com.maersk.referencedata.locationsconsumer.repositories.facilities.TransportModesRepository;
 import com.maersk.shared.kafka.serialization.KafkaDeserializerUtils;
+import com.maersk.shared.kafka.utilities.ErrorHandlingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
@@ -48,7 +49,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.kafka.receiver.KafkaReceiver;
 import reactor.kafka.receiver.ReceiverRecord;
+import reactor.util.retry.Retry;
 
+import java.time.Duration;
 import java.util.*;
 
 import static com.maersk.referencedata.locationsconsumer.mappers.GeographyMapper.findGeoIdFromFacilityParentAlternateCodes;
@@ -81,8 +84,13 @@ public class FacilitiesService {
         return facilityKafkaReceiver
                 .receive()
                 .take(0)
-//                .doOnNext(event -> log.info("Received event: key {}, value {}", event.key(), event.value()))
-                .doOnError(error -> log.error("Error receiving Facility record", error))
+                .doOnError(error -> log.warn("Error receiving Facility record, exception -> {}, retry will be attempted",
+                        error.getLocalizedMessage(), error))
+                .retryWhen(Retry.indefinitely().filter(ErrorHandlingUtils::isRetriableKafkaError))
+                .doOnError(error -> log.warn("Error thrown whilst processing facility records, error isn't a " +
+                        "known retriable error, will attempt to retry processing records , exception -> {}", error.getLocalizedMessage(), error))
+                .retryWhen(Retry.fixedDelay(100, Duration.ofMinutes(1)))
+                .doOnNext(event -> log.debug("Received facility event: key {}, value {}", event.key(), event.value()))
                 .flatMap(this::handleFacilityEvent)
                 .subscribe(event -> event.receiverOffset().acknowledge());
     }
@@ -154,7 +162,7 @@ public class FacilitiesService {
 
         final var contactDetails = mapToContactDetails(facilityEvent.getContactDetails(), facilityId);
 
-        return Flux.merge(facilitiesRepository.save(facility),
+        return Flux.concat(facilitiesRepository.save(facility),
                         addressesRepository.save(address),
 //                        parentsRepository.save(parent),
 //                        facilityAlternateCodeLinksRepository.saveAll(facilityAlternateCodeLinks),

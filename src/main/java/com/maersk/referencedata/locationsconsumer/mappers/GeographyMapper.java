@@ -16,7 +16,7 @@ import java.util.UUID;
 @UtilityClass
 public class GeographyMapper {
 
-    private static final String GEO_ID = "GEO_ID";
+    private static final String GEO_ID = "GEOID";
 
     public String findCodeFromCountryAlternateCodes(List<countryAlternateCode> alternateCodes, String type) {
         // TODO Do I really want to set a random UUID?
