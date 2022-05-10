@@ -83,7 +83,7 @@ public class FacilitiesService {
     public Disposable startKafkaConsumer() {
         return facilityKafkaReceiver
                 .receive()
-                .take(0)
+                .take(10000)
                 .doOnError(error -> log.warn("Error receiving Facility record, exception -> {}, retry will be attempted",
                         error.getLocalizedMessage(), error))
                 .retryWhen(Retry.indefinitely().filter(ErrorHandlingUtils::isRetriableKafkaError))
