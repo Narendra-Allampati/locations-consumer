@@ -136,8 +136,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: maersk-global/github-actions-commons
-#          ref: feature-trivy-scan
-          token: ${{ secrets.githubToken }}
+          token: ${{ secrets.ACCESS_TOKEN }}
           path: .github/actions/commons
       - name: Push Docker image
         uses: ./.github/actions/commons/docker-push
