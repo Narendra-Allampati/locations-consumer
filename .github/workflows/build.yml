@@ -142,3 +142,4 @@ jobs:
         uses: ./.github/actions/commons/docker-push
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
+          loadDockerImageArtifact: 'false'
