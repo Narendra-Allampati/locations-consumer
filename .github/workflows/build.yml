@@ -143,4 +143,4 @@ jobs:
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           loadDockerImageArtifact: 'false'
-          imageName: 'ghcr.io/maersk-global/locations-consumer'
+          imageName: 'maersk-global/locations-consumer'
