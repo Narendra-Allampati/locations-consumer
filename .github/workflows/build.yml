@@ -115,8 +115,6 @@ jobs:
           docker images
           docker save ghcr.io/maersk-global/locations-consumer:${{ github.run_id }} > /tmp/locations.tar
           ls /tmp
-          echo "::debug::Workspace contents"
-          ls ${{ github.workspace }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload image artifact
@@ -126,10 +124,10 @@ jobs:
           path: /tmp/locations.tar
 
           
-  docker-push:
+  docker_push:
     name: Push Docker image
     runs-on: ubuntu-latest
-#    needs: trivy
+    needs: docker_image
     steps:
       - uses: actions/download-artifact@v2
         with:
