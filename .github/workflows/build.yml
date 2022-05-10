@@ -113,7 +113,7 @@ jobs:
         run: |
           mvn spring-boot:build-image -B -e -Dspring-boot.build-image.imageName=maersk-global/locations-consumer:v${{ github.run_id }}
           docker images
-          docker save maersk-global/locations-consumer:${{ github.run_id }} > /tmp/image.tar
+          docker save maersk-global/locations-consumer:v${{ github.run_id }} > /tmp/image.tar
           ls /tmp
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
