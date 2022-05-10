@@ -113,7 +113,7 @@ jobs:
         run: |
           mvn spring-boot:build-image -B -e -Dspring-boot.build-image.imageName=maersk-global/locations-consumer:${{ github.run_id }}
           docker images
-          docker save maersk-global/locations-consumer:${{ github.run_id }} > /tmp/locations.tar
+          docker save maersk-global/locations-consumer:${{ github.run_id }} > /tmp/image.tar
           ls /tmp
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -121,7 +121,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: docker-image
-          path: /tmp/locations.tar
+          path: /tmp/image.tar
 
           
   docker_push:
@@ -129,9 +129,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: docker_image
     steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: docker-image
       - name: Checkout common actions
         uses: actions/checkout@v2
         with:
@@ -142,5 +139,4 @@ jobs:
         uses: ./.github/actions/commons/docker-push
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
-          loadDockerImageArtifact: 'false'
           imageName: 'maersk-global/locations-consumer'
