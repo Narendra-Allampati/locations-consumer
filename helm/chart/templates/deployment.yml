@@ -46,12 +46,32 @@ spec:
                   value: "true"
                 - name: DD_LOG_LEVEL
                   value: "debug"
+                - name: OTEL_COLLECTOR_ADDRESS
+                  value: {{ .Values.spring.sleuth.otel.exporter.otlp.endpoint }}
+                - name: KAFKA_BOOTSTRAP_SERVERS
+                  value: {{ .Values.kafka.bootstrapServers }}
+                - name: KAFKA_USERNAME
+                  value: {{ .Values.kafka.username }}
+                - name: KAFKA_PASSWORD
+                  value: {{ .Values.kafka.password }}
+                - name: KAFKA_CONSUMER_GROUP
+                  value: {{ .Values.kafka.consumer.consumerGroup }}
+                - name: KAFKA_SCHEMA_REGISTRY_URL
+                  value: {{ .Values.kafka.schemaRegistry.url }}
+                - name: KAFKA_SCHEMA_REGISTRY_API_KEY
+                  value: {{ .Values.kafka.schemaRegistry.username }}
+                - name: KAFKA_SCHEMA_REGISTRY_PASSWORD
+                  value: {{ .Values.kafka.schemaRegistry.password }}
+                - name: KAFKA_FACILITIES_TOPIC
+                  value: {{ .Values.kafka.consumer.facilities.topic }}
+                - name: KAFKA_LOCATIONS_TOPIC
+                  value: {{ .Values.kafka.consumer.locations.topic }}
                 - name: DATASOURCE_URL
-                  value: {{ .Values.datasource.url }}
+                  value: {{ .Values.spring.r2dbc.url }}
                 - name: DATASOURCE_USERNAME
-                  value: {{ .Values.datasource.username }}
+                  value: {{ .Values.spring.r2dbc.username }}
                 - name: DATASOURCE_PASSWORD
-                  value: {{ .Values.datasource.password }}
+                  value: {{ .Values.spring.r2dbc.password }}
           imagePullPolicy: Always
           ports:
             - name: http
