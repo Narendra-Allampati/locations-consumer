@@ -69,7 +69,7 @@ spring:
     #  \___/ \______/ \___/   \____________/\__________/\___________/
     #  |       |      |           |           |           |
     #  scheme  driver  protocol  authority    path        query
-    url: ${POSTGRES_SCHEME}:postgresql:${POSTGRES_HOST}/${POSTGRES_DB}?locale=en_GB
+    url: ${POSTGRES_SCHEME}:postgresql:${POSTGRES_HOST}/${POSTGRES_DB}?locale=en_GB&ssl=true
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
   sleuth:
