@@ -28,7 +28,7 @@ kafka:
 
 spring:
   r2dbc:
-    url: r2dbc:postgresql:vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/postgres/host#host/vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/postgres/db#db?locale=en_GB
+    url: r2dbc:postgresql:reference-data-server.postgres.database.azure.com/reference-data-server?locale=en_GB
     username: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/postgres/username#username
     password: vault:synergyreferencedata-kv/data/dev/services/locations-consumer/postgres/password#password
   sleuth:
