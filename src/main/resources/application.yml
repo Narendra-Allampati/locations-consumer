@@ -23,8 +23,8 @@ OTEL_COLLECTOR_ADDRESS: "http://localhost:4317"
 POSTGRES_HOST: https://localhost:5432
 POSTGRES_DB: postgres
 #POSTGRES_DB: reference-data-locations
-POSTGRES_USER: postgres
-POSTGRES_PWD: postgres
+POSTGRES_USERNAME: postgres
+POSTGRES_PASSWORD: postgres
 ## Scheme identifies whether SSL is disabled (r2dbc) or Enabled (r2dbcs)
 POSTGRES_SCHEME: r2dbc
 
@@ -70,8 +70,8 @@ spring:
     #  |       |      |           |           |           |
     #  scheme  driver  protocol  authority    path        query
     url: ${POSTGRES_SCHEME}:postgresql:${POSTGRES_HOST}/${POSTGRES_DB}?locale=en_GB
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PWD}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
   sleuth:
     otel:
       exporter:

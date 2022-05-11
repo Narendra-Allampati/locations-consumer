@@ -66,11 +66,15 @@ spec:
                   value: {{ .Values.kafka.consumer.facilities.topic }}
                 - name: KAFKA_LOCATIONS_TOPIC
                   value: {{ .Values.kafka.consumer.locations.topic }}
-                - name: DATASOURCE_URL
-                  value: {{ .Values.spring.r2dbc.url }}
-                - name: DATASOURCE_USERNAME
+                - name: POSTGRES_HOST
+                  value: {{ .Values.spring.r2dbc.host }}
+                - name: POSTGRES_DB
+                  value: {{ .Values.spring.r2dbc.db }}
+                - name: POSTGRES_SCHEME
+                  value: {{ .Values.spring.r2dbc.scheme }}
+                - name: POSTGRES_USERNAME
                   value: {{ .Values.spring.r2dbc.username }}
-                - name: DATASOURCE_PASSWORD
+                - name: POSTGRES_PASSWORD
                   value: {{ .Values.spring.r2dbc.password }}
           imagePullPolicy: Always
           ports:
