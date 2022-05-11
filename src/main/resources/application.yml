@@ -1,4 +1,32 @@
+#KAFKA_BOOTSTRAP_SERVERS: "localhost:9092"
+KAFKA_BOOTSTRAP_SERVERS: "pkc-lq8gm.westeurope.azure.confluent.cloud:9092"
+KAFKA_LOCATIONS_TOPIC: MSK.geography.gda.topic.internal.any.v2
+KAFKA_FACILITIES_TOPIC: MSK.geography.facility.topic.internal.any.v2
+# preprod
+#KAFKA_USERNAME:
+#KAFKA_PASSWORD:
+# prod
+KAFKA_USERNAME:
+KAFKA_PASSWORD:
+KAFKA_CONSUMER_GROUP: MSK.referenceData.referenceDataReader.consumerGroup.v1
 
+KAFKA_SCHEMA_REGISTRY_URL: "https://psrc-4kk0p.westeurope.azure.confluent.cloud/"
+# preprod
+#KAFKA_SCHEMA_REGISTRY_API_KEY:
+#KAFKA_SCHEMA_REGISTRY_PASSWORD:
+# prod
+KAFKA_SCHEMA_REGISTRY_API_KEY:
+KAFKA_SCHEMA_REGISTRY_PASSWORD:
+
+OTEL_COLLECTOR_ADDRESS: "http://localhost:4317"
+
+POSTGRES_HOST: https://localhost:5432
+POSTGRES_DB: postgres
+#POSTGRES_DB: reference-data-locations
+POSTGRES_USER: postgres
+POSTGRES_PWD: postgres
+## Scheme identifies whether SSL is disabled (r2dbc) or Enabled (r2dbcs)
+POSTGRES_SCHEME: r2dbc
 
 kafka:
   bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
@@ -44,8 +72,6 @@ spring:
     url: ${POSTGRES_SCHEME}:postgresql:${POSTGRES_HOST}/${POSTGRES_DB}?locale=en_GB
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PWD}
-  profiles:
-    active: ${PROFILE}
   sleuth:
     otel:
       exporter:
@@ -75,7 +101,7 @@ management:
     web:
       exposure:
         include: health, info, prometheus
-#logging:
-#  level:
-#    io.r2dbc.postgresql.QUERY: DEBUG
-#    io.r2dbc.postgresql.PARAM: DEBUG
+logging:
+  level:
+    io.r2dbc.postgresql.QUERY: DEBUG
+    io.r2dbc.postgresql.PARAM: DEBUG

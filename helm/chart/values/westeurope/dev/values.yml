@@ -1,23 +1,50 @@
+OTEL_COLLECTOR_ADDRESS: vault:synergyreferencedata-kv/data/readable/dev/services/global/otel-collector-address#otel-collector-address
+
+POSTGRES_HOST: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/postgres/host#host
+POSTGRES_DB: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/postgres/db#db
+POSTGRES_USER: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/postgres/username#username
+POSTGRES_PWD: vault:synergyreferencedata-kv/data/dev/services/locations-consumer/postgres/password#password
+## Scheme identifies whether SSL is disabled (r2dbc) or Enabled (r2dbcs)
+POSTGRES_SCHEME: r2dbc
+
 appName: reference-data-locations
 product: reference-data
 region: westeurope
 replicaCount: 1
 vaultRole: reference-data-dev
+
 datadog:
   env: dev
   namespace: reference-data-dev
   serviceName: reference-data-locations
+
 kafka:
-  bootstrapServers: pkc-lq8gm.westeurope.azure.confluent.cloud:9092
+  bootstrapServers: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/bootstrap-servers#bootstrap-servers
   username: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/username#username
   password: vault:synergyreferencedata-kv/data/dev/services/locations-consumer/kafka/password#password
   schemaRegistry:
-    url: https://psrc-4kk0p.westeurope.azure.confluent.cloud/
+    url: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/schema-registry/url#url
     username: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/schema-registry/api-key#api-key
     password: vault:synergyreferencedata-kv/data/dev/services/locations-consumer/kafka/schema-registry/password#password
   consumer:
-    topic: MSK.geography.facility.topic.internal.any.v1
-    consumerGroup: MSK.referenceData.referenceDataReader.consumerGroup.v1
+    facilities:
+      client-id: facilities-consumer
+      topic: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/facilities-events/topic#topic
+    locations:
+      client-id: locations-consumer
+      topic: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/locations-events/topic#topic
+    consumerGroup: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/consumer-group#consumer-group
+
+spring:
+  r2dbc:
+    url: ${POSTGRES_SCHEME}:postgresql:${POSTGRES_HOST}/${POSTGRES_DB}?locale=en_GB
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PWD}
+  sleuth:
+    otel:
+      exporter:
+        otlp:
+          endpoint: ${OTEL_COLLECTOR_ADDRESS}
 resources:
   requests:
     memory: 512Mi
