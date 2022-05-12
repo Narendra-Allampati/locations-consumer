@@ -94,7 +94,7 @@ management:
         enabled: true
       group:
         readiness:
-          include: "readinessState,diskSpace,ping,kafka"
+          include: "readinessState,diskSpace,ping,kafka,r2dbc"
           show-details: always
 
   endpoints:

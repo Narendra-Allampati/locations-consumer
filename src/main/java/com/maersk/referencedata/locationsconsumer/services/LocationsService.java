@@ -89,6 +89,9 @@ public class LocationsService {
     public Disposable startKafkaConsumer() {
         return locationsKafkaReceiver
                 .receive()
+                .name("geo events")
+                .tag("source", "kafka")
+                .metrics()
                 .doOnError(error -> log.warn("Error receiving Geography record, exception -> {}, retry will be attempted",
                         error.getLocalizedMessage(), error))
                 .retryWhen(Retry.indefinitely().filter(ErrorHandlingUtils::isRetriableKafkaError))

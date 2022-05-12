@@ -83,6 +83,9 @@ public class FacilitiesService {
     public Disposable startKafkaConsumer() {
         return facilityKafkaReceiver
                 .receive()
+                .name("facility events")
+                .tag("source", "kafka")
+                .metrics()
                 .doOnError(error -> log.warn("Error receiving Facility record, exception -> {}, retry will be attempted",
                         error.getLocalizedMessage(), error))
                 .retryWhen(Retry.indefinitely().filter(ErrorHandlingUtils::isRetriableKafkaError))
@@ -101,11 +104,7 @@ public class FacilitiesService {
                     if (tuple.getT2().isEmpty() && Objects.nonNull(tuple.getT1().value())) {
                         sink.next(tuple.getT1().value());
                     } else {
-                        if (tuple.getT2().isPresent()) {
-                            log.error("Error while processing Facility " + tuple.getT2().get());
-                        } else {
-                            log.error("I guess T1 is empty too");
-                        }
+                        log.error("Error while processing Facility " + tuple.getT2().get());
                     }
                 })
                 .flatMap(facilityMessage -> createOrUpdateFacility(facilityMessage.getFacility()))
@@ -114,22 +113,22 @@ public class FacilitiesService {
                 .then(Mono.just(event));
     }
 
-    private Mono<Void> createOrUpdateFacility(facility facilityEvent) {
+    private Mono<String> createOrUpdateFacility(facility facilityEvent) {
         return facilitiesRepository.findById(facilityEvent.getFacilityId())
                 .flatMap(facilityFromDB -> updateFacility(facilityEvent))
                 .switchIfEmpty(saveFacility(facilityEvent));
     }
 
-    private Mono<Void> saveFacility(facility facilityEvent) {
+    private Mono<String> saveFacility(facility facilityEvent) {
         return mapAndSaveFacilityEvent(facilityEvent);
     }
 
-    private Mono<Void> updateFacility(facility facilityEvent) {
+    private Mono<String> updateFacility(facility facilityEvent) {
         return facilitiesRepository.deleteById(facilityEvent.getFacilityId())
                 .then(mapAndSaveFacilityEvent(facilityEvent));
     }
 
-    private Mono<Void> mapAndSaveFacilityEvent(facility facilityEvent) {
+    private Mono<String> mapAndSaveFacilityEvent(facility facilityEvent) {
 
         String facilityId = facilityEvent.getFacilityId();
 
@@ -173,7 +172,7 @@ public class FacilitiesService {
                         facilityServicesRepository.saveAll(facilityServices).collectList(),
                         fencesRepository.saveAll(fences).collectList(),
                         contactDetailsRepository.saveAll(contactDetails).collectList())
-                .then();
+                .then(Mono.just("1"));
     }
 
     private Facility mapToFacility(facility facilityEvent) {
