@@ -1,0 +1,47 @@
+appName: reference-data-locations
+product: reference-data
+region: westeurope
+replicaCount: 1
+vaultRole: reference-data
+
+datadog:
+  env: prod
+  namespace: reference-data-metrics
+  serviceName: reference-data-locations
+
+kafka:
+  bootstrapServers: vault:synergyreferencedata-kv/data/readable/prod/services/locations-consumer/kafka/bootstrap-servers#bootstrap-servers
+  username: vault:synergyreferencedata-kv/data/readable/prod/services/locations-consumer/kafka/username#username
+  password: vault:synergyreferencedata-kv/data/prod/services/locations-consumer/kafka/password#password
+  schemaRegistry:
+    url: vault:synergyreferencedata-kv/data/readable/prod/services/locations-consumer/kafka/schema-registry/url#url
+    username: vault:synergyreferencedata-kv/data/readable/prod/services/locations-consumer/kafka/schema-registry/api-key#api-key
+    password: vault:synergyreferencedata-kv/data/prod/services/locations-consumer/kafka/schema-registry/password#password
+  consumer:
+    facilities:
+      client-id: facilities-consumer
+      topic: vault:synergyreferencedata-kv/data/readable/prod/services/locations-consumer/kafka/facilities-events/topic#topic
+    locations:
+      client-id: locations-consumer
+      topic: vault:synergyreferencedata-kv/data/readable/prod/services/locations-consumer/kafka/locations-events/topic#topic
+    consumerGroup: vault:synergyreferencedata-kv/data/readable/prod/services/locations-consumer/kafka/consumer-group#consumer-group
+
+spring:
+  r2dbc:
+    host: vault:synergyreferencedata-kv/data/readable/prod/services/locations-consumer/postgres/host#host
+    db: vault:synergyreferencedata-kv/data/readable/prod/services/locations-consumer/postgres/db#db
+    scheme: r2dbc
+    username: vault:synergyreferencedata-kv/data/readable/prod/services/locations-consumer/postgres/username#username
+    password: vault:synergyreferencedata-kv/data/prod/services/locations-consumer/postgres/password#password
+  sleuth:
+    otel:
+      exporter:
+        otlp:
+          endpoint: vault:synergyreferencedata-kv/data/readable/prod/services/global/otel-collector-address#otel-collector-address
+resources:
+  requests:
+    memory: 512Mi
+    cpu: 500m
+  limits:
+    memory: 512Mi
+    cpu: 1000m

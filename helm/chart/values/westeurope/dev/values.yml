@@ -1,22 +1,22 @@
 appName: reference-data-locations
 product: reference-data
 region: westeurope
-replicaCount: 1
+replicaCount: 4
 vaultRole: reference-data-dev
 
 datadog:
   env: dev
-  namespace: reference-data-dev
+  namespace: reference-data-metrics
   serviceName: reference-data-locations
 
 kafka:
   bootstrapServers: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/bootstrap-servers#bootstrap-servers
-  username: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/username#username
-  password: vault:synergyreferencedata-kv/data/dev/services/locations-consumer/kafka/password#password
+  username: vault:synergyreferencedata-kv/data/readable/preprod/services/locations-consumer/kafka/username#username
+  password: vault:synergyreferencedata-kv/data/preprod/services/locations-consumer/kafka/password#password
   schemaRegistry:
-    url: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/schema-registry/url#url
-    username: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/schema-registry/api-key#api-key
-    password: vault:synergyreferencedata-kv/data/dev/services/locations-consumer/kafka/schema-registry/password#password
+    url: vault:synergyreferencedata-kv/data/readable/preprod/services/locations-consumer/kafka/schema-registry/url#url
+    username: vault:synergyreferencedata-kv/data/readable/preprod/services/locations-consumer/kafka/schema-registry/api-key#api-key
+    password: vault:synergyreferencedata-kv/data/preprod/services/locations-consumer/kafka/schema-registry/password#password
   consumer:
     facilities:
       client-id: facilities-consumer

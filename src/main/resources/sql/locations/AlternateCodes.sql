@@ -3,4 +3,8 @@ CREATE TABLE ALTERNATE_CODES
     ID                                  UUID,
     GEO_ID								VARCHAR (100),
     CODE                             	VARCHAR (100),
-    CODE_TYPE                           VARCHAR (100));
+    CODE_TYPE                           VARCHAR (100),
+    CONSTRAINT ALTERNATE_CODES_PK PRIMARY KEY (ID),
+    CONSTRAINT GEOGRAPHY_FK FOREIGN KEY(GEO_ID)
+    REFERENCES GEOGRAPHY(GEO_ID)
+    ON DELETE CASCADE);
