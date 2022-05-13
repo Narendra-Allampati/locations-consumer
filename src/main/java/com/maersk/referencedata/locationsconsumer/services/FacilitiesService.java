@@ -93,7 +93,7 @@ public class FacilitiesService {
                         "known retriable error, will attempt to retry processing records , exception -> {}", error.getLocalizedMessage(), error))
                 .retryWhen(Retry.fixedDelay(100, Duration.ofMinutes(1)))
                 .doOnNext(event -> log.debug("Received facility event: key {}, value {}", event.key(), event.value()))
-                .flatMap(this::handleFacilityEvent)
+                .concatMap(this::handleFacilityEvent)
                 .subscribe(event -> event.receiverOffset().acknowledge());
     }
 

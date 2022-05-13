@@ -77,10 +77,10 @@ spring:
       exporter:
         otlp:
           endpoint: ${OTEL_COLLECTOR_ADDRESS}
+      config:
+        trace-id-ratio-based: 1.0
 management:
   health:
-    kafka:
-      enabled: true
     livenessstate:
       enabled: true
     readinessstate:
