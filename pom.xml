@@ -19,6 +19,7 @@
         <jacoco.version>0.8.8</jacoco.version>
         <java.version>17</java.version>
         <kafka-utils.version>2.0.0</kafka-utils.version>
+        <logstash-logback-encoder.version>7.1.1</logstash-logback-encoder.version>
         <spring-cloud-sleuth-otel.version>1.1.0-M5</spring-cloud-sleuth-otel.version>
         <spring-cloud.version>2021.0.1</spring-cloud.version>
         <testcontainers.version>1.16.3</testcontainers.version>
@@ -95,6 +96,11 @@
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
             <version>${avro.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>${logstash-logback-encoder.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -28,6 +28,8 @@ POSTGRES_PASSWORD: postgres
 ## Scheme identifies whether SSL is disabled (r2dbc) or Enabled (r2dbcs)
 POSTGRES_SCHEME: r2dbc
 
+PROFILE: local
+
 kafka:
   bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
   login-module: org.apache.kafka.common.security.plain.PlainLoginModule
@@ -79,6 +81,9 @@ spring:
           endpoint: ${OTEL_COLLECTOR_ADDRESS}
       config:
         trace-id-ratio-based: 1.0
+  config:
+    activate:
+      on-profile: ${PROFILE}
 management:
   health:
     livenessstate:

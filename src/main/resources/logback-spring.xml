@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+    <!-- use Spring default values -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+
+        <!-- If running on local use Spring Boot pattern -->
+        <springProfile name="local">
+            <encoder>
+                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+                <charset>utf8</charset>
+            </encoder>
+        </springProfile>
+
+        <!-- If not running on local then output logs in JSON format -->
+        <springProfile name="!local">
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+        </springProfile>
+
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="stdout"/>
+    </root>
+</configuration>
