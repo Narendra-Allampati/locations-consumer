@@ -77,7 +77,7 @@ spec:
                 - name: POSTGRES_PASSWORD
                   value: {{ .Values.spring.r2dbc.password }}
                 - name: PROFILE
-                  value: {{ .Values.spring.config.activate.on-profile }}
+                  value: {{ .Values.spring.config.activate.onprofile }}
           imagePullPolicy: Always
           ports:
             - name: http
