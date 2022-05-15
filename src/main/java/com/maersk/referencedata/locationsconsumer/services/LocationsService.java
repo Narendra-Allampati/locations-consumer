@@ -168,7 +168,9 @@ public class LocationsService {
         return Flux.concat(geographyRepository.saveAll(Mono.justOrEmpty(geo)).then()
                         , postalCodeRepository.saveAll(Mono.justOrEmpty(postalCode)).then()
                         , alternateNameRepository.saveAll(alternateNames).then()
-                        , alternateCodeRepository.saveAll(alternateCodes).then())
+                        , alternateCodeRepository.saveAll(alternateCodes).doOnError(e ->
+                                log.warn("Geo ID {} with geo name {} and geo type {}",
+                                        geoID, geography.getName(), geography.getGeoType(), e)).then())
 //                        , geoAlternateCodeLinksRepository.saveAll(geoAlternateCodeLinks).then())
                 .then(Mono.just("1"));
     }
