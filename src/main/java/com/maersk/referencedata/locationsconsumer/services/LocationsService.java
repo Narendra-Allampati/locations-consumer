@@ -54,11 +54,7 @@ import reactor.kafka.receiver.ReceiverRecord;
 import reactor.util.retry.Retry;
 
 import java.time.Duration;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -159,7 +155,7 @@ public class LocationsService {
 //        final var alternateCodesWrappers = mapToAlternateCodesWrapper(geography.getAlternateCodes(), geoID, isNew);
 //        List<GeoAlternateCodeLink> geoAlternateCodeLinks = alternateCodesWrappers.stream().map(AlternateCodeWrapper::getAlternateCodesLinks).toList();
 //        List<AlternateCode> alternateCodes = alternateCodesWrappers.stream().map(AlternateCodeWrapper::getAlternateCodes).toList();
-        List<AlternateCode> alternateCodes = mapToAlternateCodes(geography.getAlternateCodes(), geoID, isNew);
+        List<AlternateCode> alternateCodes = mapToAlternateCodes(geography.getAlternateCodes(), geoID, geography.getGeoType(), isNew);
 
         List<BdaWithAlternateCodes> bdaWithAlternateCodes = mapToBdaWithAlternateCodes(geography.getBdas());
 
@@ -426,7 +422,12 @@ public class LocationsService {
                 .toList();
     }
 
-    private List<AlternateCode> mapToAlternateCodes(List<alternateCode> alternateCodes, String geoID, boolean isNew) {
+    private List<AlternateCode> mapToAlternateCodes(List<alternateCode> alternateCodes, String geoID, String geoType, boolean isNew) {
+        // TODO temporary hack to see if all other inserts go well
+        if (POSTAL_CODE.equals(geoType)) {
+            return new ArrayList<>();
+        }
+
         return alternateCodes
                 .stream()
                 .map(alternateCode ->
