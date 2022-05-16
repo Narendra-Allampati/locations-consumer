@@ -160,18 +160,18 @@ public class FacilitiesService {
 
         final var contactDetails = mapToContactDetails(facilityEvent.getContactDetails(), facilityId);
 
-        return Flux.concat(facilitiesRepository.save(facility),
-                        addressesRepository.save(address),
-//                        parentsRepository.save(parent),
-//                        facilityAlternateCodeLinksRepository.saveAll(facilityAlternateCodeLinks),
-                        facilityDetailsRepository.saveAll(Mono.justOrEmpty(facilityDetail)),
-                        facilityTypesRepository.saveAll(facilityTypes),
-//                        facilityTypeLinksRepository.saveAll(facilityTypeLinks),
-                        openingHoursRepository.saveAll(openingHours).collectList(),
-                        transportModesRepository.saveAll(transportModes).collectList(),
-                        facilityServicesRepository.saveAll(facilityServices).collectList(),
-                        fencesRepository.saveAll(fences).collectList(),
-                        contactDetailsRepository.saveAll(contactDetails).collectList())
+        return Flux.concat(facilitiesRepository.save(facility).then(),
+                        addressesRepository.save(address).then(),
+//                        parentsRepository.save(parent).then(),
+//                        facilityAlternateCodeLinksRepository.saveAll(facilityAlternateCodeLinks).then(),
+                        facilityDetailsRepository.saveAll(Mono.justOrEmpty(facilityDetail)).then(),
+                        facilityTypesRepository.saveAll(facilityTypes).then(),
+//                        facilityTypeLinksRepository.saveAll(facilityTypeLinks).then(),
+                        openingHoursRepository.saveAll(openingHours).then(),
+                        transportModesRepository.saveAll(transportModes).then(),
+                        facilityServicesRepository.saveAll(facilityServices).then(),
+                        fencesRepository.saveAll(fences).then(),
+                        contactDetailsRepository.saveAll(contactDetails).then())
                 .then(Mono.just("1"));
     }
 
