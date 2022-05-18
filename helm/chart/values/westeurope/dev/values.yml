@@ -1,13 +1,12 @@
-appName: reference-data-locations
+appName: locations-consumer
 product: reference-data
 region: westeurope
 replicaCount: 4
 vaultRole: reference-data-dev
 
-datadog:
+otel:
   env: dev
   namespace: reference-data-metrics
-  serviceName: reference-data-locations
 
 kafka:
   bootstrapServers: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/bootstrap-servers#bootstrap-servers
@@ -29,7 +28,7 @@ kafka:
 spring:
   config:
     activate:
-      on-profile: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/profile#profile
+      on-profile: vault:synergyreferencedata-kv/data/readable/dev/services/global/profile#profile
   r2dbc:
     host: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/postgres/host#host
     db: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/postgres/db#db

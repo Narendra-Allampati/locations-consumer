@@ -102,30 +102,30 @@ public class LocationsService {
     private Mono<ReceiverRecord<String, geographyMessage>> handleLocationEvent(ReceiverRecord<String, geographyMessage> geographyRecord) {
 
         return Mono.just(geographyRecord)
-                .map(KafkaDeserializerUtils::extractDeserializerError)
-                .<com.maersk.geography.smds.operations.msk.geographyMessage>handle((tuple, sink) -> {
-                    if (tuple.getT2().isEmpty() && Objects.nonNull(tuple.getT1().value())) {
-                        sink.next(tuple.getT1().value());
-                    } else {
-                        log.error("Error while processing geographyMessage " + tuple.getT2().get());
-                    }
-                })
-                .flatMap(geographyMessage -> createOrUpdate(geographyMessage.getGeography()))
-                .doOnError(ex -> log.warn("Error processing event {} and value {}", geographyRecord.key(), geographyRecord.value(), ex))
-                .onErrorResume(ex -> Mono.empty())
-                .then(Mono.just(geographyRecord));
+                   .map(KafkaDeserializerUtils::extractDeserializerError)
+                   .<com.maersk.geography.smds.operations.msk.geographyMessage>handle((tuple, sink) -> {
+                       if (tuple.getT2().isEmpty() && Objects.nonNull(tuple.getT1().value())) {
+                           sink.next(tuple.getT1().value());
+                       } else {
+                           log.error("Error while processing geographyMessage " + tuple.getT2().get());
+                       }
+                   })
+                   .flatMap(geographyMessage -> createOrUpdate(geographyMessage.getGeography()))
+                   .doOnError(ex -> log.warn("Error processing event {} and value {}", geographyRecord.key(), geographyRecord.value(), ex))
+                   .onErrorResume(ex -> Mono.empty())
+                   .then(Mono.just(geographyRecord));
     }
 
     private Mono<String> createOrUpdate(geography geography) {
         if (POSTAL_CODE.equals(geography.getGeoType())) {
             return postalCodeRepository.findById(geography.getGeoId())
-                    .flatMap(geographyFromDB -> updateGeography(geography))
-                    .switchIfEmpty(saveGeography(geography));
+                                       .flatMap(geographyFromDB -> updateGeography(geography))
+                                       .switchIfEmpty(saveGeography(geography));
         }
 
         return geographyRepository.findById(geography.getGeoId())
-                .flatMap(geographyFromDB -> updateGeography(geography))
-                .switchIfEmpty(saveGeography(geography));
+                                  .flatMap(geographyFromDB -> updateGeography(geography))
+                                  .switchIfEmpty(saveGeography(geography));
     }
 
     private Mono<String> saveGeography(geography geography) {
@@ -135,10 +135,10 @@ public class LocationsService {
     private Mono<String> updateGeography(geography geography) {
         if (POSTAL_CODE.equals(geography.getGeoType())) {
             return postalCodeRepository.deleteById(geography.getGeoId())
-                    .then(saveGeography(geography));
+                                       .then(saveGeography(geography));
         } else {
             return geographyRepository.deleteById(geography.getGeoId())
-                    .then(saveGeography(geography));
+                                      .then(saveGeography(geography));
         }
     }
 
@@ -162,76 +162,80 @@ public class LocationsService {
         List<BdaLocationWithAlternateCodes> bdaLocationWithAlternateCodes = mapToBdaLocationsWithAlternateCodes(geography.getBdaLocations());
 
         return Flux.concat(geographyRepository.saveAll(Mono.justOrEmpty(geo)).then()
-                        , postalCodeRepository.saveAll(Mono.justOrEmpty(postalCode)).then()
-                        , alternateNameRepository.saveAll(alternateNames).then()
-                        , alternateCodeRepository.saveAll(alternateCodes).doOnError(e ->
-                                log.warn("Geo ID {} with geo name {} and geo type {}",
-                                        geoID, geography.getName(), geography.getGeoType(), e)).then())
+                           , postalCodeRepository.saveAll(Mono.justOrEmpty(postalCode)).then()
+                           , alternateNameRepository.saveAll(alternateNames).then()
+                           , alternateCodeRepository.saveAll(alternateCodes).doOnError(e ->
+                                   log.warn("Geo ID {} with geo name {} and geo type {}",
+                                           geoID, geography.getName(), geography.getGeoType(), e)).then())
 //                        , geoAlternateCodeLinksRepository.saveAll(geoAlternateCodeLinks).then())
-                .then(Mono.just("1"));
+                   .then(Mono.just("1"));
     }
 
     private List<BdaWithAlternateCodes> mapToBdaWithAlternateCodes(List<bda> bdas) {
         return Optional.ofNullable(bdas)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(bda -> {
-                    List<bdaAlternateCode> alternateCodes = bda.getAlternateCodes();
-                    String geoID = GeographyMapper.findCodeFromBdaAlternateCodes(alternateCodes, GEO_ID);
-                    BusinessDefinedArea businessDefinedArea = BusinessDefinedArea.builder()
-                            .rowId(geoID)
-                            .name(bda.getName()).type(bda.getType()).bdaType(bda.getBdaType())
-                            .build();
-                    return new BdaWithAlternateCodes(businessDefinedArea, mapToBDAAlternateCodes(alternateCodes, geoID));
-                })
-                .toList();
+                       .orElse(Collections.emptyList())
+                       .stream()
+                       .map(bda -> {
+                           List<bdaAlternateCode> alternateCodes = bda.getAlternateCodes();
+                           String geoID = GeographyMapper.findCodeFromBdaAlternateCodes(alternateCodes, GEO_ID);
+                           BusinessDefinedArea businessDefinedArea = BusinessDefinedArea.builder()
+                                                                                        .rowId(geoID)
+                                                                                        .name(bda.getName()).type(bda.getType()).bdaType(bda.getBdaType())
+                                                                                        .build();
+                           return new BdaWithAlternateCodes(businessDefinedArea, mapToBDAAlternateCodes(alternateCodes, geoID));
+                       })
+                       .toList();
     }
 
     private List<BdaLocationWithAlternateCodes> mapToBdaLocationsWithAlternateCodes(List<bdaLocation> bdaLocations) {
         return Optional.ofNullable(bdaLocations)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(bdaLocation -> {
-                    List<bdaLocationAlternateCode> alternateCodes = bdaLocation.getAlternateCodes();
-                    String geoID = GeographyMapper.findCodeFromBdaLocationAlternateCodes(alternateCodes, GEO_ID);
-                    BusinessDefinedAreaLocation businessDefinedAreaLocation = BusinessDefinedAreaLocation.builder()
-                            .rowId(geoID)
-                            .name(bdaLocation.getName()).type(bdaLocation.getType()).status(bdaLocation.getStatus())
-                            .build();
-                    return new BdaLocationWithAlternateCodes(businessDefinedAreaLocation,
-                            mapToBDALocationAlternateCodes(alternateCodes, geoID));
-                })
-                .toList();
+                       .orElse(Collections.emptyList())
+                       .stream()
+                       .map(bdaLocation -> {
+                           List<bdaLocationAlternateCode> alternateCodes = bdaLocation.getAlternateCodes();
+                           String geoID = GeographyMapper.findCodeFromBdaLocationAlternateCodes(alternateCodes, GEO_ID);
+                           BusinessDefinedAreaLocation businessDefinedAreaLocation = BusinessDefinedAreaLocation.builder()
+                                                                                                                .rowId(geoID)
+                                                                                                                .name(bdaLocation.getName()).type(bdaLocation.getType()).status(bdaLocation.getStatus())
+                                                                                                                .build();
+                           return new BdaLocationWithAlternateCodes(businessDefinedAreaLocation,
+                                   mapToBDALocationAlternateCodes(alternateCodes, geoID));
+                       })
+                       .toList();
     }
 
     private List<SubCityParent> mapToSubCityParents(List<subCityParent> subCityParents) {
         return Optional.ofNullable(subCityParents)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(scp -> {
-                    List<subCityParentAlternateCode> alternateCodes = scp.getAlternateCodes();
-                    String geoID = GeographyMapper.findCodeFromSubCityParentAlternateCodes(alternateCodes, GEO_ID);
-                    return SubCityParent.builder().rowId(geoID).name(scp.getName()).type(scp.getType()).build();
-                })
-                .toList();
+                       .orElse(Collections.emptyList())
+                       .stream()
+                       .map(scp -> {
+                           List<subCityParentAlternateCode> alternateCodes = scp.getAlternateCodes();
+                           String geoID = GeographyMapper.findCodeFromSubCityParentAlternateCodes(alternateCodes, GEO_ID);
+                           return SubCityParent.builder()
+                                               .rowId(geoID)
+                                               .name(scp.getName())
+                                               .type(scp.getType())
+                                               .build();
+                       })
+                       .toList();
     }
 
     private Optional<Parent> mapToParent(parent parentAvro) {
         return Optional.ofNullable(parentAvro)
-                .map(pa -> {
-                    List<parentAlternateCode> alternateCodes = pa.getAlternateCodes();
-                    String geoID = GeographyMapper.findCodeFromGeoParentAlternateCodes(alternateCodes, GEO_ID);
-                    return Parent.builder().rowId(geoID).name(pa.getName()).type(pa.getType()).build();
-                });
+                       .map(pa -> {
+                           List<parentAlternateCode> alternateCodes = pa.getAlternateCodes();
+                           String geoID = GeographyMapper.findCodeFromGeoParentAlternateCodes(alternateCodes, GEO_ID);
+                           return Parent.builder().rowId(geoID).name(pa.getName()).type(pa.getType()).build();
+                       });
     }
 
     private Optional<Country> mapToCountry(country countryAvro) {
         return Optional.ofNullable(countryAvro)
-                .map(ca -> {
-                    List<countryAlternateCode> alternateCodes = ca.getAlternateCodes();
-                    String geoID = GeographyMapper.findCodeFromCountryAlternateCodes(alternateCodes, GEO_ID);
-                    return Country.builder().rowId(geoID).name(ca.getName()).build();
-                });
+                       .map(ca -> {
+                           List<countryAlternateCode> alternateCodes = ca.getAlternateCodes();
+                           String geoID = GeographyMapper.findCodeFromCountryAlternateCodes(alternateCodes, GEO_ID);
+                           return Country.builder().rowId(geoID).name(ca.getName()).build();
+                       });
     }
 
     private Optional<PostalCode> mapGeographyEventToPostalCode(geography geography, boolean isNew) {
@@ -246,33 +250,33 @@ public class LocationsService {
 
     private PostalCode buildPostalCode(geography geography, boolean isNew) {
         PostalCode postalCode = PostalCode.builder()
-                .isNew(isNew)
-                .geoId(geography.getGeoId())
-                .geoType(geography.getGeoType())
-                .name(geography.getName())
-                .status(geography.getStatus())
-                .validFrom(geography.getValidFrom())
-                .validTo(geography.getValidTo())
-                .longitude(geography.getLongitude())
-                .latitude(geography.getLatitude())
-                .timeZone(geography.getTimeZone())
-                .daylightSavingTime(geography.getDaylightSavingTime())
-                .utcOffsetMinutes(geography.getUtcOffsetMinutes())
-                .daylightSavingStart(geography.getDaylightSavingStart())
-                .daylightSavingEnd(geography.getDaylightSavingEnd())
-                .daylightSavingShiftMinutes(geography.getDaylightSavingShiftMinutes())
-                .description(geography.getDescription())
-                .workaroundReason(geography.getWorkaroundReason())
-                .restricted(geography.getRestricted())
-                .postalCodeMandatory(geography.getPostalCodeMandatory())
-                .stateProvinceMandatory(geography.getStateProvinceMandatory())
-                .dialingCode(geography.getDialingCode())
-                .dialingCodeDescription(geography.getDialingCodeDescription())
-                .portFlag(geography.getPortFlag())
-                .olsonTimeZone(geography.getOlsonTimezone())
-                .bdaType(geography.getBdaType())
-                .hsudName(geography.getHsudName())
-                .build();
+                                          .isNew(isNew)
+                                          .geoId(geography.getGeoId())
+                                          .geoType(geography.getGeoType())
+                                          .name(geography.getName())
+                                          .status(geography.getStatus())
+                                          .validFrom(geography.getValidFrom())
+                                          .validTo(geography.getValidTo())
+                                          .longitude(geography.getLongitude())
+                                          .latitude(geography.getLatitude())
+                                          .timeZone(geography.getTimeZone())
+                                          .daylightSavingTime(geography.getDaylightSavingTime())
+                                          .utcOffsetMinutes(geography.getUtcOffsetMinutes())
+                                          .daylightSavingStart(geography.getDaylightSavingStart())
+                                          .daylightSavingEnd(geography.getDaylightSavingEnd())
+                                          .daylightSavingShiftMinutes(geography.getDaylightSavingShiftMinutes())
+                                          .description(geography.getDescription())
+                                          .workaroundReason(geography.getWorkaroundReason())
+                                          .restricted(geography.getRestricted())
+                                          .postalCodeMandatory(geography.getPostalCodeMandatory())
+                                          .stateProvinceMandatory(geography.getStateProvinceMandatory())
+                                          .dialingCode(geography.getDialingCode())
+                                          .dialingCodeDescription(geography.getDialingCodeDescription())
+                                          .portFlag(geography.getPortFlag())
+                                          .olsonTimeZone(geography.getOlsonTimezone())
+                                          .bdaType(geography.getBdaType())
+                                          .hsudName(geography.getHsudName())
+                                          .build();
 
         Optional<Country> countryOptional = mapToCountry(geography.getCountry());
         if (countryOptional.isPresent()) {
@@ -313,33 +317,33 @@ public class LocationsService {
 
     private Geography buildGeography(geography geography, boolean isNew) {
         Geography geo = Geography.builder()
-                .isNew(isNew)
-                .geoId(geography.getGeoId())
-                .geoType(geography.getGeoType())
-                .name(geography.getName())
-                .status(geography.getStatus())
-                .validFrom(geography.getValidFrom())
-                .validTo(geography.getValidTo())
-                .longitude(geography.getLongitude())
-                .latitude(geography.getLatitude())
-                .timeZone(geography.getTimeZone())
-                .daylightSavingTime(geography.getDaylightSavingTime())
-                .utcOffsetMinutes(geography.getUtcOffsetMinutes())
-                .daylightSavingStart(geography.getDaylightSavingStart())
-                .daylightSavingEnd(geography.getDaylightSavingEnd())
-                .daylightSavingShiftMinutes(geography.getDaylightSavingShiftMinutes())
-                .description(geography.getDescription())
-                .workaroundReason(geography.getWorkaroundReason())
-                .restricted(geography.getRestricted())
-                .postalCodeMandatory(geography.getPostalCodeMandatory())
-                .stateProvinceMandatory(geography.getStateProvinceMandatory())
-                .dialingCode(geography.getDialingCode())
-                .dialingCodeDescription(geography.getDialingCodeDescription())
-                .portFlag(geography.getPortFlag())
-                .olsonTimeZone(geography.getOlsonTimezone())
-                .bdaType(geography.getBdaType())
-                .hsudName(geography.getHsudName())
-                .build();
+                                 .isNew(isNew)
+                                 .geoId(geography.getGeoId())
+                                 .geoType(geography.getGeoType())
+                                 .name(geography.getName())
+                                 .status(geography.getStatus())
+                                 .validFrom(geography.getValidFrom())
+                                 .validTo(geography.getValidTo())
+                                 .longitude(geography.getLongitude())
+                                 .latitude(geography.getLatitude())
+                                 .timeZone(geography.getTimeZone())
+                                 .daylightSavingTime(geography.getDaylightSavingTime())
+                                 .utcOffsetMinutes(geography.getUtcOffsetMinutes())
+                                 .daylightSavingStart(geography.getDaylightSavingStart())
+                                 .daylightSavingEnd(geography.getDaylightSavingEnd())
+                                 .daylightSavingShiftMinutes(geography.getDaylightSavingShiftMinutes())
+                                 .description(geography.getDescription())
+                                 .workaroundReason(geography.getWorkaroundReason())
+                                 .restricted(geography.getRestricted())
+                                 .postalCodeMandatory(geography.getPostalCodeMandatory())
+                                 .stateProvinceMandatory(geography.getStateProvinceMandatory())
+                                 .dialingCode(geography.getDialingCode())
+                                 .dialingCodeDescription(geography.getDialingCodeDescription())
+                                 .portFlag(geography.getPortFlag())
+                                 .olsonTimeZone(geography.getOlsonTimezone())
+                                 .bdaType(geography.getBdaType())
+                                 .hsudName(geography.getHsudName())
+                                 .build();
 
         Optional<Country> countryOptional = mapToCountry(geography.getCountry());
         if (countryOptional.isPresent()) {
@@ -371,9 +375,9 @@ public class LocationsService {
         return alternateCodes
                 .stream().map(alternateCode ->
                         AlternateCode.builder()
-                                .code(alternateCode.getCode())
-                                .codeType(alternateCode.getCodeType())
-                                .build()
+                                     .code(alternateCode.getCode())
+                                     .codeType(alternateCode.getCodeType())
+                                     .build()
                 )
                 .collect(Collectors.toList());
     }
@@ -382,9 +386,9 @@ public class LocationsService {
         return alternateCodes
                 .stream().map(alternateCode ->
                         AlternateCode.builder()
-                                .code(alternateCode.getCode())
-                                .codeType(alternateCode.getCodeType())
-                                .build()
+                                     .code(alternateCode.getCode())
+                                     .codeType(alternateCode.getCodeType())
+                                     .build()
                 )
                 .collect(Collectors.toList());
     }
@@ -393,9 +397,9 @@ public class LocationsService {
         return alternateCodes
                 .stream().map(alternateCode ->
                         AlternateCode.builder()
-                                .code(alternateCode.getCode())
-                                .codeType(alternateCode.getCodeType())
-                                .build()
+                                     .code(alternateCode.getCode())
+                                     .codeType(alternateCode.getCodeType())
+                                     .build()
                 )
                 .toList();
     }
@@ -404,9 +408,9 @@ public class LocationsService {
         return alternateCodes
                 .stream().map(alternateCode ->
                         AlternateCode.builder()
-                                .code(alternateCode.getCode())
-                                .codeType(alternateCode.getCodeType())
-                                .build()
+                                     .code(alternateCode.getCode())
+                                     .codeType(alternateCode.getCodeType())
+                                     .build()
                 )
                 .toList();
     }
@@ -415,9 +419,9 @@ public class LocationsService {
         return alternateCodes
                 .stream().map(alternateCode ->
                         AlternateCode.builder()
-                                .code(alternateCode.getCode())
-                                .codeType(alternateCode.getCodeType())
-                                .build()
+                                     .code(alternateCode.getCode())
+                                     .codeType(alternateCode.getCodeType())
+                                     .build()
                 )
                 .toList();
     }
@@ -432,12 +436,12 @@ public class LocationsService {
                 .stream()
                 .map(alternateCode ->
                         AlternateCode.builder()
-                                .isNew(isNew)
-                                .id(UUID.randomUUID())
-                                .geoId(geoID)
-                                .code(alternateCode.getCode())
-                                .codeType(alternateCode.getCodeType())
-                                .build()
+                                     .isNew(isNew)
+                                     .id(UUID.randomUUID())
+                                     .geoId(geoID)
+                                     .code(alternateCode.getCode())
+                                     .codeType(alternateCode.getCodeType())
+                                     .build()
                 )
                 .toList();
     }
@@ -447,38 +451,38 @@ public class LocationsService {
                 .stream()
                 .map(alternateCode -> {
                     AlternateCode ac = AlternateCode.builder()
-                            .isNew(isNew)
-                            .code(alternateCode.getCode())
-                            .codeType(alternateCode.getCodeType())
-                            .build();
+                                                    .isNew(isNew)
+                                                    .code(alternateCode.getCode())
+                                                    .codeType(alternateCode.getCodeType())
+                                                    .build();
                     GeoAlternateCodeLink acl = GeoAlternateCodeLink.builder()
-                            .isNew(isNew)
-                            .id(UUID.randomUUID())
-                            .geoId(geoID)
-                            .alternateCodeId(alternateCode.getCode())
-                            .alternateCodeType(alternateCode.getCodeType())
-                            .build();
+                                                                   .isNew(isNew)
+                                                                   .id(UUID.randomUUID())
+                                                                   .geoId(geoID)
+                                                                   .alternateCodeId(alternateCode.getCode())
+                                                                   .alternateCodeType(alternateCode.getCodeType())
+                                                                   .build();
                     return AlternateCodeWrapper.builder()
-                            .alternateCodes(ac)
-                            .alternateCodesLinks(acl)
-                            .build();
+                                               .alternateCodes(ac)
+                                               .alternateCodesLinks(acl)
+                                               .build();
                 })
                 .toList();
     }
 
     private List<AlternateName> mapToAlternateNames(List<alternateName> alternateNames, String geoID, boolean isNew) {
         return Optional.ofNullable(alternateNames)
-                .orElse(Collections.emptyList()).stream().map(alternateName ->
+                       .orElse(Collections.emptyList()).stream().map(alternateName ->
                         AlternateName.builder()
-                                .isNew(isNew)
-                                .id(UUID.randomUUID())
-                                .geoId(geoID)
-                                .name(alternateName.getName())
-                                .status(alternateName.getStatus())
-                                .description(alternateName.getDescription())
-                                .build()
+                                     .isNew(isNew)
+                                     .id(UUID.randomUUID())
+                                     .geoId(geoID)
+                                     .name(alternateName.getName())
+                                     .status(alternateName.getStatus())
+                                     .description(alternateName.getDescription())
+                                     .build()
 
                 )
-                .toList();
+                       .toList();
     }
 }

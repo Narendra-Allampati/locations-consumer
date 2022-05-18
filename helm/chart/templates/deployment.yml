@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: {{ .Values.appName }}
   labels:
+    env: {{ .Values.otel.env }}
     product: {{ .Values.product }}
     k8s-app: {{ .Values.appName }}
 spec:
@@ -27,7 +28,7 @@ spec:
         ad.datadoghq.com/security-service.check_names: '["openmetrics"]'
         ad.datadoghq.com/security-service.init_configs: '[{}]'
         ad.datadoghq.com/security-service.instances: '[{"prometheus_url": "http://%%host%%:8080/actuator/prometheus",
-            "namespace": "{{ .Values.datadog.namespace }}", "metrics": ["*"]}]'
+            "namespace": "{{ .Values.otel.namespace }}", "metrics": ["*"]}]'
         vault.security.banzaicloud.io/vault-role: "{{ .Values.vaultRole }}"
     spec:
       imagePullSecrets:
@@ -36,16 +37,6 @@ spec:
         - name: {{ .Values.appName }}
           image: {{ .Values.image }}:{{ .Values.version }}
           env:
-                - name: DD_SERVICE_NAME
-                  value: {{ .Values.datadog.serviceName }}
-                - name: DD_ENV
-                  value: {{ .Values.datadog.env }}
-                - name: DD_TAGS
-                  value: "region:{{ .Values.region }}"
-                - name: DD_LOGS_INJECTION
-                  value: "true"
-                - name: DD_LOG_LEVEL
-                  value: "debug"
                 - name: OTEL_COLLECTOR_ADDRESS
                   value: {{ .Values.spring.sleuth.otel.exporter.otlp.endpoint }}
                 - name: KAFKA_BOOTSTRAP_SERVERS
@@ -77,7 +68,7 @@ spec:
                 - name: POSTGRES_PASSWORD
                   value: {{ .Values.spring.r2dbc.password }}
                 - name: PROFILE
-                  value: {{ .Values.spring.config.activate.onprofile }}
+                  value: {{ .Values.spring.config.activate.onProfile }}
           imagePullPolicy: Always
           ports:
             - name: http
