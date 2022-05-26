@@ -26,9 +26,8 @@ kafka:
     consumerGroup: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/consumer-group#consumer-group
 
 spring:
-  config:
-    activate:
-      on-profile: vault:synergyreferencedata-kv/data/readable/dev/services/global/profile#profile
+  profiles:
+      active: vault:synergyreferencedata-kv/data/readable/dev/services/global/profile#profile
   r2dbc:
     host: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/postgres/host#host
     db: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/postgres/db#db

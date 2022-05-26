@@ -66,6 +66,8 @@ spring:
     r2dbc:
       repositories:
         enabled: true
+  profiles:
+    active: ${PROFILE}
   r2dbc:
     #  r2dbc:a-driver:pipes://localhost:3306/my_database?locale=en_US
     #  \___/ \______/ \___/   \____________/\__________/\___________/
@@ -81,9 +83,6 @@ spring:
           endpoint: ${OTEL_COLLECTOR_ADDRESS}
       config:
         trace-id-ratio-based: 1.0
-  config:
-    activate:
-      on-profile: ${PROFILE}
 management:
   health:
     livenessstate:
