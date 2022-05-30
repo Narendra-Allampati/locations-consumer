@@ -37,38 +37,38 @@ spec:
         - name: {{ .Values.appName }}
           image: {{ .Values.image }}:{{ .Values.version }}
           env:
-              - name: OTEL_COLLECTOR_ADDRESS
-                value: {{ .Values.spring.sleuth.otel.exporter.otlp.endpoint }}
-                - name: KAFKA_BOOTSTRAP_SERVERS
-                  value: {{ .Values.kafka.bootstrapServers }}
-                - name: KAFKA_USERNAME
-                  value: {{ .Values.kafka.username }}
-                - name: KAFKA_PASSWORD
-                  value: {{ .Values.kafka.password }}
-                - name: KAFKA_CONSUMER_GROUP
-                  value: {{ .Values.kafka.consumer.consumerGroup }}
-                - name: KAFKA_SCHEMA_REGISTRY_URL
-                  value: {{ .Values.kafka.schemaRegistry.url }}
-                - name: KAFKA_SCHEMA_REGISTRY_API_KEY
-                  value: {{ .Values.kafka.schemaRegistry.username }}
-                - name: KAFKA_SCHEMA_REGISTRY_PASSWORD
-                  value: {{ .Values.kafka.schemaRegistry.password }}
-                - name: KAFKA_FACILITIES_TOPIC
-                  value: {{ .Values.kafka.consumer.facilities.topic }}
-                - name: KAFKA_LOCATIONS_TOPIC
-                  value: {{ .Values.kafka.consumer.locations.topic }}
-                - name: POSTGRES_HOST
-                  value: {{ .Values.spring.r2dbc.host }}
-                - name: POSTGRES_DB
-                  value: {{ .Values.spring.r2dbc.db }}
-                - name: POSTGRES_SCHEME
-                  value: {{ .Values.spring.r2dbc.scheme }}
-                - name: POSTGRES_USERNAME
-                  value: {{ .Values.spring.r2dbc.username }}
-                - name: POSTGRES_PASSWORD
-                  value: {{ .Values.spring.r2dbc.password }}
-                - name: PROFILE
-                  value: {{ .Values.spring.profiles.active }}
+            - name: OTEL_COLLECTOR_ADDRESS
+              value: {{ .Values.spring.sleuth.otel.exporter.otlp.endpoint }}
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: {{ .Values.kafka.bootstrapServers }}
+            - name: KAFKA_USERNAME
+              value: {{ .Values.kafka.username }}
+            - name: KAFKA_PASSWORD
+              value: {{ .Values.kafka.password }}
+            - name: KAFKA_CONSUMER_GROUP
+              value: {{ .Values.kafka.consumer.consumerGroup }}
+            - name: KAFKA_SCHEMA_REGISTRY_URL
+              value: {{ .Values.kafka.schemaRegistry.url }}
+            - name: KAFKA_SCHEMA_REGISTRY_API_KEY
+              value: {{ .Values.kafka.schemaRegistry.username }}
+            - name: KAFKA_SCHEMA_REGISTRY_PASSWORD
+              value: {{ .Values.kafka.schemaRegistry.password }}
+            - name: KAFKA_FACILITIES_TOPIC
+              value: {{ .Values.kafka.consumer.facilities.topic }}
+            - name: KAFKA_LOCATIONS_TOPIC
+              value: {{ .Values.kafka.consumer.locations.topic }}
+            - name: POSTGRES_HOST
+              value: {{ .Values.spring.r2dbc.host }}
+            - name: POSTGRES_DB
+              value: {{ .Values.spring.r2dbc.db }}
+            - name: POSTGRES_SCHEME
+              value: {{ .Values.spring.r2dbc.scheme }}
+            - name: POSTGRES_USERNAME
+              value: {{ .Values.spring.r2dbc.username }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.spring.r2dbc.password }}
+            - name: PROFILE
+              value: {{ .Values.spring.profiles.active }}
           imagePullPolicy: Always
           ports:
             - name: http
