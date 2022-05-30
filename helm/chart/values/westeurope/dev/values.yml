@@ -1,7 +1,7 @@
 appName: locations-consumer
 product: reference-data
 region: westeurope
-replicaCount: 4
+replicaCount: 1
 vaultRole: reference-data-dev
 
 otel:
@@ -27,7 +27,7 @@ kafka:
 
 spring:
   profiles:
-      active: vault:synergyreferencedata-kv/data/readable/dev/services/global/profile#profile
+    active: vault:synergyreferencedata-kv/data/readable/dev/services/global/profile#profile
   r2dbc:
     host: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/postgres/host#host
     db: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/postgres/db#db

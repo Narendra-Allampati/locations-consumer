@@ -20,9 +20,9 @@
         <java.version>17</java.version>
         <kafka-utils.version>2.0.1</kafka-utils.version>
         <logstash-logback-encoder.version>7.1.1</logstash-logback-encoder.version>
-        <spring-cloud-sleuth-otel.version>1.1.0-M5</spring-cloud-sleuth-otel.version>
-        <spring-cloud.version>2021.0.2</spring-cloud.version>
-        <testcontainers.version>1.16.3</testcontainers.version>
+        <spring-cloud-sleuth-otel.version>1.1.0-M6</spring-cloud-sleuth-otel.version>
+        <spring-cloud.version>2021.0.3</spring-cloud.version>
+        <testcontainers.version>1.17.1</testcontainers.version>
         <versions-plugin.version>2.10.0</versions-plugin.version>
     </properties>
     <dependencyManagement>

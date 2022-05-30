@@ -37,8 +37,8 @@ spec:
         - name: {{ .Values.appName }}
           image: {{ .Values.image }}:{{ .Values.version }}
           env:
-                - name: OTEL_COLLECTOR_ADDRESS
-                  value: {{ .Values.spring.sleuth.otel.exporter.otlp.endpoint }}
+              - name: OTEL_COLLECTOR_ADDRESS
+                value: {{ .Values.spring.sleuth.otel.exporter.otlp.endpoint }}
                 - name: KAFKA_BOOTSTRAP_SERVERS
                   value: {{ .Values.kafka.bootstrapServers }}
                 - name: KAFKA_USERNAME
@@ -68,7 +68,7 @@ spec:
                 - name: POSTGRES_PASSWORD
                   value: {{ .Values.spring.r2dbc.password }}
                 - name: PROFILE
-                  value: {{ .Values.spring.config.activate.onProfile }}
+                  value: {{ .Values.spring.profiles.active }}
           imagePullPolicy: Always
           ports:
             - name: http
