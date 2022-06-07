@@ -125,7 +125,8 @@ public class FacilitiesService {
 
     private Mono<String> updateFacility(facility facilityEvent) {
         return facilitiesRepository.deleteById(facilityEvent.getFacilityId())
-                .then(mapAndSaveFacilityEvent(facilityEvent));
+                .doOnSuccess(event -> log.info("Received facility event: key {}", facilityEvent.getFacilityId()))
+                .then(saveFacility(facilityEvent));
     }
 
     private Mono<String> mapAndSaveFacilityEvent(facility facilityEvent) {
