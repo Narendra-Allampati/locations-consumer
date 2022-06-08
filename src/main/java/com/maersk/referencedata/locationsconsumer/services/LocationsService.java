@@ -94,7 +94,10 @@ public class LocationsService {
                 .doOnError(error -> log.warn("Error thrown whilst processing geography records, error isn't a " +
                         "known retriable error, will attempt to retry processing records , exception -> {}", error.getLocalizedMessage(), error))
                 .retryWhen(Retry.fixedDelay(100, Duration.ofMinutes(1)))
-                .doOnNext(event -> log.debug("Received geo event: key {}, value {}", event.key(), event.value()))
+//                .doOnNext(event -> log.debug("Received geo event: key {}, value {}", event.key(), event.value()))
+                .doOnNext(event -> log.info("Received geo event: key {}, geoId {}, partition number {}", event.key()
+                        , event.value().getGeography().getGeoId()
+                        ,event.receiverOffset().topicPartition().partition()))
                 .concatMap(this::handleLocationEvent)
                 .subscribe(result -> result.receiverOffset().acknowledge());
     }
@@ -120,12 +123,12 @@ public class LocationsService {
         if (POSTAL_CODE.equals(geography.getGeoType())) {
             return postalCodeRepository.findById(geography.getGeoId())
                                        .flatMap(geographyFromDB -> updateGeography(geography))
-                                       .switchIfEmpty(saveGeography(geography));
+                                       .switchIfEmpty(Mono.defer(() -> saveGeography(geography)));
         }
 
         return geographyRepository.findById(geography.getGeoId())
                                   .flatMap(geographyFromDB -> updateGeography(geography))
-                                  .switchIfEmpty(saveGeography(geography));
+                                  .switchIfEmpty(Mono.defer(() -> saveGeography(geography)));
     }
 
     private Mono<String> saveGeography(geography geography) {

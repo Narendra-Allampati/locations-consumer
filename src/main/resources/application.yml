@@ -73,9 +73,14 @@ spring:
     #  \___/ \______/ \___/   \____________/\__________/\___________/
     #  |       |      |           |           |           |
     #  scheme  driver  protocol  authority    path        query
-    url: ${POSTGRES_SCHEME}:pool:postgresql:${POSTGRES_HOST}/${POSTGRES_DB}?locale=en_GB&ssl=true
+    url: ${POSTGRES_SCHEME}:postgresql:${POSTGRES_HOST}/${POSTGRES_DB}?locale=en_GB&ssl=true
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
+    pool:
+      enabled: true
+      max-life-time: -1
+      maxSize: 20
+      initialSize: 20
   sleuth:
     otel:
       exporter:
