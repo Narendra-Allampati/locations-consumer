@@ -1,12 +1,3 @@
-#KAFKA_BOOTSTRAP_SERVERS: "localhost:9092"
-KAFKA_BOOTSTRAP_SERVERS: "pkc-lq8gm.westeurope.azure.confluent.cloud:9092"
-KAFKA_LOCATIONS_TOPIC: MSK.geography.gda.topic.internal.any.v2
-KAFKA_FACILITIES_TOPIC: MSK.geography.facility.topic.internal.any.v2
-# preprod
-#KAFKA_USERNAME:
-#KAFKA_PASSWORD:
-# prod
-KAFKA_USERNAME:
 KAFKA_PASSWORD:
 KAFKA_CONSUMER_GROUP: MSK.referenceData.referenceDataReader.consumerGroup.v1
 
@@ -50,7 +41,7 @@ kafka:
       client-id: locations-consumer
       topic: ${KAFKA_LOCATIONS_TOPIC}
     consumer-group: ${KAFKA_CONSUMER_GROUP}
-    offset-auto-reset: earliest
+    offset-auto-reset: latest
     concurrency: 1
     max-poll-records: 5
     max-poll-timeout: 5000
