@@ -93,12 +93,8 @@ public class FacilitiesService {
                 .doOnError(error -> log.warn("Error thrown whilst processing facility records, error isn't a " +
                         "known retriable error, will attempt to retry processing records , exception -> {}", error.getLocalizedMessage(), error))
                 .retryWhen(Retry.fixedDelay(100, Duration.ofMinutes(1)))
-                .doOnNext(event -> log.info("Received facility event: key {}, facilityId {}, partition number {}", event.key()
-                        , event.value()
-                               .getFacility()
-                               .getFacilityId(), event.receiverOffset()
-                                                      .topicPartition()
-                                                      .partition()))
+                .doOnNext(event -> log.info("Received facility event: key {}, partition number {}", event.key()
+                        , event.receiverOffset().topicPartition().partition()))
                 .concatMap(this::handleFacilityEvent)
                 .subscribe(event -> event.receiverOffset()
                                          .acknowledge());

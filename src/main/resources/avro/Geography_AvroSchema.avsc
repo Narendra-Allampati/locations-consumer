@@ -332,53 +332,56 @@
             "type": [
               "null",
               {
-                "type": "record",
-                "name": "parent",
-                "doc": "Display Parent Information.For city Copenghagen  the parent is country Denmark",
-                "fields": [
-                  {
-                    "doc": "The parent name of geography object. Example: MAHARASHTRA",
-                    "name": "name",
-                    "type": "string"
-                  },
-                  {
-                    "doc": "The parent type of geography object. Example: State/Prov",
-                    "name": "type",
-                    "type": "string"
-                  },
-                  {
-                    "doc": "The business defined area type of geography object. Example: FINANCIAL,POOL",
-                    "name": "bdaType",
-                    "type": [
-                      "null",
-                      "string"
-                    ],
-                    "default": null
-                  },
-                  {
-                    "name": "alternateCodes",
-                    "type": {
-                      "type": "array",
-                      "items": {
-                        "name": "parentAlternateCode",
-                        "doc": "Parent AlternateCode details",
-                        "type": "record",
-                        "fields": [
-                          {
-                            "doc": "The alternate code type of  parent object. Example: RKTS,RKST,GEOID",
-                            "name": "codeType",
-                            "type": "string"
-                          },
-                          {
-                            "doc": "The alternate code value of  parent object. Example: INPNQ00",
-                            "name": "code",
-                            "type": "string"
-                          }
-                        ]
+                "type": "array",
+                "items": {
+                  "name": "parent",
+                  "doc": "Display Parent Information.For city Copenghagen  the parent is country Denmark",
+                  "type": "record",
+                  "fields": [
+                    {
+                      "doc": "The parent name of geography object. Example: MAHARASHTRA",
+                      "name": "name",
+                      "type": "string"
+                    },
+                    {
+                      "doc": "The parent type of geography object. Example: State/Prov",
+                      "name": "type",
+                      "type": "string"
+                    },
+                    {
+                      "doc": "The business defined area type of geography object. Example: FINANCIAL,POOL",
+                      "name": "bdaType",
+                      "type": [
+                        "null",
+                        "string"
+                      ],
+                      "default": null
+                    },
+                    {
+                      "name": "alternateCodes",
+                      "type": {
+                        "type": "array",
+                        "items": {
+                          "name": "parentAlternateCode",
+                          "doc": "Parent AlternateCode details",
+                          "type": "record",
+                          "fields": [
+                            {
+                              "doc": "The alternate code type of  parent object. Example: RKTS,RKST,GEOID",
+                              "name": "codeType",
+                              "type": "string"
+                            },
+                            {
+                              "doc": "The alternate code value of  parent object. Example: INPNQ00",
+                              "name": "code",
+                              "type": "string"
+                            }
+                          ]
+                        }
                       }
                     }
-                  }
-                ]
+                  ]
+                }
               }
             ],
             "default": null

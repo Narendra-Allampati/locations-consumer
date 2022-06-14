@@ -95,8 +95,7 @@ public class LocationsService {
                         "known retriable error, will attempt to retry processing records , exception -> {}", error.getLocalizedMessage(), error))
                 .retryWhen(Retry.fixedDelay(100, Duration.ofMinutes(1)))
 //                .doOnNext(event -> log.debug("Received geo event: key {}, value {}", event.key(), event.value()))
-                .doOnNext(event -> log.info("Received geo event: key {}, geoId {}, partition number {}", event.key()
-                        , event.value().getGeography().getGeoId()
+                .doOnNext(event -> log.info("Received geo event: key {}, partition number {}", event.key()
                         ,event.receiverOffset().topicPartition().partition()))
                 .concatMap(this::handleLocationEvent)
                 .subscribe(result -> result.receiverOffset().acknowledge());
@@ -288,7 +287,8 @@ public class LocationsService {
             postalCode.setCountryName(country.getName());
         }
 
-        Optional<Parent> parentOptional = mapToParent(geography.getParent());
+        // TODO handle multiple parents
+        Optional<Parent> parentOptional = mapToParent(geography.getParent().get(0));
         if (parentOptional.isPresent()) {
             Parent parent = parentOptional.get();
             postalCode.setParentId(parent.getRowId());
@@ -355,7 +355,8 @@ public class LocationsService {
             geo.setCountryName(country.getName());
         }
 
-        Optional<Parent> parentOptional = mapToParent(geography.getParent());
+        // TODO handle multiple parents
+        Optional<Parent> parentOptional = mapToParent(geography.getParent().get(0));
         if (parentOptional.isPresent()) {
             Parent parent = parentOptional.get();
             geo.setParentId(parent.getRowId());
