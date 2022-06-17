@@ -35,6 +35,12 @@ CREATE TABLE GEOGRAPHY
     SUB_CITY_PARENT_ID                      VARCHAR (14),
     SUB_CITY_PARENT_NAME                    VARCHAR (512),
     SUB_CITY_PARENT_TYPE                    VARCHAR (100),
+    RKST                             	    VARCHAR (100),
+    RKTS                             	    VARCHAR (100),
+    UNLOC                             	    VARCHAR (100),
+    UNLOC_LOOKUP                            VARCHAR (100),
+    UNLOC_RETURN                            VARCHAR (100),
+    ISO_TERRITORY                           VARCHAR (100),
     CONSTRAINT GEO_ID_PK PRIMARY KEY (GEO_ID));
 
 CREATE TABLE FACILITIES

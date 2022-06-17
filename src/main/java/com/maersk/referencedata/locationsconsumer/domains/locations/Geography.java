@@ -54,6 +54,12 @@ public class Geography implements Persistable<String> {
     private String subCityParentId;
     private String subCityParentName;
     private String subCityParentType;
+    private String rkst;
+    private String rkts;
+    private String unloc;
+    private String unlocReturn;
+    private String unlocLookup;
+    private String isoTerritory;
 
     @PersistenceConstructor
     public Geography() {

@@ -328,7 +328,7 @@
             "default": null
           },
           {
-            "name": "parent",
+            "name": "parents",
             "type": [
               "null",
               {

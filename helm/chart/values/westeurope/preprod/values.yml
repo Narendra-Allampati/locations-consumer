@@ -11,6 +11,7 @@ datadog:
 
 kafka:
   bootstrapServers: vault:synergyreferencedata-kv/data/readable/preprod/services/locations-consumer/kafka/bootstrap-servers#bootstrap-servers
+  environment-specific-offset: vault:synergyreferencedata-kv/data/readable/preprod/services/locations-consumer/kafka/environment-specific-offset#environment-specific-offset
   username: vault:synergyreferencedata-kv/data/readable/preprod/services/locations-consumer/kafka/username#username
   password: vault:synergyreferencedata-kv/data/preprod/services/locations-consumer/kafka/password#password
   schemaRegistry:

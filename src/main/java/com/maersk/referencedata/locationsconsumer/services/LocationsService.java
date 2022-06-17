@@ -94,9 +94,7 @@ public class LocationsService {
                 .doOnError(error -> log.warn("Error thrown whilst processing geography records, error isn't a " +
                         "known retriable error, will attempt to retry processing records , exception -> {}", error.getLocalizedMessage(), error))
                 .retryWhen(Retry.fixedDelay(100, Duration.ofMinutes(1)))
-//                .doOnNext(event -> log.debug("Received geo event: key {}, value {}", event.key(), event.value()))
-                .doOnNext(event -> log.info("Received geo event: key {}, partition number {}", event.key()
-                        ,event.receiverOffset().topicPartition().partition()))
+//                .doOnNext(event -> log.info("Received geo event: key {}, value {}", event.key(), event.value()))
                 .concatMap(this::handleLocationEvent)
                 .subscribe(result -> result.receiverOffset().acknowledge());
     }
@@ -112,6 +110,8 @@ public class LocationsService {
                            log.error("Error while processing geographyMessage " + tuple.getT2().get());
                        }
                    })
+                   .doOnNext(event -> log.info("Received geo event: key {}, geoId {}, partition number {}", geographyRecord.key()
+                           ,event.getGeography().getGeoId(), geographyRecord.receiverOffset().topicPartition().partition()))
                    .flatMap(geographyMessage -> createOrUpdate(geographyMessage.getGeography()))
                    .doOnError(ex -> log.warn("Error processing event {} and value {}", geographyRecord.key(), geographyRecord.value(), ex))
                    .onErrorResume(ex -> Mono.empty())
@@ -120,9 +120,10 @@ public class LocationsService {
 
     private Mono<String> createOrUpdate(geography geography) {
         if (POSTAL_CODE.equals(geography.getGeoType())) {
-            return postalCodeRepository.findById(geography.getGeoId())
-                                       .flatMap(geographyFromDB -> updateGeography(geography))
-                                       .switchIfEmpty(Mono.defer(() -> saveGeography(geography)));
+            return Mono.just("postal code");
+//            return postalCodeRepository.findById(geography.getGeoId())
+//                                       .flatMap(geographyFromDB -> updateGeography(geography))
+//                                       .switchIfEmpty(Mono.defer(() -> saveGeography(geography)));
         }
 
         return geographyRepository.findById(geography.getGeoId())
@@ -288,7 +289,7 @@ public class LocationsService {
         }
 
         // TODO handle multiple parents
-        Optional<Parent> parentOptional = mapToParent(geography.getParent().get(0));
+        Optional<Parent> parentOptional = mapToParent(geography.getParents().get(0));
         if (parentOptional.isPresent()) {
             Parent parent = parentOptional.get();
             postalCode.setParentId(parent.getRowId());
@@ -356,7 +357,7 @@ public class LocationsService {
         }
 
         // TODO handle multiple parents
-        Optional<Parent> parentOptional = mapToParent(geography.getParent().get(0));
+        Optional<Parent> parentOptional = mapToParent(geography.getParents().get(0));
         if (parentOptional.isPresent()) {
             Parent parent = parentOptional.get();
             geo.setParentId(parent.getRowId());
@@ -370,6 +371,24 @@ public class LocationsService {
             geo.setSubCityParentId(subCityParent.getRowId());
             geo.setSubCityParentName(geo.getSubCityParentName());
             geo.setSubCityParentType(geo.getSubCityParentType());
+        }
+
+        List<alternateCode> alternateCodes = geography.getAlternateCodes();
+        for (alternateCode aCode :alternateCodes) {
+            String codeType = aCode.getCodeType();
+            if ("RKST".equalsIgnoreCase(codeType)) {
+                geo.setRkst(codeType);
+            } else if ("RKTS".equalsIgnoreCase(codeType)) {
+                geo.setRkts(codeType);
+            } else if ("UN CODE".equalsIgnoreCase(codeType)) {
+                geo.setUnloc(codeType);
+            } else if ("UN CODE(Lookup Only)".equalsIgnoreCase(codeType)) {
+                geo.setUnlocLookup(codeType);
+            } else if ("UN CODE(Return Only)".equalsIgnoreCase(codeType)) {
+                geo.setUnlocReturn(codeType);
+            } else if ("ISO TERRITORY".equalsIgnoreCase(codeType)) {
+                geo.setIsoTerritory(codeType);
+            }
         }
 
         return geo;

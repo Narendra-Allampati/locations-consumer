@@ -67,6 +67,9 @@ public class KafkaConfig {
     private String schemaRegistryUrl;
     @Value("${kafka.schema-registry.username}")
     private String schemaRegistryUsername;
+
+    @Value("${kafka.environment-specific-offset:latest}")
+    private String environmentSpecificOffset;
     @Value("${kafka.schema-registry.password}")
     private String schemaRegistryPassword;
     private final ConsumerFactory.Listener<String, geographyMessage> consumerFactoryListener;
@@ -98,9 +101,14 @@ public class KafkaConfig {
         Map<String, Object> stringObjectMap = this.kafkaConsumerProperties();
         stringObjectMap.put("client.id", facilitiesClientId);
         ReceiverOptions<String, facilityMessage> options = ReceiverOptions.create(stringObjectMap);
-        options = options.addAssignListener(receiverPartitions -> receiverPartitions.forEach(ReceiverPartition::seekToBeginning));
-//        options = options.addAssignListener(receiverPartitions ->
-//                receiverPartitions.forEach(receiverPartition -> log.info("Assigned partition {}", receiverPartition)));
+
+        if ("seekToBeginning".equals(environmentSpecificOffset)) {
+            options = options.addAssignListener(receiverPartitions -> receiverPartitions.forEach(ReceiverPartition::seekToBeginning));
+        } else {
+            options = options.addAssignListener(receiverPartitions ->
+                    receiverPartitions.forEach(receiverPartition -> log.info("Assigned partition {}", receiverPartition)));
+        }
+
         options = options.pollTimeout(Duration.ofMillis(this.pollTimeout)).subscription(List.of(this.consumerFacilitiesTopicName));
         return KafkaReceiver.create(metricAwareProducerFactory, options);
     }

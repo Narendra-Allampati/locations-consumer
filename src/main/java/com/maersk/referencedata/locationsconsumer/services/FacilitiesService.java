@@ -83,6 +83,7 @@ public class FacilitiesService {
     public Disposable startKafkaConsumer() {
         return facilityKafkaReceiver
                 .receive()
+                .take(0, true)
                 .name("facility events")
                 .tag("source", "kafka")
                 .metrics()
@@ -93,15 +94,13 @@ public class FacilitiesService {
                 .doOnError(error -> log.warn("Error thrown whilst processing facility records, error isn't a " +
                         "known retriable error, will attempt to retry processing records , exception -> {}", error.getLocalizedMessage(), error))
                 .retryWhen(Retry.fixedDelay(100, Duration.ofMinutes(1)))
-                .doOnNext(event -> log.info("Received facility event: key {}, partition number {}", event.key()
-                        , event.receiverOffset().topicPartition().partition()))
                 .concatMap(this::handleFacilityEvent)
                 .subscribe(event -> event.receiverOffset()
                                          .acknowledge());
     }
 
-    private Mono<ReceiverRecord<String, facilityMessage>> handleFacilityEvent(ReceiverRecord<String, facilityMessage> event) {
-        return Mono.just(event)
+    private Mono<ReceiverRecord<String, facilityMessage>> handleFacilityEvent(ReceiverRecord<String, facilityMessage> facilityRecord) {
+        return Mono.just(facilityRecord)
                    .map(KafkaDeserializerUtils::extractDeserializerError)
                    .<facilityMessage>handle((tuple, sink) -> {
                        if (tuple.getT2()
@@ -114,10 +113,12 @@ public class FacilitiesService {
                                                                                .get());
                        }
                    })
+                   .doOnNext(event -> log.info("Received facility event: key {}, facilityId{}, partition number {}", facilityRecord.key()
+                           , event.getFacility().getFacilityId(), facilityRecord.receiverOffset().topicPartition().partition()))
                    .flatMap(facilityMessage -> createOrUpdateFacility(facilityMessage.getFacility()))
-                   .doOnError(ex -> log.error("Error processing event after all retries {} and value {}", event.key(), event.value(), ex))
+                   .doOnError(ex -> log.error("Error processing event after all retries {} and value {}", facilityRecord.key(), facilityRecord.value(), ex))
                    .onErrorResume(ex -> Mono.empty())
-                   .then(Mono.just(event));
+                   .then(Mono.just(facilityRecord));
     }
 
     private Mono<String> createOrUpdateFacility(facility facilityEvent) {
