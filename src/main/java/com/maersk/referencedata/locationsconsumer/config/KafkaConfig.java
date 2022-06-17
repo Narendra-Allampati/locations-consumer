@@ -88,9 +88,14 @@ public class KafkaConfig {
         Map<String, Object> stringObjectMap = this.kafkaConsumerProperties();
         stringObjectMap.put("client.id", locationsClientId);
         ReceiverOptions<String, geographyMessage> options = ReceiverOptions.create(stringObjectMap);
-//        options = options.addAssignListener(receiverPartitions -> receiverPartitions.forEach(ReceiverPartition::seekToBeginning));
-        options = options.addAssignListener(receiverPartitions ->
-                receiverPartitions.forEach(receiverPartition -> log.info("Assigned partition {}", receiverPartition)));
+
+        if ("seekToBeginning".equals(environmentSpecificOffset)) {
+            options = options.addAssignListener(receiverPartitions -> receiverPartitions.forEach(ReceiverPartition::seekToBeginning));
+        } else {
+            options = options.addAssignListener(receiverPartitions ->
+                    receiverPartitions.forEach(receiverPartition -> log.info("Assigned partition {}", receiverPartition)));
+        }
+
         options = options.pollTimeout(Duration.ofMillis(this.pollTimeout)).subscription(List.of(consumerLocationsTopicName));
         return KafkaReceiver.create(metricAwareProducerFactory, options);
     }
