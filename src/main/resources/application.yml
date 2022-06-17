@@ -4,14 +4,6 @@ KAFKA_ENVIRONMENT_SPECIFIC_OFFSET: seekToBeginning
 KAFKA_LOCATIONS_TOPIC: MSK.geography.gda.topic.internal.any.v3
 KAFKA_FACILITIES_TOPIC: MSK.geography.facility.topic.internal.any.v3
 # preprod
-KAFKA_USERNAME: DONOUESM3BKJO7ZW
-KAFKA_PASSWORD: ouDnEHcLMwtzYP0EsuXKSGanIz5znUc61Qry7xjyyTVphM0gOvabrPtT3817x1AR
-#KAFKA_BOOTSTRAP_SERVERS: "localhost:9092"
-KAFKA_BOOTSTRAP_SERVERS: "pkc-lq8gm.westeurope.azure.confluent.cloud:9092"
-KAFKA_ENVIRONMENT_SPECIFIC_OFFSET: seekToBeginning
-KAFKA_LOCATIONS_TOPIC: MSK.geography.gda.topic.internal.any.v3
-KAFKA_FACILITIES_TOPIC: MSK.geography.facility.topic.internal.any.v3
-# preprod
 #KAFKA_USERNAME:
 #KAFKA_PASSWORD:
 # prod
