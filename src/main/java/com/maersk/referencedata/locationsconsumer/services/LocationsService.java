@@ -383,17 +383,17 @@ public class LocationsService {
         for (alternateCode aCode :alternateCodes) {
             String codeType = aCode.getCodeType();
             if ("RKST".equalsIgnoreCase(codeType)) {
-                geo.setRkst(codeType);
+                geo.setRkst(aCode.getCode());
             } else if ("RKTS".equalsIgnoreCase(codeType)) {
-                geo.setRkts(codeType);
+                geo.setRkts(aCode.getCode());
             } else if ("UN CODE".equalsIgnoreCase(codeType)) {
-                geo.setUnloc(codeType);
+                geo.setUnloc(aCode.getCode());
             } else if ("UN CODE(Lookup Only)".equalsIgnoreCase(codeType)) {
-                geo.setUnlocLookup(codeType);
+                geo.setUnlocLookup(aCode.getCode());
             } else if ("UN CODE(Return Only)".equalsIgnoreCase(codeType)) {
-                geo.setUnlocReturn(codeType);
+                geo.setUnlocReturn(aCode.getCode());
             } else if ("ISO TERRITORY".equalsIgnoreCase(codeType)) {
-                geo.setIsoTerritory(codeType);
+                geo.setIsoTerritory(aCode.getCode());
             }
         }
 
