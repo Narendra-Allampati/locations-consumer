@@ -289,12 +289,15 @@ public class LocationsService {
         }
 
         // TODO handle multiple parents
-        Optional<Parent> parentOptional = mapToParent(geography.getParents().get(0));
-        if (parentOptional.isPresent()) {
-            Parent parent = parentOptional.get();
-            postalCode.setParentId(parent.getRowId());
-            postalCode.setParentName(parent.getName());
-            postalCode.setParentType(parent.getType());
+        List<parent> parents = geography.getParents();
+        if (!parents.isEmpty()) {
+            Optional<Parent> parentOptional = mapToParent(parents.get(0));
+            if (parentOptional.isPresent()) {
+                Parent parent = parentOptional.get();
+                postalCode.setParentId(parent.getRowId());
+                postalCode.setParentName(parent.getName());
+                postalCode.setParentType(parent.getType());
+            }
         }
 
         List<SubCityParent> subCityParents = mapToSubCityParents(geography.getSubCityParents());
@@ -357,12 +360,15 @@ public class LocationsService {
         }
 
         // TODO handle multiple parents
-        Optional<Parent> parentOptional = mapToParent(geography.getParents().get(0));
-        if (parentOptional.isPresent()) {
-            Parent parent = parentOptional.get();
-            geo.setParentId(parent.getRowId());
-            geo.setParentName(parent.getName());
-            geo.setParentType(parent.getType());
+        List<parent> parents = geography.getParents();
+        if (!parents.isEmpty()) {
+            Optional<Parent> parentOptional = mapToParent(parents.get(0));
+            if (parentOptional.isPresent()) {
+                Parent parent = parentOptional.get();
+                geo.setParentId(parent.getRowId());
+                geo.setParentName(parent.getName());
+                geo.setParentType(parent.getType());
+            }
         }
 
         List<SubCityParent> subCityParents = mapToSubCityParents(geography.getSubCityParents());
