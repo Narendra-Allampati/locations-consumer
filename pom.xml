@@ -15,14 +15,14 @@
     <description>Consuming locations data from Kafka</description>
     <properties>
         <avro.version>1.11.0</avro.version>
-        <io-grpc-netty.version>1.46.0</io-grpc-netty.version>
+        <io-grpc-netty.version>1.47.0</io-grpc-netty.version>
         <jacoco.version>0.8.8</jacoco.version>
         <java.version>17</java.version>
         <kafka-utils.version>2.0.1</kafka-utils.version>
-        <logstash-logback-encoder.version>7.1.1</logstash-logback-encoder.version>
+        <logstash-logback-encoder.version>7.2</logstash-logback-encoder.version>
         <spring-cloud-sleuth-otel.version>1.1.0-M6</spring-cloud-sleuth-otel.version>
         <spring-cloud.version>2021.0.3</spring-cloud.version>
-        <testcontainers.version>1.17.1</testcontainers.version>
+        <testcontainers.version>1.17.2</testcontainers.version>
         <versions-plugin.version>2.10.0</versions-plugin.version>
     </properties>
     <dependencyManagement>
