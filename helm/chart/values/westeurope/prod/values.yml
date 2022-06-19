@@ -1,7 +1,7 @@
 appName: reference-data-locations
 product: reference-data
 region: westeurope
-replicaCount: 1
+replicaCount: 4
 vaultRole: reference-data
 
 datadog:

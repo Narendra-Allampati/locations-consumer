@@ -83,7 +83,6 @@ public class FacilitiesService {
     public Disposable startKafkaConsumer() {
         return facilityKafkaReceiver
                 .receive()
-                .take(0, true)
                 .name("facility events")
                 .tag("source", "kafka")
                 .metrics()

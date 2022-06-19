@@ -1,7 +1,7 @@
 appName: locations-consumer
 product: reference-data
 region: westeurope
-replicaCount: 4
+replicaCount: 1
 vaultRole: reference-data-dev
 
 otel:
