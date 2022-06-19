@@ -74,6 +74,7 @@ jobs:
           githubToken: ${{ secrets.ACCESS_TOKEN }}
           url: ${{ secrets.BLACKDUCK_URL }}
           apiToken: ${{ secrets.BLACKDUCK_API_TOKEN }}
+          cleanupToken: ${{ secrets.BLACKDUCK_CLEANUP_VERSIONS_AZFUN_TOKEN }}
 
   polaris:
     name: Polaris scan
