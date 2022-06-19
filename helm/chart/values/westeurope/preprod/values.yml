@@ -1,4 +1,4 @@
-appName: reference-data-locations
+appName: locations-consumer
 product: reference-data
 region: westeurope
 replicaCount: 4
