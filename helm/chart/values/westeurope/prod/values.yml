@@ -4,10 +4,9 @@ region: westeurope
 replicaCount: 4
 vaultRole: reference-data
 
-datadog:
+otel:
   env: prod
   namespace: reference-data-metrics
-  serviceName: reference-data-locations
 
 kafka:
   bootstrapServers: vault:synergyreferencedata-kv/data/readable/prod/services/locations-consumer/kafka/bootstrap-servers#bootstrap-servers
