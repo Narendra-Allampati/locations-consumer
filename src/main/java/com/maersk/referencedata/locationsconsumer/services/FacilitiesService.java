@@ -14,7 +14,7 @@ import com.maersk.facility.smds.operations.msk.transportMode;
 import com.maersk.referencedata.locationsconsumer.domains.facilities.Address;
 import com.maersk.referencedata.locationsconsumer.domains.facilities.ContactDetail;
 import com.maersk.referencedata.locationsconsumer.domains.facilities.Facility;
-import com.maersk.referencedata.locationsconsumer.domains.facilities.FacilityAlternateCodeLink;
+import com.maersk.referencedata.locationsconsumer.domains.facilities.FacilityAlternateCode;
 import com.maersk.referencedata.locationsconsumer.domains.facilities.FacilityDetail;
 import com.maersk.referencedata.locationsconsumer.domains.facilities.FacilityService;
 import com.maersk.referencedata.locationsconsumer.domains.facilities.FacilityType;
@@ -23,12 +23,11 @@ import com.maersk.referencedata.locationsconsumer.domains.facilities.Fence;
 import com.maersk.referencedata.locationsconsumer.domains.facilities.OpeningHour;
 import com.maersk.referencedata.locationsconsumer.domains.facilities.TransportMode;
 import com.maersk.referencedata.locationsconsumer.domains.locations.Parent;
-import com.maersk.referencedata.locationsconsumer.mappers.GeographyMapper;
 import com.maersk.referencedata.locationsconsumer.model.facilities.FacilityTypeWrapper;
 import com.maersk.referencedata.locationsconsumer.repositories.facilities.AddressesRepository;
 import com.maersk.referencedata.locationsconsumer.repositories.facilities.ContactDetailsRepository;
 import com.maersk.referencedata.locationsconsumer.repositories.facilities.FacilitiesRepository;
-import com.maersk.referencedata.locationsconsumer.repositories.facilities.FacilityAlternateCodeLinksRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.facilities.FacilityAlternateCodesRepository;
 import com.maersk.referencedata.locationsconsumer.repositories.facilities.FacilityDetailsRepository;
 import com.maersk.referencedata.locationsconsumer.repositories.facilities.FacilityServicesRepository;
 import com.maersk.referencedata.locationsconsumer.repositories.facilities.FacilityTypeLinksRepository;
@@ -69,7 +68,7 @@ public class FacilitiesService {
     private final AddressesRepository addressesRepository;
     private final ContactDetailsRepository contactDetailsRepository;
     private final FacilitiesRepository facilitiesRepository;
-    private final FacilityAlternateCodeLinksRepository facilityAlternateCodeLinksRepository;
+    private final FacilityAlternateCodesRepository facilityAlternateCodesRepository;
     private final FacilityDetailsRepository facilityDetailsRepository;
     private final FacilityServicesRepository facilityServicesRepository;
     private final FacilityTypesRepository facilityTypesRepository;
@@ -113,7 +112,10 @@ public class FacilitiesService {
                        }
                    })
                    .doOnNext(event -> log.info("Received facility event: key {}, facilityId{}, partition number {}", facilityRecord.key()
-                           , event.getFacility().getFacilityId(), facilityRecord.receiverOffset().topicPartition().partition()))
+                           , event.getFacility()
+                                  .getFacilityId(), facilityRecord.receiverOffset()
+                                                                  .topicPartition()
+                                                                  .partition()))
                    .flatMap(facilityMessage -> createOrUpdateFacility(facilityMessage.getFacility()))
                    .doOnError(ex -> log.error("Error processing event after all retries {} and value {}", facilityRecord.key(), facilityRecord.value(), ex))
                    .onErrorResume(ex -> Mono.empty())
@@ -147,7 +149,7 @@ public class FacilitiesService {
         // TODO This one has a list of alternateCodes but do we need them?
 //        final var parent = mapToParent(facilityEvent.getParent());
 
-        List<FacilityAlternateCodeLink> facilityAlternateCodeLinks = mapToAlternateCodeLinks(facilityEvent.getAlternateCodes(), facilityId);
+        List<FacilityAlternateCode> facilityAlternateCodes = mapToAlternateCodeLinks(facilityEvent.getAlternateCodes(), facilityId);
 
         final var facilityDetail = mapToFacilityDetail(facilityEvent.getFacilityDetail(), facilityId);
 
@@ -175,7 +177,8 @@ public class FacilitiesService {
                            addressesRepository.save(address)
                                               .then(),
 //                        parentsRepository.save(parent).then(),
-//                        facilityAlternateCodeLinksRepository.saveAll(facilityAlternateCodeLinks).then(),
+                           facilityAlternateCodesRepository.saveAll(facilityAlternateCodes)
+                                                           .then(),
                            facilityDetailsRepository.saveAll(Mono.justOrEmpty(facilityDetail))
                                                     .then(),
                            facilityTypesRepository.saveAll(facilityTypes)
@@ -214,12 +217,15 @@ public class FacilitiesService {
                        .build();
     }
 
-    private List<FacilityAlternateCodeLink> mapToAlternateCodeLinks(List<alternateCode> alternateCodes, String facilityId) {
+    private List<FacilityAlternateCode> mapToAlternateCodeLinks(List<alternateCode> alternateCodes, String facilityId) {
         return alternateCodes.stream()
-                             .map(alternateCode -> FacilityAlternateCodeLink.builder()
-                                                                            .facilityId(facilityId)
-                                                                            .alternateCodeId(alternateCode.getCode())
-                                                                            .build())
+                             .map(alternateCode -> FacilityAlternateCode.builder()
+                                                                        .isNew(true)
+                                                                        .id(UUID.randomUUID())
+                                                                        .facilityId(facilityId)
+                                                                        .code(alternateCode.getCode())
+                                                                        .codeType(alternateCode.getCodeType())
+                                                                        .build())
                              .toList();
     }
 

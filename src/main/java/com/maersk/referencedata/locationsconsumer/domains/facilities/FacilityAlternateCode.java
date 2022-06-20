@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
@@ -14,16 +14,17 @@ import java.util.UUID;
 @Builder
 @Data
 @AllArgsConstructor
-@Table(value = "FACILITY_ALTERNATE_CODE_LINKS")
-public class FacilityAlternateCodeLink implements Persistable<UUID> {
+@Table(value = "FACILITY_ALTERNATE_CODES")
+public class FacilityAlternateCode implements Persistable<UUID> {
 
     @Id
     private UUID id;
     private String facilityId;
-    private String alternateCodeId;
+    private String code;
+    private String codeType;
 
-    @PersistenceConstructor
-    public FacilityAlternateCodeLink() {
+    @PersistenceCreator
+    public FacilityAlternateCode() {
     }
 
     @Transient

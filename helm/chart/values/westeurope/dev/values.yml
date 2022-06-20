@@ -10,7 +10,6 @@ otel:
 
 kafka:
   bootstrapServers: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/bootstrap-servers#bootstrap-servers
-  environmentSpecificOffset: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/environment-specific-offset#environment-specific-offset
   username: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/username#username
   password: vault:synergyreferencedata-kv/data/dev/services/locations-consumer/kafka/password#password
   schemaRegistry:
@@ -21,9 +20,11 @@ kafka:
     facilities:
       client-id: facilities-consumer
       topic: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/facilities-events/topic#topic
+      environmentSpecificOffset: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/locations-events/environment-specific-offset#environment-specific-offset
     locations:
       client-id: locations-consumer
       topic: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/locations-events/topic#topic
+      environmentSpecificOffset: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/facilities-events/environment-specific-offset#environment-specific-offset
     consumerGroup: vault:synergyreferencedata-kv/data/readable/dev/services/locations-consumer/kafka/consumer-group#consumer-group
 
 spring:

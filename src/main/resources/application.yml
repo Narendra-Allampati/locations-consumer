@@ -1,6 +1,7 @@
 #KAFKA_BOOTSTRAP_SERVERS: "localhost:9092"
 KAFKA_BOOTSTRAP_SERVERS: "pkc-lq8gm.westeurope.azure.confluent.cloud:9092"
-KAFKA_ENVIRONMENT_SPECIFIC_OFFSET: seekToBeginning
+KAFKA_ENVIRONMENT_SPECIFIC_OFFSET_FACILITIES: seekToBeginning
+KAFKA_ENVIRONMENT_SPECIFIC_OFFSET_LOCATIONS: seekToBeginning
 KAFKA_LOCATIONS_TOPIC: MSK.geography.gda.topic.internal.any.v3
 KAFKA_FACILITIES_TOPIC: MSK.geography.facility.topic.internal.any.v3
 # preprod
@@ -47,11 +48,12 @@ kafka:
     facilities:
       client-id: facilities-consumer
       topic: ${KAFKA_FACILITIES_TOPIC}
+      environment-specific-offset: ${KAFKA_ENVIRONMENT_SPECIFIC_OFFSET_FACILITIES}
     locations:
       client-id: locations-consumer
       topic: ${KAFKA_LOCATIONS_TOPIC}
+      environment-specific-offset: ${KAFKA_ENVIRONMENT_SPECIFIC_OFFSET_LOCATIONS}
     consumer-group: ${KAFKA_CONSUMER_GROUP}
-    environment-specific-offset: ${KAFKA_ENVIRONMENT_SPECIFIC_OFFSET}
     offset-auto-reset: earliest
     concurrency: 1
     max-poll-records: 5

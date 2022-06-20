@@ -182,7 +182,7 @@ public class LocationsService {
                            List<bdaAlternateCode> alternateCodes = bda.getAlternateCodes();
                            String geoID = GeographyMapper.findCodeFromBdaAlternateCodes(alternateCodes, GEO_ID);
                            BusinessDefinedArea businessDefinedArea = BusinessDefinedArea.builder()
-                                                                                        .rowId(geoID)
+                                                                                        .id(geoID)
                                                                                         .name(bda.getName()).type(bda.getType()).bdaType(bda.getBdaType())
                                                                                         .build();
                            return new BdaWithAlternateCodes(businessDefinedArea, mapToBDAAlternateCodes(alternateCodes, geoID));
@@ -198,7 +198,7 @@ public class LocationsService {
                            List<bdaLocationAlternateCode> alternateCodes = bdaLocation.getAlternateCodes();
                            String geoID = GeographyMapper.findCodeFromBdaLocationAlternateCodes(alternateCodes, GEO_ID);
                            BusinessDefinedAreaLocation businessDefinedAreaLocation = BusinessDefinedAreaLocation.builder()
-                                                                                                                .rowId(geoID)
+                                                                                                                .id(geoID)
                                                                                                                 .name(bdaLocation.getName()).type(bdaLocation.getType()).status(bdaLocation.getStatus())
                                                                                                                 .build();
                            return new BdaLocationWithAlternateCodes(businessDefinedAreaLocation,
@@ -290,7 +290,7 @@ public class LocationsService {
 
         // TODO handle multiple parents
         List<parent> parents = geography.getParents();
-        if (!parents.isEmpty()) {
+        if (null != parents && !parents.isEmpty()) {
             Optional<Parent> parentOptional = mapToParent(parents.get(0));
             if (parentOptional.isPresent()) {
                 Parent parent = parentOptional.get();
@@ -361,7 +361,7 @@ public class LocationsService {
 
         // TODO handle multiple parents
         List<parent> parents = geography.getParents();
-        if (!parents.isEmpty()) {
+        if (null != parents && !parents.isEmpty()) {
             Optional<Parent> parentOptional = mapToParent(parents.get(0));
             if (parentOptional.isPresent()) {
                 Parent parent = parentOptional.get();
