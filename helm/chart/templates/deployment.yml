@@ -44,7 +44,7 @@ spec:
             - name: KAFKA_ENVIRONMENT_SPECIFIC_OFFSET_FACILITIES
               value: {{ .Values.kafka.consumer.facilities.environmentSpecificOffset }}
             - name: KAFKA_ENVIRONMENT_SPECIFIC_OFFSET_LOCATIONS
-              value: { { .Values.kafka.consumer.locations.environmentSpecificOffset } }
+              value: {{ .Values.kafka.consumer.locations.environmentSpecificOffset }}
             - name: KAFKA_USERNAME
               value: {{ .Values.kafka.username }}
             - name: KAFKA_PASSWORD
