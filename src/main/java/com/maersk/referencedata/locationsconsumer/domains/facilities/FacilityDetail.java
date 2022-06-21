@@ -3,7 +3,7 @@ package com.maersk.referencedata.locationsconsumer.domains.facilities;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
@@ -34,7 +34,7 @@ public class FacilityDetail implements Persistable<String> {
     private String internationalDialCode;
     private String telephoneNumber;
 
-    @PersistenceConstructor
+    @PersistenceCreator
     public FacilityDetail() {
     }
 

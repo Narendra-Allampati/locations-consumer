@@ -198,23 +198,61 @@ public class FacilitiesService {
     }
 
     private Facility mapToFacility(facility facilityEvent) {
-        return Facility.builder()
-                       .isNew(true)
-                       .id(facilityEvent.getFacilityId())
-                       .name(facilityEvent.getName())
-                       .type(facilityEvent.getType())
-                       .extOwned(facilityEvent.getExtOwned())
-                       .status(facilityEvent.getStatus())
-                       .extExposed(facilityEvent.getExtExposed())
-                       .url(facilityEvent.getUrl())
-                       .departmentOfDefenceActivityAddressCode(facilityEvent.getDoDAAC())
-                       .parentId(findGeoIdFromFacilityParentAlternateCodes(facilityEvent.getParent()
-                                                                                        .getAlternateCodes()))
-                       .parentName(facilityEvent.getParent()
-                                                .getName())
-                       .parentType(facilityEvent.getParent()
-                                                .getType())
-                       .build();
+        Facility facility = Facility.builder()
+                                 .isNew(true)
+                                 .id(facilityEvent.getFacilityId())
+                                 .name(facilityEvent.getName())
+                                 .type(facilityEvent.getType())
+                                 .extOwned(facilityEvent.getExtOwned())
+                                 .status(facilityEvent.getStatus())
+                                 .extExposed(facilityEvent.getExtExposed())
+                                 .url(facilityEvent.getUrl())
+                                 .departmentOfDefenceActivityAddressCode(facilityEvent.getDoDAAC())
+                                 .parentId(findGeoIdFromFacilityParentAlternateCodes(facilityEvent.getParent()
+                                                                                                  .getAlternateCodes()))
+                                 .parentName(facilityEvent.getParent()
+                                                          .getName())
+                                 .parentType(facilityEvent.getParent()
+                                                          .getType())
+                                 .build();
+
+        List<alternateCode> alternateCodes = facilityEvent.getAlternateCodes();
+        for (alternateCode aCode :alternateCodes) {
+            String codeType = aCode.getCodeType();
+            if ("RKST".equalsIgnoreCase(codeType)) {
+                facility.setRkst(aCode.getCode());
+            } else if ("RKTS".equalsIgnoreCase(codeType)) {
+                facility.setRkts(aCode.getCode());
+            } else if ("UN CODE".equalsIgnoreCase(codeType)) {
+                facility.setUnloc(aCode.getCode());
+            } else if ("UN CODE(Lookup Only)".equalsIgnoreCase(codeType)) {
+                facility.setUnlocLookup(aCode.getCode());
+            } else if ("UN CODE(Return Only)".equalsIgnoreCase(codeType)) {
+                facility.setUnlocReturn(aCode.getCode());
+            } else if ("GEOID".equalsIgnoreCase(codeType)) {
+                facility.setGeoId(aCode.getCode());
+            } else if ("BIC".equalsIgnoreCase(codeType)) {
+                facility.setBic(aCode.getCode());
+            } else if ("HSUD CODE".equalsIgnoreCase(codeType)) {
+                facility.setHsudCode(aCode.getCode());
+            } else if ("HSUD NUMBER".equalsIgnoreCase(codeType)) {
+                facility.setHsudNumber(aCode.getCode());
+            } else if ("SMDG(City UN Code + Facility)".equalsIgnoreCase(codeType)) {
+                facility.setSmdg(aCode.getCode());
+            } else if ("CUSTOMSLOC".equalsIgnoreCase(codeType)) {
+                facility.setCustomsLoc(aCode.getCode());
+            } else if ("SCHEDULE D".equalsIgnoreCase(codeType)) {
+                facility.setScheduleD(aCode.getCode());
+            } else if ("SCHEDULE K".equalsIgnoreCase(codeType)) {
+                facility.setScheduleK(aCode.getCode());
+            } else if ("Business Unit ID".equalsIgnoreCase(codeType)) {
+                facility.setCustomsLoc(aCode.getCode());
+            } else if ("LNS CODE".equalsIgnoreCase(codeType)) {
+                facility.setCustomsLoc(aCode.getCode());
+            }
+        }
+
+        return facility;
     }
 
     private List<FacilityAlternateCode> mapToAlternateCodeLinks(List<alternateCode> alternateCodes, String facilityId) {

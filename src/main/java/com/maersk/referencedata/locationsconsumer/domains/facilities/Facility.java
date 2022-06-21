@@ -2,8 +2,9 @@ package com.maersk.referencedata.locationsconsumer.domains.facilities;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
@@ -13,6 +14,7 @@ import org.springframework.data.relational.core.mapping.Table;
  */
 @AllArgsConstructor
 @Builder
+@Data
 @Table(value = "FACILITIES")
 public class Facility implements Persistable<String> {
 
@@ -28,8 +30,23 @@ public class Facility implements Persistable<String> {
     private String parentId;
     private String parentName;
     private String parentType;
+    private String rkst;
+    private String rkts;
+    private String unloc;
+    private String unlocReturn;
+    private String unlocLookup;
+    private String scheduleD;
+    private String scheduleK;
+    private String lns;
+    private String hsudCode;
+    private String hsudNumber;
+    private String businessUnitId;
+    private String customsLoc;
+    private String smdg;
+    private String bic;
+    private String geoId;
 
-    @PersistenceConstructor
+    @PersistenceCreator
     public Facility() {
     }
 

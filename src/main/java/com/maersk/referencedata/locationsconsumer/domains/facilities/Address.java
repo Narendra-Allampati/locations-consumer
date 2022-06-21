@@ -3,12 +3,10 @@ package com.maersk.referencedata.locationsconsumer.domains.facilities;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
-
-import java.util.UUID;
 
 /**
  * @author Anders Clausen on 18/11/2021.
@@ -36,7 +34,7 @@ public class Address implements Persistable<String> {
     private String longitude;
     private String addressQualityCheckIndicator;
 
-    @PersistenceConstructor
+    @PersistenceCreator
     public Address() {
     }
 
