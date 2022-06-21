@@ -62,6 +62,7 @@ CREATE TABLE FACILITIES
     UNLOC_RETURN                                    VARCHAR (100),
     RKST                             	            VARCHAR (100),
     RKTS                             	            VARCHAR (100),
+    IATA                             	            VARCHAR (100),
     SCHEDULE_D                                      VARCHAR (100),
     SCHEDULE_K                                      VARCHAR (100),
     BUSINESS_UNIT_ID                                VARCHAR (100),
@@ -70,7 +71,8 @@ CREATE TABLE FACILITIES
     BIC                                             VARCHAR (100),
     HSUD_CODE                                       VARCHAR (100),
     HSUD_NUMBER                                     VARCHAR (100),
-    LNS                             	            VARCHAR (100),
+    LNS_CODE                           	            VARCHAR (100),
+    LNS_UN_CODE                        	            VARCHAR (100),
     CONSTRAINT FACILITY_ID_PK PRIMARY KEY (ID));
 
 CREATE TABLE ADDRESSES

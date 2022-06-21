@@ -37,7 +37,8 @@ public class Facility implements Persistable<String> {
     private String unlocLookup;
     private String scheduleD;
     private String scheduleK;
-    private String lns;
+    private String lnsCode;
+    private String lnsUnCode;
     private String hsudCode;
     private String hsudNumber;
     private String businessUnitId;
@@ -45,6 +46,7 @@ public class Facility implements Persistable<String> {
     private String smdg;
     private String bic;
     private String geoId;
+    private String iata;
 
     @PersistenceCreator
     public Facility() {

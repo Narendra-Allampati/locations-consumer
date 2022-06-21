@@ -246,9 +246,13 @@ public class FacilitiesService {
             } else if ("SCHEDULE K".equalsIgnoreCase(codeType)) {
                 facility.setScheduleK(aCode.getCode());
             } else if ("Business Unit ID".equalsIgnoreCase(codeType)) {
-                facility.setCustomsLoc(aCode.getCode());
+                facility.setBusinessUnitId(aCode.getCode());
             } else if ("LNS CODE".equalsIgnoreCase(codeType)) {
-                facility.setCustomsLoc(aCode.getCode());
+                facility.setLnsCode(aCode.getCode());
+            } else if ("LNS UN CODE".equalsIgnoreCase(codeType)) {
+                facility.setLnsUnCode(aCode.getCode());
+            } else if ("IATA".equalsIgnoreCase(codeType)) {
+                facility.setIata(aCode.getCode());
             }
         }
 
