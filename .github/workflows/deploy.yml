@@ -177,7 +177,7 @@ jobs:
           dockerImageVersion: ${{ needs.prepare.outputs.dockerImageVersion }}
           helmValues: ./helm/chart/values/westeurope/prod/values.yml
           registryPassword: ${{ secrets.GHCR_PULL_TOKEN }}
-          k8s-cluster: mcom-np-west-1
+          k8s-cluster: mcom-prod-westeurope-1
           k8s-namespace: reference-data
           vaultName: ${{ secrets.VAULT_NAME }}
           vaultRoleId: ${{ secrets.VAULT_ROLE_ID }}
