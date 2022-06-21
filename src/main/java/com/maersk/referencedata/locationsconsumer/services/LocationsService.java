@@ -120,10 +120,10 @@ public class LocationsService {
 
     private Mono<String> createOrUpdate(geography geography) {
         if (POSTAL_CODE.equals(geography.getGeoType())) {
-            return Mono.just("postal code");
-//            return postalCodeRepository.findById(geography.getGeoId())
-//                                       .flatMap(geographyFromDB -> updateGeography(geography))
-//                                       .switchIfEmpty(Mono.defer(() -> saveGeography(geography)));
+//            return Mono.just("postal code");
+            return postalCodeRepository.findById(geography.getGeoId())
+                                       .flatMap(geographyFromDB -> updateGeography(geography))
+                                       .switchIfEmpty(Mono.defer(() -> saveGeography(geography)));
         }
 
         return geographyRepository.findById(geography.getGeoId())
