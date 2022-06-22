@@ -90,13 +90,15 @@ public class LocationsService {
                 .metrics()
                 .doOnError(error -> log.warn("Error receiving Geography record, exception -> {}, retry will be attempted",
                         error.getLocalizedMessage(), error))
-                .retryWhen(Retry.indefinitely().filter(ErrorHandlingUtils::isRetriableKafkaError))
+                .retryWhen(Retry.indefinitely()
+                                .filter(ErrorHandlingUtils::isRetriableKafkaError))
                 .doOnError(error -> log.warn("Error thrown whilst processing geography records, error isn't a " +
                         "known retriable error, will attempt to retry processing records , exception -> {}", error.getLocalizedMessage(), error))
                 .retryWhen(Retry.fixedDelay(100, Duration.ofMinutes(1)))
 //                .doOnNext(event -> log.info("Received geo event: key {}, value {}", event.key(), event.value()))
                 .concatMap(this::handleLocationEvent)
-                .subscribe(result -> result.receiverOffset().acknowledge());
+                .subscribe(result -> result.receiverOffset()
+                                           .acknowledge());
     }
 
     private Mono<ReceiverRecord<String, geographyMessage>> handleLocationEvent(ReceiverRecord<String, geographyMessage> geographyRecord) {
@@ -104,14 +106,21 @@ public class LocationsService {
         return Mono.just(geographyRecord)
                    .map(KafkaDeserializerUtils::extractDeserializerError)
                    .<com.maersk.geography.smds.operations.msk.geographyMessage>handle((tuple, sink) -> {
-                       if (tuple.getT2().isEmpty() && Objects.nonNull(tuple.getT1().value())) {
-                           sink.next(tuple.getT1().value());
+                       if (tuple.getT2()
+                                .isEmpty() && Objects.nonNull(tuple.getT1()
+                                                                   .value())) {
+                           sink.next(tuple.getT1()
+                                          .value());
                        } else {
-                           log.error("Error while processing geographyMessage " + tuple.getT2().get());
+                           log.error("Error while processing geographyMessage " + tuple.getT2()
+                                                                                       .get());
                        }
                    })
                    .doOnNext(event -> log.info("Received geo event: key {}, geoId {}, partition number {}", geographyRecord.key()
-                           ,event.getGeography().getGeoId(), geographyRecord.receiverOffset().topicPartition().partition()))
+                           , event.getGeography()
+                                  .getGeoId(), geographyRecord.receiverOffset()
+                                                              .topicPartition()
+                                                              .partition()))
                    .flatMap(geographyMessage -> createOrUpdate(geographyMessage.getGeography()))
                    .doOnError(ex -> log.warn("Error processing event {} and value {}", geographyRecord.key(), geographyRecord.value(), ex))
                    .onErrorResume(ex -> Mono.empty())
@@ -164,12 +173,17 @@ public class LocationsService {
 
         List<BdaLocationWithAlternateCodes> bdaLocationWithAlternateCodes = mapToBdaLocationsWithAlternateCodes(geography.getBdaLocations());
 
-        return Flux.concat(geographyRepository.saveAll(Mono.justOrEmpty(geo)).then()
-                           , postalCodeRepository.saveAll(Mono.justOrEmpty(postalCode)).then()
-                           , alternateNameRepository.saveAll(alternateNames).then()
-                           , alternateCodeRepository.saveAll(alternateCodes).doOnError(e ->
-                                   log.warn("Geo ID {} with geo name {} and geo type {}",
-                                           geoID, geography.getName(), geography.getGeoType(), e)).then())
+        return Flux.concat(geographyRepository.saveAll(Mono.justOrEmpty(geo))
+                                              .then()
+                           , postalCodeRepository.saveAll(Mono.justOrEmpty(postalCode))
+                                                 .then()
+                           , alternateNameRepository.saveAll(alternateNames)
+                                                    .then()
+                           , alternateCodeRepository.saveAll(alternateCodes)
+                                                    .doOnError(e ->
+                                                            log.warn("Geo ID {} with geo name {} and geo type {}",
+                                                                    geoID, geography.getName(), geography.getGeoType(), e))
+                                                    .then())
 //                        , geoAlternateCodeLinksRepository.saveAll(geoAlternateCodeLinks).then())
                    .then(Mono.just("1"));
     }
@@ -183,7 +197,9 @@ public class LocationsService {
                            String geoID = GeographyMapper.findCodeFromBdaAlternateCodes(alternateCodes, GEO_ID);
                            BusinessDefinedArea businessDefinedArea = BusinessDefinedArea.builder()
                                                                                         .id(geoID)
-                                                                                        .name(bda.getName()).type(bda.getType()).bdaType(bda.getBdaType())
+                                                                                        .name(bda.getName())
+                                                                                        .type(bda.getType())
+                                                                                        .bdaType(bda.getBdaType())
                                                                                         .build();
                            return new BdaWithAlternateCodes(businessDefinedArea, mapToBDAAlternateCodes(alternateCodes, geoID));
                        })
@@ -199,7 +215,9 @@ public class LocationsService {
                            String geoID = GeographyMapper.findCodeFromBdaLocationAlternateCodes(alternateCodes, GEO_ID);
                            BusinessDefinedAreaLocation businessDefinedAreaLocation = BusinessDefinedAreaLocation.builder()
                                                                                                                 .id(geoID)
-                                                                                                                .name(bdaLocation.getName()).type(bdaLocation.getType()).status(bdaLocation.getStatus())
+                                                                                                                .name(bdaLocation.getName())
+                                                                                                                .type(bdaLocation.getType())
+                                                                                                                .status(bdaLocation.getStatus())
                                                                                                                 .build();
                            return new BdaLocationWithAlternateCodes(businessDefinedAreaLocation,
                                    mapToBDALocationAlternateCodes(alternateCodes, geoID));
@@ -228,7 +246,11 @@ public class LocationsService {
                        .map(pa -> {
                            List<parentAlternateCode> alternateCodes = pa.getAlternateCodes();
                            String geoID = GeographyMapper.findCodeFromGeoParentAlternateCodes(alternateCodes, GEO_ID);
-                           return Parent.builder().rowId(geoID).name(pa.getName()).type(pa.getType()).build();
+                           return Parent.builder()
+                                        .rowId(geoID)
+                                        .name(pa.getName())
+                                        .type(pa.getType())
+                                        .build();
                        });
     }
 
@@ -237,7 +259,10 @@ public class LocationsService {
                        .map(ca -> {
                            List<countryAlternateCode> alternateCodes = ca.getAlternateCodes();
                            String geoID = GeographyMapper.findCodeFromCountryAlternateCodes(alternateCodes, GEO_ID);
-                           return Country.builder().rowId(geoID).name(ca.getName()).build();
+                           return Country.builder()
+                                         .rowId(geoID)
+                                         .name(ca.getName())
+                                         .build();
                        });
     }
 
@@ -326,8 +351,9 @@ public class LocationsService {
         Geography geo = Geography.builder()
                                  .isNew(isNew)
                                  .geoId(geography.getGeoId())
-                                 .geoType(geography.getGeoType())
+                                 .geoType(geography.getGeoType().toUpperCase())
                                  .name(geography.getName())
+                                 .nameUpperCase(geography.getName().toUpperCase())
                                  .status(geography.getStatus())
                                  .validFrom(geography.getValidFrom())
                                  .validTo(geography.getValidTo())
@@ -357,6 +383,7 @@ public class LocationsService {
             Country country = countryOptional.get();
             geo.setCountryId(country.getRowId());
             geo.setCountryName(country.getName());
+            geo.setCountryNameUpperCase(country.getName().toUpperCase());
         }
 
         // TODO handle multiple parents
@@ -380,7 +407,7 @@ public class LocationsService {
         }
 
         List<alternateCode> alternateCodes = geography.getAlternateCodes();
-        for (alternateCode aCode :alternateCodes) {
+        for (alternateCode aCode : alternateCodes) {
             String codeType = aCode.getCodeType();
             if ("RKST".equalsIgnoreCase(codeType)) {
                 geo.setRkst(aCode.getCode());
@@ -402,7 +429,8 @@ public class LocationsService {
 
     private List<AlternateCode> mapToBDALocationAlternateCodes(List<bdaLocationAlternateCode> alternateCodes, String geoId) {
         return alternateCodes
-                .stream().map(alternateCode ->
+                .stream()
+                .map(alternateCode ->
                         AlternateCode.builder()
                                      .code(alternateCode.getCode())
                                      .codeType(alternateCode.getCodeType())
@@ -413,7 +441,8 @@ public class LocationsService {
 
     private List<AlternateCode> mapToBDAAlternateCodes(List<bdaAlternateCode> alternateCodes, String geoId) {
         return alternateCodes
-                .stream().map(alternateCode ->
+                .stream()
+                .map(alternateCode ->
                         AlternateCode.builder()
                                      .code(alternateCode.getCode())
                                      .codeType(alternateCode.getCodeType())
@@ -424,7 +453,8 @@ public class LocationsService {
 
     private List<AlternateCode> mapToSubCityParentAlternateCodes(List<subCityParentAlternateCode> alternateCodes, String geoId) {
         return alternateCodes
-                .stream().map(alternateCode ->
+                .stream()
+                .map(alternateCode ->
                         AlternateCode.builder()
                                      .code(alternateCode.getCode())
                                      .codeType(alternateCode.getCodeType())
@@ -435,7 +465,8 @@ public class LocationsService {
 
     private List<AlternateCode> mapToParentAlternateCodes(List<parentAlternateCode> alternateCodes, String geoId) {
         return alternateCodes
-                .stream().map(alternateCode ->
+                .stream()
+                .map(alternateCode ->
                         AlternateCode.builder()
                                      .code(alternateCode.getCode())
                                      .codeType(alternateCode.getCodeType())
@@ -446,7 +477,8 @@ public class LocationsService {
 
     private List<AlternateCode> mapToCountryAlternateCodes(List<countryAlternateCode> alternateCodes, String geoId) {
         return alternateCodes
-                .stream().map(alternateCode ->
+                .stream()
+                .map(alternateCode ->
                         AlternateCode.builder()
                                      .code(alternateCode.getCode())
                                      .codeType(alternateCode.getCodeType())
@@ -501,17 +533,19 @@ public class LocationsService {
 
     private List<AlternateName> mapToAlternateNames(List<alternateName> alternateNames, String geoID, boolean isNew) {
         return Optional.ofNullable(alternateNames)
-                       .orElse(Collections.emptyList()).stream().map(alternateName ->
-                        AlternateName.builder()
-                                     .isNew(isNew)
-                                     .id(UUID.randomUUID())
-                                     .geoId(geoID)
-                                     .name(alternateName.getName())
-                                     .status(alternateName.getStatus())
-                                     .description(alternateName.getDescription())
-                                     .build()
+                       .orElse(Collections.emptyList())
+                       .stream()
+                       .map(alternateName ->
+                               AlternateName.builder()
+                                            .isNew(isNew)
+                                            .id(UUID.randomUUID())
+                                            .geoId(geoID)
+                                            .name(alternateName.getName())
+                                            .status(alternateName.getStatus())
+                                            .description(alternateName.getDescription())
+                                            .build()
 
-                )
+                       )
                        .toList();
     }
 }

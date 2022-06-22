@@ -24,6 +24,7 @@ public class Geography implements Persistable<String> {
     private String geoId;
     private String geoType;
     private String name;
+    private String nameUpperCase;
     private String status;
     private LocalDate validFrom;
     private LocalDate validTo;
@@ -48,6 +49,7 @@ public class Geography implements Persistable<String> {
     private String hsudName;
     private String countryId;
     private String countryName;
+    private String countryNameUpperCase;
     private String parentId;
     private String parentName;
     private String parentType;
