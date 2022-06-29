@@ -27,7 +27,8 @@ public class FacilityTypeLink implements Persistable<UUID> {
     }
 
     @Transient
-    private boolean isNew;
+    @Builder.Default
+    private boolean isNew = true;
 
     @Override
     public UUID getId() {

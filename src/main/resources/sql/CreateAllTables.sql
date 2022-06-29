@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS ADDRESSES, CONTACT_DETAILS, FACILITIES, FACILITY_ALTERNATE_CODES, FACILITY_DETAILS, FACILITY_SERVICES, FACILITY_TYPE_LINKS, FACILITY_TYPES, FENCES, OPENING_HOURS, TRANSPORT_MODES, ALTERNATE_CODES, ALTERNATE_NAMES, GEO_ALTERNATE_CODE_LINKS, GEOGRAPHY, POSTAL_CODE;
+DROP VIEW IF EXISTS VIEW_CITIES_AND_FACILITIES;
 
 CREATE TABLE GEOGRAPHY
 (
@@ -14,6 +15,7 @@ CREATE TABLE GEOGRAPHY
     PARENT_ID                               VARCHAR (14),
     PARENT_NAME                             VARCHAR (512),
     PARENT_TYPE                             VARCHAR (100),
+    FIPS                             	    VARCHAR (100),
     RKST                             	    VARCHAR (100),
     RKTS                             	    VARCHAR (100),
     UNLOC                             	    VARCHAR (100),
@@ -46,6 +48,14 @@ CREATE TABLE GEOGRAPHY
     CONSTRAINT GEO_ID_PK PRIMARY KEY (GEO_ID));
 
 CREATE INDEX IF NOT EXISTS GEO_TYPE_GEO_IDX ON GEOGRAPHY USING btree (GEO_TYPE);
+CREATE INDEX IF NOT EXISTS GEO_NAME_UPPERCASE_IDX ON GEOGRAPHY USING btree (NAME_UPPER_CASE text_pattern_ops ASC NULLS LAST);
+CREATE INDEX IF NOT EXISTS RKTS_IDX ON GEOGRAPHY USING btree (RKTS);
+CREATE INDEX IF NOT EXISTS RKST_IDX ON GEOGRAPHY USING btree (RKST);
+CREATE INDEX IF NOT EXISTS UNLOC_IDX ON GEOGRAPHY USING btree (UNLOC);
+CREATE INDEX IF NOT EXISTS UNLOC_LOOKUP_IDX ON GEOGRAPHY USING btree (UNLOC_LOOKUP);
+CREATE INDEX IF NOT EXISTS GEO_TYPE_IDX ON GEOGRAPHY USING btree (GEO_TYPE);
+CREATE INDEX IF NOT EXISTS FIPS_IDX ON GEOGRAPHY USING btree (FIPS);
+CREATE INDEX IF NOT EXISTS ISO_TERRITORY_IDX ON GEOGRAPHY USING btree (ISO_TERRITORY);
 
 CREATE TABLE FACILITIES
 (
@@ -324,3 +334,45 @@ CREATE TABLE POSTAL_CODE
     SUB_CITY_PARENT_NAME                    VARCHAR (512),
     SUB_CITY_PARENT_TYPE                    VARCHAR (100),
     CONSTRAINT POSTAL_CODE_ID_PK PRIMARY KEY (GEO_ID));
+
+CREATE OR REPLACE VIEW VIEW_CITIES_AND_FACILITIES
+AS
+-- Get a list of Cities
+SELECT
+    geo.geo_id, geo.name AS city_name, geo.name_upper_case AS city_name_upper_case, ctry.rkst AS country_code, geo.country_id AS country_geo_id,
+    geo.country_name, geo.geo_type,
+    null AS locality_name, geo.rkst, geo.rkts, reg.iso_territory AS region_code,
+    reg.name AS region_name, null AS site_name, geo.olson_time_zone,
+    geo.unloc, geo.unloc_lookup, geo.unloc_return
+FROM geography geo
+         LEFT OUTER JOIN geography reg
+                         ON geo.parent_id = reg.geo_id
+                             AND reg.geo_type = 'STATE/PROV'
+         INNER JOIN geography ctry
+                    ON geo.country_id = ctry.geo_id
+                        AND ctry.geo_type = 'COUNTRY'
+WHERE geo.geo_type = 'CITY'
+UNION ALL
+-- Get list of facilities
+SELECT
+    f.geo_id, city.name AS city_name, city.name_upper_case AS city_name_upper_case, ctry.rkst AS country_code, city.country_id AS country_geo_id,
+    city.country_name, ft.name AS geo_type,
+    -- ftcm.facility_type_code_mapping
+    null AS locality_name, f.rkst, f.rkts, reg.iso_territory AS region_code,
+    reg.name AS region_name, f.name AS site_name, city.olson_time_zone,
+    f.unloc, f.unloc_lookup, f.unloc_return
+FROM facilities f
+         INNER JOIN geography city
+                    ON f.parent_id = city.geo_id
+         LEFT OUTER JOIN geography reg
+                         ON city.parent_id = reg.geo_id
+                             AND reg.geo_type = 'STATE/PROV'
+         INNER JOIN geography ctry
+                    ON city.country_id = ctry.geo_id
+                        AND ctry.geo_type = 'COUNTRY'
+         INNER JOIN facility_types ft
+                    ON f.id = ft.facility_id
+--  INNER JOIN facility_type_code_mapping ftcm
+--          ON ft.code = ftcm.facility_type_code
+WHERE f.status = 'Active'
+  AND city.geo_type = 'CITY'

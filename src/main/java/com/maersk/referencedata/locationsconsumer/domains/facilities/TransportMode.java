@@ -31,7 +31,8 @@ public class TransportMode implements Persistable<String> {
     }
 
     @Transient
-    private boolean isNew;
+    @Builder.Default
+    private boolean isNew = true;
 
     @Override
     public String getId() {

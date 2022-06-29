@@ -56,6 +56,7 @@ public class Geography implements Persistable<String> {
     private String subCityParentId;
     private String subCityParentName;
     private String subCityParentType;
+    private String fips;
     private String rkst;
     private String rkts;
     private String unloc;
@@ -68,7 +69,8 @@ public class Geography implements Persistable<String> {
     }
 
     @Transient
-    private boolean isNew;
+    @Builder.Default
+    private boolean isNew = true;
 
     @Override
     public String getId() {
