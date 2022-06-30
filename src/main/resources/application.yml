@@ -82,6 +82,7 @@ spring:
     password: ${POSTGRES_PASSWORD}
     pool:
       enabled: true
+      max-life-time: -1
       maxSize: 10
       initialSize: 5
   sleuth:
