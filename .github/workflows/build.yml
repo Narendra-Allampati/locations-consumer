@@ -103,7 +103,7 @@ jobs:
   trivy:
     name: Trivy Scan
     runs-on: ubuntu-latest
-    needs: docker-build
+    needs: docker_image
     steps:
       - name: Trivy Scan
         with:
