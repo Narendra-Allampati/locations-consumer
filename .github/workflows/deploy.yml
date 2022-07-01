@@ -24,15 +24,9 @@ jobs:
       helmChart: ${{ steps.prepare-deployment.outputs.helmChart }}
       helmChartVersion: ${{ steps.prepare-deployment.outputs.helmChartVersion }}
     steps:
-      - name: Checkout common actions
-        uses: actions/checkout@v2
-        with:
-          repository: maersk-global/github-actions-commons
-          token: ${{ secrets.ACCESS_TOKEN }}
-          path: .github/actions/commons
       - id: prepare-deployment
         name: Prepare deployment
-        uses: ./.github/actions/commons/prepare-deployment
+        uses: Maersk-Global/github-actions-commons/prepare-deployment@main
         with:
           githubToken: ${{ secrets.ACCESS_TOKEN }}
           dockerImage: ${{ github.event.inputs.dockerImage }}
@@ -46,14 +40,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         name: Checkout repo
-      - name: Checkout common actions
-        uses: actions/checkout@v2
-        with:
-          repository: maersk-global/github-actions-commons
-          token: ${{ secrets.ACCESS_TOKEN }}
-          path: .github/actions/commons
       - name: Helm install
-        uses: ./.github/actions/commons/helm-upgrade
+        uses: Maersk-Global/github-actions-commons/helm-upgrade@main
         with:
           helmChart: ${{ needs.prepare.outputs.helmChart }}
           helmChartVersion: ${{ needs.prepare.outputs.helmChartVersion }}
@@ -104,14 +92,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         name: Checkout repo
-      - name: Checkout common actions
-        uses: actions/checkout@v2
-        with:
-          repository: maersk-global/github-actions-commons
-          token: ${{ secrets.ACCESS_TOKEN }}
-          path: .github/actions/commons
       - name: Helm install
-        uses: ./.github/actions/commons/helm-upgrade
+        uses: Maersk-Global/github-actions-commons/helm-upgrade@main
         with:
           helmChart: ${{ needs.prepare.outputs.helmChart }}
           helmChartVersion: ${{ needs.prepare.outputs.helmChartVersion }}
@@ -162,14 +144,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         name: Checkout repo
-      - name: Checkout common actions
-        uses: actions/checkout@v2
-        with:
-          repository: maersk-global/github-actions-commons
-          token: ${{ secrets.ACCESS_TOKEN }}
-          path: .github/actions/commons
       - name: Helm install
-        uses: ./.github/actions/commons/helm-upgrade
+        uses: Maersk-Global/github-actions-commons/helm-upgrade@main
         with:
           helmChart: ${{ needs.prepare.outputs.helmChart }}
           helmChartVersion: ${{ needs.prepare.outputs.helmChartVersion }}

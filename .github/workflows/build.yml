@@ -16,14 +16,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         name: Checkout repo
-      - name: Checkout common actions
-        uses: actions/checkout@v2
-        with:
-          repository: maersk-global/github-actions-commons
-          token: ${{ secrets.ACCESS_TOKEN }}
-          path: .github/actions/commons
       - name: Maven build
-        uses: ./.github/actions/commons/maven-build
+        uses: Maersk-Global/github-actions-commons/maven-build@main
         with:
           githubToken: ${{ secrets.ACCESS_TOKEN }}
           jdkVersion: 17
@@ -41,13 +35,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: workspace
-      - name: Checkout common actions
-        uses: actions/checkout@v2
-        with:
-          repository: maersk-global/github-actions-commons
-          token: ${{ secrets.ACCESS_TOKEN }}
-          path: .github/actions/commons
-      - uses: ./.github/actions/commons/sonarqube-scan
+      - uses: Maersk-Global/github-actions-commons/sonarqube-scan@main
         with:
           githubToken: ${{ secrets.ACCESS_TOKEN }}
           host: ${{ secrets.MDN_SONARQUBE_HOST }}
@@ -63,13 +51,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: workspace
-      - name: Checkout common actions
-        uses: actions/checkout@v2
-        with:
-          repository: maersk-global/github-actions-commons
-          token: ${{ secrets.ACCESS_TOKEN }}
-          path: .github/actions/commons
-      - uses: ./.github/actions/commons/blackduck-scan
+      - uses: Maersk-Global/github-actions-commons/blackduck-scan@main
         with:
           githubToken: ${{ secrets.ACCESS_TOKEN }}
           url: ${{ secrets.BLACKDUCK_URL }}
@@ -84,13 +66,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: workspace
-      - name: Checkout common actions
-        uses: actions/checkout@v2
-        with:
-          repository: maersk-global/github-actions-commons
-          token: ${{ secrets.ACCESS_TOKEN }}
-          path: .github/actions/commons
-      - uses: ./.github/actions/commons/polaris-scan
+      - uses: Maersk-Global/github-actions-commons/polaris-scan@main
         with:
           githubToken: ${{ secrets.ACCESS_TOKEN }}
           apiToken: ${{ secrets.POLARIS_API_TOKEN }}
@@ -124,20 +100,25 @@ jobs:
           name: docker-image
           path: /tmp/image.tar
 
+  trivy:
+    name: Trivy Scan
+    runs-on: ubuntu-latest
+    needs: docker-build
+    steps:
+      - name: Trivy Scan
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          vulnerabilityType: library
+          severity: CRITICAL
+        uses: Maersk-Global/github-actions-commons/trivy-scan@main
           
   docker_push:
     name: Push Docker image
     runs-on: ubuntu-latest
     needs: docker_image
     steps:
-      - name: Checkout common actions
-        uses: actions/checkout@v2
-        with:
-          repository: maersk-global/github-actions-commons
-          token: ${{ secrets.ACCESS_TOKEN }}
-          path: .github/actions/commons
       - name: Push Docker image
-        uses: ./.github/actions/commons/docker-push
+        uses: Maersk-Global/github-actions-commons/docker-push@main
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           imageName: 'maersk-global/locations-consumer'

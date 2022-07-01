@@ -15,12 +15,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         name: Checkout repo
-      - name: Checkout common actions
-        uses: actions/checkout@v2
-        with:
-          repository: maersk-global/github-actions-commons
-          token: ${{ secrets.ACCESS_TOKEN }}
-          path: .github/actions/commons
-      - uses: ./.github/actions/commons/helm-build-push
+      - uses: Maersk-Global/github-actions-commons/helm-build-push@main
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
