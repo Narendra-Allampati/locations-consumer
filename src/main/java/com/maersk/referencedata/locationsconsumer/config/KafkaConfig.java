@@ -77,6 +77,8 @@ public class KafkaConfig {
     private String schemaRegistryPassword;
     private final ConsumerFactory.Listener<String, geographyMessage> consumerFactoryListener;
 
+    private static final String SEEK_TO_BEGINNING = "seekToBeginning";
+
     public KafkaConfig() {
         this.consumerFactoryListener = new MicrometerConsumerListener(Metrics.globalRegistry);
     }
@@ -92,7 +94,7 @@ public class KafkaConfig {
         stringObjectMap.put("client.id", locationsClientId);
         ReceiverOptions<String, geographyMessage> options = ReceiverOptions.create(stringObjectMap);
 
-        if ("seekToBeginning".equals(environmentSpecificOffsetLocations)) {
+        if (SEEK_TO_BEGINNING.equals(environmentSpecificOffsetLocations)) {
             options = options.addAssignListener(receiverPartitions -> receiverPartitions.forEach(ReceiverPartition::seekToBeginning));
         } else {
             options = options.addAssignListener(receiverPartitions ->
@@ -110,7 +112,7 @@ public class KafkaConfig {
         stringObjectMap.put("client.id", facilitiesClientId);
         ReceiverOptions<String, facilityMessage> options = ReceiverOptions.create(stringObjectMap);
 
-        if ("seekToBeginning".equals(environmentSpecificOffsetFacilities)) {
+        if (SEEK_TO_BEGINNING.equals(environmentSpecificOffsetFacilities)) {
             options = options.addAssignListener(receiverPartitions -> receiverPartitions.forEach(ReceiverPartition::seekToBeginning));
         } else {
             options = options.addAssignListener(receiverPartitions ->
