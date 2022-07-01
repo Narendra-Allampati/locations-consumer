@@ -25,9 +25,9 @@ spec:
         product: {{ .Values.product }}
         k8s-app: {{ .Values.appName }}
       annotations:
-        ad.datadoghq.com/security-service.check_names: '["openmetrics"]'
-        ad.datadoghq.com/security-service.init_configs: '[{}]'
-        ad.datadoghq.com/security-service.instances: '[{"prometheus_url": "http://%%host%%:8080/actuator/prometheus",
+        ad.datadoghq.com/locations-consumer.check_names: '["openmetrics"]'
+        ad.datadoghq.com/locations-consumer.init_configs: '[{}]'
+        ad.datadoghq.com/locations-consumer.instances: '[{"prometheus_url": "http://%%host%%:8080/actuator/prometheus",
             "namespace": "{{ .Values.otel.namespace }}", "metrics": ["*"]}]'
         vault.security.banzaicloud.io/vault-role: "{{ .Values.vaultRole }}"
     spec:
