@@ -54,36 +54,30 @@ jobs:
           vaultName: ${{ secrets.VAULT_NAME }}
           vaultRoleId: ${{ secrets.VAULT_ROLE_ID }}
           vaultRoleSecretId: ${{ secrets.VAULT_ROLE_SECRET_ID }}
-#
-#  deploy-dev-apac:
-#    name: Dev (APAC)
-#    environment: dev-apac
-#    needs: prepare
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#        name: Checkout repo
-#      - name: Checkout common actions
-#        uses: actions/checkout@v2
-#        with:
-#          repository: maersk-global/github-actions-commons
-#          token: ${{ secrets.ACCESS_TOKEN }}
-#          path: .github/actions/commons
-#      - name: Helm install
-#        uses: ./.github/actions/commons/helm-upgrade
-#        with:
-#          helmChart: ${{ needs.prepare.outputs.helmChart }}
-#          helmChartVersion: ${{ needs.prepare.outputs.helmChartVersion }}
-#          dockerImage: ${{ needs.prepare.outputs.dockerImage }}
-#          dockerImageVersion: ${{ needs.prepare.outputs.dockerImageVersion }}
-#          helmValues: ./helm/chart/values/japaneast/development/values.yml
-#          registryPassword: ${{ secrets.GHCR_PULL_TOKEN }}
-#          k8s-cluster: core-dev-japaneast-1
-#          k8s-namespace: shipmentmobile-dev
-#          vaultName: ${{ secrets.VAULT_NAME }}
-#          vaultRoleId: ${{ secrets.VAULT_ROLE_ID }}
-#          vaultRoleSecretId: ${{ secrets.VAULT_ROLE_SECRET_ID }}
-#
+
+  deploy-dev-apac:
+    name: Dev (APAC)
+    environment: dev-apac
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout repo
+      - name: Helm install
+        uses: Maersk-Global/github-actions-commons/helm-upgrade@main
+        with:
+          helmChart: ${{ needs.prepare.outputs.helmChart }}
+          helmChartVersion: ${{ needs.prepare.outputs.helmChartVersion }}
+          dockerImage: ${{ needs.prepare.outputs.dockerImage }}
+          dockerImageVersion: ${{ needs.prepare.outputs.dockerImageVersion }}
+          helmValues: ./helm/chart/values/japaneast/dev/values.yml
+          registryPassword: ${{ secrets.GHCR_PULL_TOKEN }}
+          k8s-cluster: core-dev-japaneast-1
+          k8s-namespace: reference-data-dev
+          vaultName: ${{ secrets.VAULT_NAME }}
+          vaultRoleId: ${{ secrets.VAULT_ROLE_ID }}
+          vaultRoleSecretId: ${{ secrets.VAULT_ROLE_SECRET_ID }}
+
   deploy-preprod-emea:
     name: Preprod (EMEA)
     environment: preprod-emea
@@ -106,36 +100,30 @@ jobs:
           vaultName: ${{ secrets.VAULT_NAME }}
           vaultRoleId: ${{ secrets.VAULT_ROLE_ID }}
           vaultRoleSecretId: ${{ secrets.VAULT_ROLE_SECRET_ID }}
-#
-#  deploy-preprod-apac:
-#    name: Preprod (APAC)
-#    environment: preprod-apac
-#    needs: prepare
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#        name: Checkout repo
-#      - name: Checkout common actions
-#        uses: actions/checkout@v2
-#        with:
-#          repository: maersk-global/github-actions-commons
-#          token: ${{ secrets.ACCESS_TOKEN }}
-#          path: .github/actions/commons
-#      - name: Helm install
-#        uses: ./.github/actions/commons/helm-upgrade
-#        with:
-#          helmChart: ${{ needs.prepare.outputs.helmChart }}
-#          helmChartVersion: ${{ needs.prepare.outputs.helmChartVersion }}
-#          dockerImage: ${{ needs.prepare.outputs.dockerImage }}
-#          dockerImageVersion: ${{ needs.prepare.outputs.dockerImageVersion }}
-#          helmValues: ./helm/chart/values/japaneast/preprod/values.yml
-#          registryPassword: ${{ secrets.GHCR_PULL_TOKEN }}
-#          k8s-cluster: core-dev-japaneast-1
-#          k8s-namespace: shipmentmobile-preprod
-#          vaultName: ${{ secrets.VAULT_NAME }}
-#          vaultRoleId: ${{ secrets.VAULT_ROLE_ID }}
-#          vaultRoleSecretId: ${{ secrets.VAULT_ROLE_SECRET_ID }}
-#
+
+  deploy-preprod-apac:
+    name: Preprod (APAC)
+    environment: preprod-apac
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout repo
+      - name: Helm install
+        uses: Maersk-Global/github-actions-commons/helm-upgrade@main
+        with:
+          helmChart: ${{ needs.prepare.outputs.helmChart }}
+          helmChartVersion: ${{ needs.prepare.outputs.helmChartVersion }}
+          dockerImage: ${{ needs.prepare.outputs.dockerImage }}
+          dockerImageVersion: ${{ needs.prepare.outputs.dockerImageVersion }}
+          helmValues: ./helm/chart/values/japaneast/preprod/values.yml
+          registryPassword: ${{ secrets.GHCR_PULL_TOKEN }}
+          k8s-cluster: core-dev-japaneast-1
+          k8s-namespace: reference-data-preprod
+          vaultName: ${{ secrets.VAULT_NAME }}
+          vaultRoleId: ${{ secrets.VAULT_ROLE_ID }}
+          vaultRoleSecretId: ${{ secrets.VAULT_ROLE_SECRET_ID }}
+
   deploy-prod-emea:
     name: Prod (EMEA)
     environment: prod-emea
@@ -158,32 +146,26 @@ jobs:
           vaultName: ${{ secrets.VAULT_NAME }}
           vaultRoleId: ${{ secrets.VAULT_ROLE_ID }}
           vaultRoleSecretId: ${{ secrets.VAULT_ROLE_SECRET_ID }}
-#
-#  deploy-prod-apac:
-#    name: Prod (APAC)
-#    environment: prod-apac
-#    needs: prepare
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#        name: Checkout repo
-#      - name: Checkout common actions
-#        uses: actions/checkout@v2
-#        with:
-#          repository: maersk-global/github-actions-commons
-#          token: ${{ secrets.ACCESS_TOKEN }}
-#          path: .github/actions/commons
-#      - name: Helm install
-#        uses: ./.github/actions/commons/helm-upgrade
-#        with:
-#          helmChart: ${{ needs.prepare.outputs.helmChart }}
-#          helmChartVersion: ${{ needs.prepare.outputs.helmChartVersion }}
-#          dockerImage: ${{ needs.prepare.outputs.dockerImage }}
-#          dockerImageVersion: ${{ needs.prepare.outputs.dockerImageVersion }}
-#          helmValues: ./helm/chart/values/japaneast/prod/values.yml
-#          registryPassword: ${{ secrets.GHCR_PULL_TOKEN }}
-#          k8s-cluster: core-prod-japaneast-1
-#          k8s-namespace: shipmentmobile
-#          vaultName: ${{ secrets.VAULT_NAME }}
-#          vaultRoleId: ${{ secrets.VAULT_ROLE_ID }}
-#          vaultRoleSecretId: ${{ secrets.VAULT_ROLE_SECRET_ID }}
+
+  deploy-prod-apac:
+    name: Prod (APAC)
+    environment: prod-apac
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout repo
+      - name: Helm install
+        uses: Maersk-Global/github-actions-commons/helm-upgrade@main
+        with:
+          helmChart: ${{ needs.prepare.outputs.helmChart }}
+          helmChartVersion: ${{ needs.prepare.outputs.helmChartVersion }}
+          dockerImage: ${{ needs.prepare.outputs.dockerImage }}
+          dockerImageVersion: ${{ needs.prepare.outputs.dockerImageVersion }}
+          helmValues: ./helm/chart/values/japaneast/prod/values.yml
+          registryPassword: ${{ secrets.GHCR_PULL_TOKEN }}
+          k8s-cluster: core-prod-japaneast-1
+          k8s-namespace: reference-data-prod
+          vaultName: ${{ secrets.VAULT_NAME }}
+          vaultRoleId: ${{ secrets.VAULT_ROLE_ID }}
+          vaultRoleSecretId: ${{ secrets.VAULT_ROLE_SECRET_ID }}
