@@ -165,7 +165,7 @@ jobs:
           helmValues: ./helm/chart/values/japaneast/prod/values.yml
           registryPassword: ${{ secrets.GHCR_PULL_TOKEN }}
           k8s-cluster: core-prod-japaneast-1
-          k8s-namespace: reference-data-prod
+          k8s-namespace: reference-data
           vaultName: ${{ secrets.VAULT_NAME }}
           vaultRoleId: ${{ secrets.VAULT_ROLE_ID }}
           vaultRoleSecretId: ${{ secrets.VAULT_ROLE_SECRET_ID }}
