@@ -72,7 +72,7 @@ jobs:
           dockerImageVersion: ${{ needs.prepare.outputs.dockerImageVersion }}
           helmValues: ./helm/chart/values/japaneast/dev/values.yml
           registryPassword: ${{ secrets.GHCR_PULL_TOKEN }}
-          k8s-cluster: core-dev-japaneast-1
+          k8s-cluster: mcom-np-japan-1
           k8s-namespace: reference-data-dev
           vaultName: ${{ secrets.VAULT_NAME }}
           vaultRoleId: ${{ secrets.VAULT_ROLE_ID }}
@@ -118,7 +118,7 @@ jobs:
           dockerImageVersion: ${{ needs.prepare.outputs.dockerImageVersion }}
           helmValues: ./helm/chart/values/japaneast/preprod/values.yml
           registryPassword: ${{ secrets.GHCR_PULL_TOKEN }}
-          k8s-cluster: core-dev-japaneast-1
+          k8s-cluster: mcom-np-japan-1
           k8s-namespace: reference-data-preprod
           vaultName: ${{ secrets.VAULT_NAME }}
           vaultRoleId: ${{ secrets.VAULT_ROLE_ID }}
@@ -164,7 +164,7 @@ jobs:
           dockerImageVersion: ${{ needs.prepare.outputs.dockerImageVersion }}
           helmValues: ./helm/chart/values/japaneast/prod/values.yml
           registryPassword: ${{ secrets.GHCR_PULL_TOKEN }}
-          k8s-cluster: core-prod-japaneast-1
+          k8s-cluster: mcom-prod-japaneast-1
           k8s-namespace: reference-data
           vaultName: ${{ secrets.VAULT_NAME }}
           vaultRoleId: ${{ secrets.VAULT_ROLE_ID }}

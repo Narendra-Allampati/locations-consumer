@@ -64,7 +64,6 @@ public class LocationsService {
                 .doOnError(error -> log.warn("Error thrown whilst processing geography records, error isn't a " +
                         "known retriable error, will attempt to retry processing records , exception -> {}", error.getLocalizedMessage(), error))
                 .retryWhen(Retry.fixedDelay(100, Duration.ofMinutes(1)))
-//                .doOnNext(event -> log.info("Received geo event: key {}, value {}", event.key(), event.value()))
                 .concatMap(this::handleLocationEvent)
                 .subscribe(result -> result.receiverOffset()
                                            .acknowledge());
