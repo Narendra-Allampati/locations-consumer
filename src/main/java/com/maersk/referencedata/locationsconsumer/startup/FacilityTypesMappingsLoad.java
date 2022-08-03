@@ -1,11 +1,13 @@
 package com.maersk.referencedata.locationsconsumer.startup;
 
+import com.maersk.referencedata.locationsconsumer.domains.facilities.FacilityTypeMapping;
 import com.maersk.referencedata.locationsconsumer.repositories.facilities.FacilityTypesMappingsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -23,13 +25,29 @@ public class FacilityTypesMappingsLoad {
 
     @PostConstruct
     public void init() {
-        facilityTypesMappingsRepository.findAll()
-                                       .map(ftm -> {
-                                           facilityTypeMappingsRankings.put(ftm.getCode(), ftm.getRank());
-                                           facilityTypeMappingsSiteTypeFromRanking.put(ftm.getRank(), ftm.getSiteType());
-                                           return ftm;
-                                       })
-                                       .subscribe();
+        List<FacilityTypeMapping> results = facilityTypesMappingsRepository.findAll()
+                                                                           .collectList()
+                                                                           .block();
+
+        for (FacilityTypeMapping ftm : results) {
+            facilityTypeMappingsRankings.put(ftm.getCode(), ftm.getRank());
+            facilityTypeMappingsSiteTypeFromRanking.put(ftm.getRank(), ftm.getSiteType());
+        }
+
+//        results.stream()
+//               .map(ftm -> {
+//                   facilityTypeMappingsRankings.put(ftm.getCode(), ftm.getRank());
+//                   facilityTypeMappingsSiteTypeFromRanking.put(ftm.getRank(), ftm.getSiteType());
+//                   return ftm;
+//               });
+
+//        facilityTypesMappingsRepository.findAll()
+//                                       .map(ftm -> {
+//                                           facilityTypeMappingsRankings.put(ftm.getCode(), ftm.getRank());
+//                                           facilityTypeMappingsSiteTypeFromRanking.put(ftm.getRank(), ftm.getSiteType());
+//                                           return ftm;
+//                                       })
+//                                       .subscribe();
 
         log.info("Finished loading Facility Types Mappings. " + facilityTypeMappingsRankings.size() + " rankings and " + facilityTypeMappingsSiteTypeFromRanking.size() + " site type from ranking.");
     }
