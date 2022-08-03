@@ -12,7 +12,6 @@ import java.util.Map;
 @Slf4j
 public class FacilityTypesMappingsLoad {
 
-    private final Map<String, String> facilityTypeMappingsSiteTypes = new HashMap<>();
     private final Map<String, Integer> facilityTypeMappingsRankings = new HashMap<>();
     private final Map<Integer, String> facilityTypeMappingsSiteTypeFromRanking = new HashMap<>();
 
@@ -23,21 +22,16 @@ public class FacilityTypesMappingsLoad {
     }
 
     @PostConstruct
-    private void init() {
+    public void init() {
         facilityTypesMappingsRepository.findAll()
                                        .map(ftm -> {
-                                           facilityTypeMappingsSiteTypes.put(ftm.getCode(), ftm.getSiteType());
                                            facilityTypeMappingsRankings.put(ftm.getCode(), ftm.getRank());
                                            facilityTypeMappingsSiteTypeFromRanking.put(ftm.getRank(), ftm.getSiteType());
                                            return ftm;
                                        })
                                        .subscribe();
 
-        log.info("Finished loading Facility Types Mappings. " + facilityTypeMappingsRankings.size() + " rankings and " + facilityTypeMappingsSiteTypes.size() + " site types.");
-    }
-
-    public String getSiteTypeFromCode(String code) {
-        return facilityTypeMappingsSiteTypes.get(code);
+        log.info("Finished loading Facility Types Mappings. " + facilityTypeMappingsRankings.size() + " rankings and " + facilityTypeMappingsSiteTypeFromRanking.size() + " site type from ranking.");
     }
 
     public Integer getRankingFromCode(String code) {

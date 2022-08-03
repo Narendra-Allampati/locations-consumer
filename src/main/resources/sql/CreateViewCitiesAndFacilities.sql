@@ -17,6 +17,7 @@ FROM geography geo
                     ON geo.country_id = ctry.geo_id
                         AND ctry.geo_type = 'COUNTRY'
 WHERE geo.geo_type = 'CITY'
+AND geo.status = 'Active'
 UNION ALL
 -- Get list of facilities
 SELECT

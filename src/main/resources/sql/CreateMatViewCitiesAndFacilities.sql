@@ -27,6 +27,7 @@ FROM geography geo
     LEFT JOIN geography reg ON geo.parent_id::text = reg.geo_id::text AND reg.geo_type::text = 'STATE/PROV'::text
     JOIN geography ctry ON geo.country_id::text = ctry.geo_id::text AND ctry.geo_type::text = 'COUNTRY'::text
 WHERE geo.geo_type::text = 'CITY'::text
+AND geo.status = 'Active'
 UNION ALL
 SELECT f.geo_id,
        city.name AS city_name,
