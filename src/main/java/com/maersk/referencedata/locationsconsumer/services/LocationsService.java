@@ -49,7 +49,6 @@ public class LocationsService {
     public Disposable startKafkaConsumer() {
         return locationsKafkaReceiver
                 .receive()
-                .take(3, true)
                 .name("geo events")
                 .tag("source", "kafka")
                 .metrics()
