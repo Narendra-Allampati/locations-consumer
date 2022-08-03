@@ -8,8 +8,8 @@ KAFKA_FACILITIES_TOPIC: MSK.geography.facility.topic.internal.any.v3
 #KAFKA_USERNAME:
 #KAFKA_PASSWORD:
 # prod
-KAFKA_USERNAME: 26GHNKUQEFRRRBWM
-KAFKA_PASSWORD: nRJlLgwfW7PfERACIbVZa8DIuRRaFykyNk9+WNJ1Z1WXd4ZlaJGLddeZuWbB5ctf
+KAFKA_USERNAME:
+KAFKA_PASSWORD:
 KAFKA_CONSUMER_GROUP: MSK.referenceData.referenceDataReaderLoc.consumerGroup.v1
 
 KAFKA_SCHEMA_REGISTRY_URL: "https://psrc-4kk0p.westeurope.azure.confluent.cloud/"
@@ -17,8 +17,8 @@ KAFKA_SCHEMA_REGISTRY_URL: "https://psrc-4kk0p.westeurope.azure.confluent.cloud/
 #KAFKA_SCHEMA_REGISTRY_API_KEY:
 #KAFKA_SCHEMA_REGISTRY_PASSWORD:
 # prod
-KAFKA_SCHEMA_REGISTRY_API_KEY: KJTPSPWASUGMN3QJ
-KAFKA_SCHEMA_REGISTRY_PASSWORD: P0v7ZH0CxZHeZXPYjfmImFSyMIQHhsZS/otyi+/ZJv9wxr+mblcu0JxSzfurRfLq
+KAFKA_SCHEMA_REGISTRY_API_KEY:
+KAFKA_SCHEMA_REGISTRY_PASSWORD:
 
 OTEL_COLLECTOR_ADDRESS: "http://localhost:4317"
 
@@ -77,7 +77,7 @@ spring:
     #  \___/ \______/ \___/   \____________/\__________/\___________/
     #  |       |      |           |           |           |
     #  scheme  driver  protocol  authority    path        query
-    url: ${POSTGRES_SCHEME}:postgresql:${POSTGRES_HOST}/${POSTGRES_DB}?locale=en_GB
+    url: ${POSTGRES_SCHEME}:postgresql:${POSTGRES_HOST}/${POSTGRES_DB}?locale=en_GB&ssl=true
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
     pool:
