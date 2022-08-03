@@ -3,6 +3,7 @@ CREATE TABLE FACILITIES
     ID                                              VARCHAR (50),
     NAME                                            VARCHAR (500),
     TYPE                                            VARCHAR (100),
+    SITE_TYPE                                       VARCHAR (100),
     EXT_OWNED                                       VARCHAR (100),
     STATUS                                          VARCHAR (100),
     EXT_EXPOSED                                     VARCHAR (100),
@@ -27,3 +28,5 @@ CREATE TABLE FACILITIES
     HSUD_NUMBER                                     VARCHAR (100),
     LNS                             	            VARCHAR (100),
     CONSTRAINT FACILITY_ID_PK PRIMARY KEY (ID));
+
+CREATE INDEX IF NOT EXISTS PARENT_ID_IDX ON FACILITIES USING btree (PARENT_ID);

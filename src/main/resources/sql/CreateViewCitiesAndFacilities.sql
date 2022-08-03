@@ -5,8 +5,8 @@ AS
 -- Get a list of Cities
 SELECT
     geo.geo_id, geo.name AS city_name, geo.name_upper_case AS city_name_upper_case, ctry.rkst AS country_code, geo.country_id AS country_geo_id,
-    geo.country_name, geo.geo_type,
-    null AS locality_name, geo.rkst, geo.rkts, reg.iso_territory AS region_code,
+    geo.country_name, geo.country_name_upper_case, geo.geo_type,
+    geo.name AS locality_name, geo.rkst, geo.rkts, reg.iso_territory AS region_code,
     reg.name AS region_name, null AS site_name, geo.olson_time_zone,
     geo.unloc, geo.unloc_lookup, geo.unloc_return
 FROM geography geo
@@ -21,9 +21,9 @@ UNION ALL
 -- Get list of facilities
 SELECT
     f.geo_id, city.name AS city_name, city.name_upper_case AS city_name_upper_case, ctry.rkst AS country_code, city.country_id AS country_geo_id,
-    city.country_name, ft.name AS geo_type,
+    city.country_name, city.country_name_upper_case, ft.name AS geo_type,
     -- ftcm.facility_type_code_mapping
-    null AS locality_name, f.rkst, f.rkts, reg.iso_territory AS region_code,
+    f.name AS locality_name, f.rkst, f.rkts, reg.iso_territory AS region_code,
     reg.name AS region_name, f.name AS site_name, city.olson_time_zone,
     f.unloc, f.unloc_lookup, f.unloc_return
 FROM facilities f

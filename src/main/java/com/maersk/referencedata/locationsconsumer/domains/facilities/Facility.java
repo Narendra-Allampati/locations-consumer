@@ -22,6 +22,7 @@ public class Facility implements Persistable<String> {
     private String id;
     private String name;
     private String type;
+    private String siteType;
     private boolean extOwned;
     private String status;
     private boolean extExposed;

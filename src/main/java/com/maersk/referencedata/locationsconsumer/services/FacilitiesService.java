@@ -5,8 +5,10 @@ import com.maersk.facility.smds.operations.msk.facilityMessage;
 import com.maersk.referencedata.locationsconsumer.domains.facilities.FacilityAlternateCode;
 import com.maersk.referencedata.locationsconsumer.domains.facilities.FacilityType;
 import com.maersk.referencedata.locationsconsumer.domains.facilities.FacilityTypeLink;
+import com.maersk.referencedata.locationsconsumer.domains.facilities.FacilityTypeMapping;
 import com.maersk.referencedata.locationsconsumer.mappers.FacilityMapper;
 import com.maersk.referencedata.locationsconsumer.repositories.facilities.*;
+import com.maersk.referencedata.locationsconsumer.startup.FacilityTypesMappingsLoad;
 import com.maersk.shared.kafka.serialization.KafkaDeserializerUtils;
 import com.maersk.shared.kafka.utilities.ErrorHandlingUtils;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +25,11 @@ import reactor.util.retry.Retry;
 
 import java.time.Duration;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author Anders Clausen on 20/03/2022.
@@ -43,11 +48,11 @@ public class FacilitiesService {
     private final FacilityDetailsRepository facilityDetailsRepository;
     private final FacilityServicesRepository facilityServicesRepository;
     private final FacilityTypesRepository facilityTypesRepository;
-    private final FacilityTypeLinksRepository facilityTypeLinksRepository;
     private final FencesRepository fencesRepository;
     private final OpeningHoursRepository openingHoursRepository;
-    private final ParentsRepository parentsRepository;
     private final TransportModesRepository transportModesRepository;
+
+    private final FacilityTypesMappingsLoad facilityTypesMappingsLoad;
 
     @EventListener(ApplicationStartedEvent.class)
     public Disposable startKafkaConsumer() {
@@ -113,9 +118,6 @@ public class FacilitiesService {
 
         final var address = FacilityMapper.mapToAddress(facilityEvent.getAddress(), facilityId);
 
-        // TODO This one has a list of alternateCodes but do we need them?
-//        final var parent = mapToParent(facilityEvent.getParent());
-
         List<FacilityAlternateCode> facilityAlternateCodes = FacilityMapper.mapToAlternateCodeLinks(facilityEvent.getAlternateCodes(), facilityId);
 
         final var facilityDetail = FacilityMapper.mapToFacilityDetail(facilityEvent.getFacilityDetail(), facilityId);
@@ -123,8 +125,7 @@ public class FacilitiesService {
         final var facilityTypeWrappers = FacilityMapper.mapToFacilityTypesWrapper(facilityEvent.getFacilityDetail(), facilityId);
         List<FacilityType> facilityTypes = facilityTypeWrappers.map(FacilityMapper::getFacilityTypesAsList)
                                                                .orElse(Collections.emptyList());
-        List<FacilityTypeLink> facilityTypeLinks = facilityTypeWrappers.map(FacilityMapper::getFacilityTypeLinksAsList)
-                                                                       .orElse(Collections.emptyList());
+        facility.setSiteType(getFacilityTypeWithHighestPrecedence(facilityTypes));
 
         final var openingHours = FacilityMapper.mapToFacilityOpeningHours(facilityEvent.getOpeningHours(), facilityId);
 
@@ -134,23 +135,18 @@ public class FacilitiesService {
 
         final var fences = FacilityMapper.mapToFences(facilityEvent.getFences(), facilityId);
 
-//        // this one has a list of alternateCodes as optional
-//        final var businessDefinedAreas = mapToBusinessDefinedAreas(facilityEvent.getBda());
-
         final var contactDetails = FacilityMapper.mapToContactDetails(facilityEvent.getContactDetails(), facilityId);
 
         return Flux.concat(facilitiesRepository.save(facility)
                                                .then(),
                            addressesRepository.save(address)
                                               .then(),
-//                        parentsRepository.save(parent).then(),
                            facilityAlternateCodesRepository.saveAll(facilityAlternateCodes)
                                                            .then(),
                            facilityDetailsRepository.saveAll(Mono.justOrEmpty(facilityDetail))
                                                     .then(),
                            facilityTypesRepository.saveAll(facilityTypes)
                                                   .then(),
-//                        facilityTypeLinksRepository.saveAll(facilityTypeLinks).then(),
                            openingHoursRepository.saveAll(openingHours)
                                                  .then(),
                            transportModesRepository.saveAll(transportModes)
@@ -162,5 +158,17 @@ public class FacilitiesService {
                            contactDetailsRepository.saveAll(contactDetails)
                                                    .then())
                    .then(Mono.just("1"));
+    }
+
+    private String getFacilityTypeWithHighestPrecedence(List<FacilityType> facilityTypes) {
+
+        return facilityTypes.stream()
+                            .map(x -> {
+                                return facilityTypesMappingsLoad.getRankingFromCode(x.getCode());
+                            })
+                            .min(Integer::compareTo)
+                            .map(facilityTypesMappingsLoad::getSiteTypeFromRanking)
+                            .orElse(null);
+
     }
 }

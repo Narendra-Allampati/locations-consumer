@@ -1,0 +1,29 @@
+drop table FACILITY_TYPES_MAPPINGS;
+CREATE TABLE FACILITY_TYPES_MAPPINGS
+(
+    ID                  VARCHAR (50),
+    RANK                VARCHAR (50),
+    CODE                VARCHAR (50),
+    SITE_TYPE           VARCHAR (50),
+    CONSTRAINT FACILITY_TYPES_MAPPINGS_ID_PK PRIMARY KEY (ID));
+
+insert into facility_types_mappings
+values
+    ('1', '1', 'FCT_TYPE.TERMINAL', 'TERMINAL'),
+    ('2', '1', 'FCT_TYPE.WATERWAY', 'TERMINAL'),
+    ('3', '1', 'FCT_TYPE.ONOFFH_SITE', 'TERMINAL'),
+    ('4', '1', 'FCT_TYPE.CANAL_SITE', 'TERMINAL'),
+    ('5', '1', 'FCT_TYPE.BUNKER_SITE', 'TERMINAL'),
+    ('6', '2', 'FCT_TYPE.RAILHEAD', 'RAIL TERMINAL'),
+    ('7', '3', 'FCT_TYPE.BARGE_PIER', 'BARGE TERMINAL'),
+    ('8', '4', 'FCT_TYPE.TRUCKER', 'CONTAINER FREIGHT STATION'),
+    ('9', '4', 'FCT_TYPE.CFS', 'CONTAINER FREIGHT STATION'),
+    ('10', '4', 'FCT_TYPE.MAIN_N_REP', 'CONTAINER FREIGHT STATION'),
+    ('11', '5', 'FCT_OPS_TYPE.ICD', 'DEPOT'),
+    ('12', '5', 'FCT_TYPE.OffHIRE_DEP', 'DEPOT'),
+    ('13', '5', 'FCT_TYPE.REEFER_DEP', 'DEPOT'),
+    ('14', '5', 'FCT_TYPE.COLD_STORE', 'DEPOT'),
+    ('15', '5', 'FCT_TYPE.PCC_DEP', 'DEPOT'),
+    ('16', '6', 'FCT_TYPE.CUST_POOL_F', 'CUSTOMER LOCATION'),
+    ('17', '6', 'FCT_TYPE.WAREHOUSE', 'CUSTOMER LOCATION'),
+    ('18', '7', 'FCT_TYPE.CTR_PROD', 'CTR. PRODUCTION');

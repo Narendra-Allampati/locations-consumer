@@ -4,11 +4,11 @@ import com.maersk.geography.smds.operations.msk.geography;
 import com.maersk.geography.smds.operations.msk.geographyMessage;
 import com.maersk.referencedata.locationsconsumer.domains.locations.AlternateCode;
 import com.maersk.referencedata.locationsconsumer.domains.locations.Geography;
-import com.maersk.referencedata.locationsconsumer.domains.locations.PostalCode;
 import com.maersk.referencedata.locationsconsumer.mappers.GeographyMapper;
-import com.maersk.referencedata.locationsconsumer.model.locations.BdaLocationWithAlternateCodes;
-import com.maersk.referencedata.locationsconsumer.model.locations.BdaWithAlternateCodes;
-import com.maersk.referencedata.locationsconsumer.repositories.locations.*;
+import com.maersk.referencedata.locationsconsumer.repositories.locations.AlternateCodeRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.locations.AlternateNameRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.locations.CountryRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.locations.GeographyRepository;
 import com.maersk.shared.kafka.serialization.KafkaDeserializerUtils;
 import com.maersk.shared.kafka.utilities.ErrorHandlingUtils;
 import lombok.RequiredArgsConstructor;
@@ -42,18 +42,14 @@ public class LocationsService {
 
     private final AlternateCodeRepository alternateCodeRepository;
     private final AlternateNameRepository alternateNameRepository;
-    private final BusinessDefinedAreaRepository businessDefinedAreaRepository;
-    private final BusinessDefinedAreaLocationRepository businessDefinedAreaLocationRepository;
     private final CountryRepository countryRepository;
     private final GeographyRepository geographyRepository;
-    private final ParentRepository parentRepository;
-    private final PostalCodeRepository postalCodeRepository;
-    private final SubCityParentRepository subCityParentRepository;
 
     @EventListener(ApplicationStartedEvent.class)
     public Disposable startKafkaConsumer() {
         return locationsKafkaReceiver
                 .receive()
+                .take(3, true)
                 .name("geo events")
                 .tag("source", "kafka")
                 .metrics()
@@ -97,10 +93,7 @@ public class LocationsService {
 
     private Mono<String> createOrUpdate(geography geography) {
         if (POSTAL_CODE.equals(geography.getGeoType())) {
-//            return Mono.just("postal code");
-            return postalCodeRepository.findById(geography.getGeoId())
-                                       .flatMap(geographyFromDB -> updateGeography(geography))
-                                       .switchIfEmpty(Mono.defer(() -> saveGeographyEvent(geography)));
+            return Mono.just("postal code");
         }
 
         return geographyRepository.findById(geography.getGeoId())
@@ -109,13 +102,8 @@ public class LocationsService {
     }
 
     private Mono<String> updateGeography(geography geography) {
-        if (POSTAL_CODE.equals(geography.getGeoType())) {
-            return postalCodeRepository.deleteById(geography.getGeoId())
-                                       .then(Mono.defer(() -> saveGeographyEvent(geography)));
-        } else {
-            return geographyRepository.deleteById(geography.getGeoId())
-                                      .then(Mono.defer(() -> saveGeographyEvent(geography)));
-        }
+        return geographyRepository.deleteById(geography.getGeoId())
+                                  .then(Mono.defer(() -> saveGeographyEvent(geography)));
     }
 
     private Mono<String> saveGeographyEvent(geography geography) {
@@ -124,20 +112,12 @@ public class LocationsService {
 
         Optional<Geography> geo = GeographyMapper.mapGeographyEventToGeography(geography);
 
-        Optional<PostalCode> postalCode = GeographyMapper.mapGeographyEventToPostalCode(geography);
-
         final var alternateNames = GeographyMapper.mapToAlternateNames(geography.getAlternateNames(), geoID);
 
-        List<AlternateCode> alternateCodes = GeographyMapper.mapToAlternateCodes(geography.getAlternateCodes(), geoID, geography.getGeoType());
-
-        List<BdaWithAlternateCodes> bdaWithAlternateCodes = GeographyMapper.mapToBdaWithAlternateCodes(geography.getBdas());
-
-        List<BdaLocationWithAlternateCodes> bdaLocationWithAlternateCodes = GeographyMapper.mapToBdaLocationsWithAlternateCodes(geography.getBdaLocations());
+        List<AlternateCode> alternateCodes = GeographyMapper.mapToAlternateCodes(geography.getAlternateCodes(), geoID);
 
         return Flux.concat(geographyRepository.saveAll(Mono.justOrEmpty(geo))
                                               .then()
-                           , postalCodeRepository.saveAll(Mono.justOrEmpty(postalCode))
-                                                 .then()
                            , alternateNameRepository.saveAll(alternateNames)
                                                     .then()
                            , alternateCodeRepository.saveAll(alternateCodes)

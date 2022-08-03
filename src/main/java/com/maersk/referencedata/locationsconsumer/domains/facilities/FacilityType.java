@@ -2,6 +2,7 @@ package com.maersk.referencedata.locationsconsumer.domains.facilities;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.annotation.Transient;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
  */
 @AllArgsConstructor
 @Builder
+@Data
 @Table(value = "FACILITY_TYPES")
 public class FacilityType implements Persistable<String> {
 

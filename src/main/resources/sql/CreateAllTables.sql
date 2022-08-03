@@ -1,5 +1,5 @@
 DROP VIEW IF EXISTS VIEW_CITIES_AND_FACILITIES;
-DROP TABLE IF EXISTS ADDRESSES, CONTACT_DETAILS, FACILITIES, FACILITY_ALTERNATE_CODES, FACILITY_DETAILS, FACILITY_SERVICES, FACILITY_TYPE_LINKS, FACILITY_TYPES, FENCES, OPENING_HOURS, TRANSPORT_MODES, ALTERNATE_CODES, ALTERNATE_NAMES, GEO_ALTERNATE_CODE_LINKS, GEOGRAPHY, POSTAL_CODE;
+DROP TABLE IF EXISTS ADDRESSES, CONTACT_DETAILS, FACILITY_TYPES_MAPPINGS, FACILITIES, FACILITY_ALTERNATE_CODES, FACILITY_DETAILS, FACILITY_SERVICES, FACILITY_TYPE_LINKS, FACILITY_TYPES, FENCES, OPENING_HOURS, TRANSPORT_MODES, ALTERNATE_CODES, ALTERNATE_NAMES, GEO_ALTERNATE_CODE_LINKS, GEOGRAPHY, POSTAL_CODE;
 
 CREATE TABLE GEOGRAPHY
 (
@@ -62,6 +62,7 @@ CREATE TABLE FACILITIES
     ID                                              VARCHAR (50),
     NAME                                            VARCHAR (500),
     TYPE                                            VARCHAR (100),
+    SITE_TYPE                                       VARCHAR (100),
     EXT_OWNED                                       VARCHAR (100),
     STATUS                                          VARCHAR (100),
     EXT_EXPOSED                                     VARCHAR (100),
@@ -76,7 +77,6 @@ CREATE TABLE FACILITIES
     UNLOC_RETURN                                    VARCHAR (100),
     RKST                             	            VARCHAR (100),
     RKTS                             	            VARCHAR (100),
-    IATA                             	            VARCHAR (100),
     SCHEDULE_D                                      VARCHAR (100),
     SCHEDULE_K                                      VARCHAR (100),
     BUSINESS_UNIT_ID                                VARCHAR (100),
@@ -85,9 +85,18 @@ CREATE TABLE FACILITIES
     BIC                                             VARCHAR (100),
     HSUD_CODE                                       VARCHAR (100),
     HSUD_NUMBER                                     VARCHAR (100),
-    LNS_CODE                           	            VARCHAR (100),
-    LNS_UN_CODE                        	            VARCHAR (100),
+    LNS                             	            VARCHAR (100),
     CONSTRAINT FACILITY_ID_PK PRIMARY KEY (ID));
+
+CREATE INDEX IF NOT EXISTS PARENT_ID_IDX ON FACILITIES USING btree (PARENT_ID);
+
+CREATE TABLE FACILITY_TYPES_MAPPINGS
+(
+    ID                  VARCHAR (50),
+    RANK                VARCHAR (50),
+    CODE                VARCHAR (50),
+    SITE_TYPE           VARCHAR (50),
+    CONSTRAINT FACILITY_TYPES_MAPPINGS_ID_PK PRIMARY KEY (ID));
 
 CREATE TABLE ADDRESSES
 (
@@ -287,61 +296,13 @@ CREATE TABLE ALTERNATE_NAMES
 
 CREATE INDEX IF NOT EXISTS ALTERNATE_NAMES_GEO_IDX ON ALTERNATE_NAMES (GEO_ID);
 
-CREATE TABLE GEO_ALTERNATE_CODE_LINKS
-(
-    ID                                  UUID,
-    GEO_ID                             	VARCHAR (14),
-    ALTERNATE_CODE_ID                   VARCHAR (100),
-    ALTERNATE_CODE_TYPE                 VARCHAR (100),
-    CONSTRAINT GEO_ALTERNATE_CODE_LINKS_PK PRIMARY KEY (ID),
-    CONSTRAINT GEOGRAPHY_FK FOREIGN KEY(GEO_ID)
-    REFERENCES GEOGRAPHY(GEO_ID)
-    ON DELETE CASCADE);
-
-CREATE TABLE POSTAL_CODE
-(
-    GEO_ID                                  VARCHAR (14),
-    GEO_TYPE                                VARCHAR (50),
-    NAME                                   	VARCHAR (512),
-    STATUS                                 	VARCHAR (512),
-    VALID_FROM                              TIMESTAMP,
-    VALID_TO                                TIMESTAMP,
-    LONGITUDE                              	VARCHAR (512),
-    LATITUDE                               	VARCHAR (512),
-    TIME_ZONE                               VARCHAR (20),
-    DAYLIGHT_SAVING_TIME                   	VARCHAR (20),
-    UTC_OFFSET_MINUTES                     	VARCHAR (20),
-    DAYLIGHT_SAVING_START                   TIMESTAMP,
-    DAYLIGHT_SAVING_END                     TIMESTAMP,
-    DAYLIGHT_SAVING_SHIFT_MINUTES    		VARCHAR (20),
-    DESCRIPTION                             VARCHAR (512),
-    WORKAROUND_REASON                  		VARCHAR (512),
-    RESTRICTED                              VARCHAR (512),
-    POSTAL_CODE_MANDATORY            		VARCHAR (20),
-    STATE_PROVINCE_MANDATORY       			VARCHAR (20),
-    DIALING_CODE                            VARCHAR (20),
-    DIALING_CODE_DESCRIPTION            	VARCHAR (20),
-    PORT_FLAG                               VARCHAR (20),
-    OLSON_TIME_ZONE                         VARCHAR (100),
-    BDA_TYPE                                VARCHAR (20),
-    HSUD_NAME                            	VARCHAR (512),
-    COUNTRY_ID                              VARCHAR (14),
-    COUNTRY_NAME                            VARCHAR (512),
-    PARENT_ID                               VARCHAR (14),
-    PARENT_NAME                             VARCHAR (512),
-    PARENT_TYPE                             VARCHAR (100),
-    SUB_CITY_PARENT_ID                      VARCHAR (14),
-    SUB_CITY_PARENT_NAME                    VARCHAR (512),
-    SUB_CITY_PARENT_TYPE                    VARCHAR (100),
-    CONSTRAINT POSTAL_CODE_ID_PK PRIMARY KEY (GEO_ID));
-
 CREATE VIEW VIEW_CITIES_AND_FACILITIES
 AS
 -- Get a list of Cities
 SELECT
     geo.geo_id, geo.name AS city_name, geo.name_upper_case AS city_name_upper_case, ctry.rkst AS country_code, geo.country_id AS country_geo_id,
-    geo.country_name, geo.geo_type,
-    null AS locality_name, geo.rkst, geo.rkts, reg.iso_territory AS region_code,
+    geo.country_name, geo.country_name_upper_case, geo.geo_type,
+    geo.name AS locality_name, geo.rkst, geo.rkts, reg.iso_territory AS region_code,
     reg.name AS region_name, null AS site_name, geo.olson_time_zone,
     geo.unloc, geo.unloc_lookup, geo.unloc_return
 FROM geography geo
@@ -356,9 +317,9 @@ UNION ALL
 -- Get list of facilities
 SELECT
     f.geo_id, city.name AS city_name, city.name_upper_case AS city_name_upper_case, ctry.rkst AS country_code, city.country_id AS country_geo_id,
-    city.country_name, ft.name AS geo_type,
+    city.country_name, city.country_name_upper_case, ft.name AS geo_type,
     -- ftcm.facility_type_code_mapping
-    null AS locality_name, f.rkst, f.rkts, reg.iso_territory AS region_code,
+    f.name AS locality_name, f.rkst, f.rkts, reg.iso_territory AS region_code,
     reg.name AS region_name, f.name AS site_name, city.olson_time_zone,
     f.unloc, f.unloc_lookup, f.unloc_return
 FROM facilities f

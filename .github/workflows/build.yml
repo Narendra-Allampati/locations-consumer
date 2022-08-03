@@ -11,114 +11,129 @@ name: Build and push Docker image
 
 jobs:
   build:
-    name: Maven build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        name: Checkout repo
-      - name: Maven build
-        uses: Maersk-Global/github-actions-commons/maven-build@main
-        with:
-          githubToken: ${{ secrets.ACCESS_TOKEN }}
-          jdkVersion: 17
-          jdkDistribution: liberica
-      - uses: actions/upload-artifact@v2
-        with:
-          name: workspace
-          path: ${{ github.workspace }}
+    uses: Maersk-Global/reference-data-workflows/.github/workflows/build-maven-docker.yml@main
+    with:
+      imageName: 'maersk-global/locations-consumer'
+    secrets:
+      githubToken: ${{ secrets.ACCESS_TOKEN }}
+      sonarqubeHost: ${{ secrets.MDN_SONARQUBE_HOST }}
+      sonarqubeToken: ${{ secrets.MDN_SONARQUBE_TOKEN }}
+      blackduckUrl: ${{ secrets.BLACKDUCK_URL }}
+      blackduckApiToken: ${{ secrets.BLACKDUCK_API_TOKEN }}
+      blackduckCleanupToken: ${{ secrets.BLACKDUCK_CLEANUP_VERSIONS_AZFUN_TOKEN }}
+      polarisServerUrl: ${{ secrets.POLARIS_SERVER_URL }}
+      polarisApiToken: ${{ secrets.POLARIS_API_TOKEN }}
 
-  sonarqube:
-    name: SonarQube scan
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: workspace
-      - uses: Maersk-Global/github-actions-commons/sonarqube-scan@main
-        with:
-          githubToken: ${{ secrets.ACCESS_TOKEN }}
-          host: ${{ secrets.MDN_SONARQUBE_HOST }}
-          token: ${{ secrets.MDN_SONARQUBE_TOKEN }}
-          jdkVersion: 17
-          jdkDistribution: liberica
-
-  blackduck:
-    name: Blackduck scan
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: workspace
-      - uses: Maersk-Global/github-actions-commons/blackduck-scan@main
-        with:
-          githubToken: ${{ secrets.ACCESS_TOKEN }}
-          url: ${{ secrets.BLACKDUCK_URL }}
-          apiToken: ${{ secrets.BLACKDUCK_API_TOKEN }}
-          cleanupToken: ${{ secrets.BLACKDUCK_CLEANUP_VERSIONS_AZFUN_TOKEN }}
-
-  polaris:
-    name: Polaris scan
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: workspace
-      - uses: Maersk-Global/github-actions-commons/polaris-scan@main
-        with:
-          githubToken: ${{ secrets.ACCESS_TOKEN }}
-          apiToken: ${{ secrets.POLARIS_API_TOKEN }}
-          serverUrl: ${{ secrets.POLARIS_SERVER_URL }}
-
-  docker_image:
-    name: Building a docker image
-    needs: [ build ]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: workspace
-      - name: Set up JDK
-        uses: actions/setup-java@v2
-        with:
-          java-version: 17
-          distribution: liberica
-          cache: 'maven'
-      - name: Build with Maven
-        run: |
-          mvn spring-boot:build-image -B -e -Dspring-boot.build-image.imageName=maersk-global/locations-consumer:v${{ github.run_id }}
-          docker images
-          docker save maersk-global/locations-consumer:v${{ github.run_id }} > /tmp/image.tar
-          ls /tmp
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Upload image artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: docker-image
-          path: /tmp/image.tar
-
-  trivy:
-    name: Trivy Scan
-    runs-on: ubuntu-latest
-    needs: docker_image
-    steps:
-      - name: Trivy Scan
-        with:
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
-          vulnerabilityType: library
-          severity: CRITICAL
-        uses: Maersk-Global/github-actions-commons/trivy-scan@main
-          
-  docker_push:
-    name: Push Docker image
-    runs-on: ubuntu-latest
-    needs: docker_image
-    steps:
-      - name: Push Docker image
-        uses: Maersk-Global/github-actions-commons/docker-push@main
-        with:
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
-          imageName: 'maersk-global/locations-consumer'
+#jobs:
+#  build:
+#    name: Maven build
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#        name: Checkout repo
+#      - name: Maven build
+#        uses: Maersk-Global/github-actions-commons/maven-build@main
+#        with:
+#          githubToken: ${{ secrets.ACCESS_TOKEN }}
+#          jdkVersion: 17
+#          jdkDistribution: liberica
+#      - uses: actions/upload-artifact@v2
+#        with:
+#          name: workspace
+#          path: ${{ github.workspace }}
+#
+#  sonarqube:
+#    name: SonarQube scan
+#    needs: build
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/download-artifact@v2
+#        with:
+#          name: workspace
+#      - uses: Maersk-Global/github-actions-commons/sonarqube-scan@main
+#        with:
+#          githubToken: ${{ secrets.ACCESS_TOKEN }}
+#          host: ${{ secrets.MDN_SONARQUBE_HOST }}
+#          token: ${{ secrets.MDN_SONARQUBE_TOKEN }}
+#          jdkVersion: 17
+#          jdkDistribution: liberica
+#
+#  blackduck:
+#    name: Blackduck scan
+#    needs: build
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/download-artifact@v2
+#        with:
+#          name: workspace
+#      - uses: Maersk-Global/github-actions-commons/blackduck-scan@main
+#        with:
+#          githubToken: ${{ secrets.ACCESS_TOKEN }}
+#          url: ${{ secrets.BLACKDUCK_URL }}
+#          apiToken: ${{ secrets.BLACKDUCK_API_TOKEN }}
+#          cleanupToken: ${{ secrets.BLACKDUCK_CLEANUP_VERSIONS_AZFUN_TOKEN }}
+#
+#  polaris:
+#    name: Polaris scan
+#    needs: build
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/download-artifact@v2
+#        with:
+#          name: workspace
+#      - uses: Maersk-Global/github-actions-commons/polaris-scan@main
+#        with:
+#          githubToken: ${{ secrets.ACCESS_TOKEN }}
+#          apiToken: ${{ secrets.POLARIS_API_TOKEN }}
+#          serverUrl: ${{ secrets.POLARIS_SERVER_URL }}
+#
+#  docker_image:
+#    name: Building a docker image
+#    needs: [ build ]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/download-artifact@v2
+#        with:
+#          name: workspace
+#      - name: Set up JDK
+#        uses: actions/setup-java@v2
+#        with:
+#          java-version: 17
+#          distribution: liberica
+#          cache: 'maven'
+#      - name: Build with Maven
+#        run: |
+#          mvn spring-boot:build-image -B -e -Dspring-boot.build-image.imageName=maersk-global/locations-consumer:v${{ github.run_id }}
+#          docker images
+#          docker save maersk-global/locations-consumer:v${{ github.run_id }} > /tmp/image.tar
+#          ls /tmp
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Upload image artifact
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: docker-image
+#          path: /tmp/image.tar
+#
+#  trivy:
+#    name: Trivy Scan
+#    runs-on: ubuntu-latest
+#    needs: docker_image
+#    steps:
+#      - name: Trivy Scan
+#        with:
+#          githubToken: ${{ secrets.GITHUB_TOKEN }}
+#          vulnerabilityType: library
+#          severity: CRITICAL
+#        uses: Maersk-Global/github-actions-commons/trivy-scan@main
+#
+#  docker_push:
+#    name: Push Docker image
+#    runs-on: ubuntu-latest
+#    needs: docker_image
+#    steps:
+#      - name: Push Docker image
+#        uses: Maersk-Global/github-actions-commons/docker-push@main
+#        with:
+#          githubToken: ${{ secrets.GITHUB_TOKEN }}
+#          imageName: 'maersk-global/locations-consumer'
