@@ -1,6 +1,6 @@
 -- View: public.mat_view_cities_and_facilities
 
--- DROP MATERIALIZED VIEW IF EXISTS public.mat_view_cities_and_facilities;
+DROP MATERIALIZED VIEW IF EXISTS public.mat_view_cities_and_facilities;
 
 CREATE MATERIALIZED VIEW IF NOT EXISTS public.mat_view_cities_and_facilities
 TABLESPACE pg_default
@@ -36,7 +36,7 @@ SELECT f.geo_id,
        city.country_id AS country_geo_id,
        city.country_name,
        city.country_name_upper_case,
-       ft.name AS geo_type,
+       f.site_type AS geo_type,
        f.name AS locality_name,
        f.rkst,
        f.rkts,
@@ -51,7 +51,6 @@ FROM facilities f
          JOIN geography city ON f.parent_id::text = city.geo_id::text
      LEFT JOIN geography reg ON city.parent_id::text = reg.geo_id::text AND reg.geo_type::text = 'STATE/PROV'::text
     JOIN geography ctry ON city.country_id::text = ctry.geo_id::text AND ctry.geo_type::text = 'COUNTRY'::text
-    JOIN facility_types ft ON f.id::text = ft.facility_id::text
 WHERE f.status::text = 'Active'::text AND city.geo_type::text = 'CITY'::text
 WITH DATA;
 

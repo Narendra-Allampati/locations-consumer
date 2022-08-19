@@ -20,13 +20,24 @@ WHERE geo.geo_type = 'CITY'
 AND geo.status = 'Active'
 UNION ALL
 -- Get list of facilities
-SELECT
-    f.geo_id, city.name AS city_name, city.name_upper_case AS city_name_upper_case, ctry.rkst AS country_code, city.country_id AS country_geo_id,
-    city.country_name, city.country_name_upper_case, ft.name AS geo_type,
-    -- ftcm.facility_type_code_mapping
-    f.name AS locality_name, f.rkst, f.rkts, reg.iso_territory AS region_code,
-    reg.name AS region_name, f.name AS site_name, city.olson_time_zone,
-    f.unloc, f.unloc_lookup, f.unloc_return
+SELECT f.geo_id,
+       city.name AS city_name,
+       city.name_upper_case AS city_name_upper_case,
+       ctry.rkst AS country_code,
+       city.country_id AS country_geo_id,
+       city.country_name,
+       city.country_name_upper_case,
+       f.site_type AS geo_type,
+       f.name AS locality_name,
+       f.rkst,
+       f.rkts,
+       reg.iso_territory AS region_code,
+       reg.name AS region_name,
+       f.name AS site_name,
+       city.olson_time_zone,
+       f.unloc,
+       f.unloc_lookup,
+       f.unloc_return
 FROM facilities f
          INNER JOIN geography city
                     ON f.parent_id = city.geo_id
@@ -36,9 +47,5 @@ FROM facilities f
          INNER JOIN geography ctry
                     ON city.country_id = ctry.geo_id
                         AND ctry.geo_type = 'COUNTRY'
-         INNER JOIN facility_types ft
-                    ON f.id = ft.facility_id
---  INNER JOIN facility_type_code_mapping ftcm
---          ON ft.code = ftcm.facility_type_code
 WHERE f.status = 'Active'
   AND city.geo_type = 'CITY'
