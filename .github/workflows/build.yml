@@ -15,7 +15,8 @@ jobs:
     with:
       imageName: 'maersk-global/locations-consumer'
     secrets:
-      githubToken: ${{ secrets.ACCESS_TOKEN }}
+      githubToken: ${{ secrets.GITHUB_TOKEN }}
+      accessToken: ${{ secrets.ACCESS_TOKEN }}
       sonarqubeHost: ${{ secrets.MDN_SONARQUBE_HOST }}
       sonarqubeToken: ${{ secrets.MDN_SONARQUBE_TOKEN }}
       blackduckUrl: ${{ secrets.BLACKDUCK_URL }}
