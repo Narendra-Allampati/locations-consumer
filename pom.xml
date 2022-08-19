@@ -15,7 +15,7 @@
     <description>Consuming locations data from Kafka</description>
     <properties>
         <avro.version>1.11.0</avro.version>
-        <io-grpc-netty.version>1.48.0</io-grpc-netty.version>
+        <io-grpc-netty.version>1.48.1</io-grpc-netty.version>
         <jacoco.version>0.8.8</jacoco.version>
         <java.version>17</java.version>
         <kafka-utils.version>2.0.1</kafka-utils.version>
