@@ -4,10 +4,17 @@ import com.maersk.facility.smds.operations.msk.facility;
 import com.maersk.facility.smds.operations.msk.facilityMessage;
 import com.maersk.referencedata.locationsconsumer.domains.facilities.FacilityAlternateCode;
 import com.maersk.referencedata.locationsconsumer.domains.facilities.FacilityType;
-import com.maersk.referencedata.locationsconsumer.domains.facilities.FacilityTypeLink;
-import com.maersk.referencedata.locationsconsumer.domains.facilities.FacilityTypeMapping;
 import com.maersk.referencedata.locationsconsumer.mappers.FacilityMapper;
-import com.maersk.referencedata.locationsconsumer.repositories.facilities.*;
+import com.maersk.referencedata.locationsconsumer.repositories.facilities.AddressesRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.facilities.ContactDetailsRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.facilities.FacilitiesRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.facilities.FacilityAlternateCodesRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.facilities.FacilityDetailsRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.facilities.FacilityServicesRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.facilities.FacilityTypesRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.facilities.FencesRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.facilities.OpeningHoursRepository;
+import com.maersk.referencedata.locationsconsumer.repositories.facilities.TransportModesRepository;
 import com.maersk.referencedata.locationsconsumer.startup.FacilityTypesMappingsLoad;
 import com.maersk.shared.kafka.serialization.KafkaDeserializerUtils;
 import com.maersk.shared.kafka.utilities.ErrorHandlingUtils;
@@ -25,11 +32,8 @@ import reactor.util.retry.Retry;
 
 import java.time.Duration;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * @author Anders Clausen on 20/03/2022.
@@ -61,6 +65,7 @@ public class FacilitiesService {
                 .name("facility events")
                 .tag("source", "kafka")
                 .metrics()
+                .take(1, true)
                 .doOnError(error -> log.warn("Error receiving Facility record, exception -> {}, retry will be attempted",
                         error.getLocalizedMessage(), error))
                 .retryWhen(Retry.indefinitely()

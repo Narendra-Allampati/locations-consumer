@@ -1,0 +1,215 @@
+{
+  "facility": {
+    "facilityId": "8486895257834",
+    "name": "Marpacifico S.A.",
+    "type": "OperationalFacility",
+    "extOwned": false,
+    "status": "Active",
+    "extExposed": true,
+    "url": "http://marpacifico.com/",
+    "doDAAC": null,
+    "address": {
+      "houseNumber": "128",
+      "street": "RUFINO ORTEGA",
+      "city": "Mendoza",
+      "postalCode": "5500",
+      "poBox": null,
+      "district": null,
+      "territory": "Mendoza",
+      "countryName": "Argentina",
+      "countryCode": "AR",
+      "addressLine2": "5500, Mendoza, Argentina",
+      "addressLine3": "ARMDZ",
+      "latitude": "-32.891901",
+      "longitude": "-68.851868",
+      "addressQualityCheckIndicator": "Do not Check"
+    },
+    "parent": {
+      "name": "Mendoza",
+      "type": "City",
+      "alternateCodes": [
+        {
+          "codeType": "RKST",
+          "code": "ARMEN"
+        },
+        {
+          "codeType": "RKTS",
+          "code": "M1N"
+        },
+        {
+          "codeType": "UN CODE",
+          "code": "ARMDZ"
+        },
+        {
+          "codeType": "SCHEDULE K",
+          "code": "35705"
+        },
+        {
+          "codeType": "GEOID",
+          "code": "1TFSQYR9081P5"
+        },
+        {
+          "codeType": "HSUD NUMBER",
+          "code": "100000475"
+        },
+        {
+          "codeType": "HSUD CODE",
+          "code": "ARMDZ00"
+        }
+      ]
+    },
+    "facilityDetail": {
+      "weightLimitCraneKg": null,
+      "weightLimitYardKg": null,
+      "vesselAgent": "NO",
+      "gpsFlag": null,
+      "gsmFlag": null,
+      "oceanFreightPricing": "NO",
+      "brand": null,
+      "commFacilityType": null,
+      "exportEnquiriesEmail": null,
+      "importEnquiriesEmail": null,
+      "facilityFunction": null,
+      "facilityFunctionDesc": null,
+      "internationalDialCode": null,
+      "telephoneNumber": null,
+      "facilityTypes": [
+        {
+          "code": "FCT_TYPE.MAIN_N_REP",
+          "name": "Maintenance and Repair",
+          "masterType": "Facility type",
+          "validThroughDate": "2099-12-31"
+        },
+        {
+          "code": "FCT_OPS_TYPE.ICD",
+          "name": "Inland Container Depot",
+          "masterType": "Facility type",
+          "validThroughDate": "2099-12-31"
+        },
+        {
+          "code": "FCT_TYPE.REEFER_DEP",
+          "name": "Reefer Depot",
+          "masterType": "Facility type",
+          "validThroughDate": "2099-12-31"
+        },
+        {
+          "code": "FCT_TYPE.TRUCKER",
+          "name": "Trucker",
+          "masterType": "Facility type",
+          "validThroughDate": "2099-12-31"
+        }
+      ]
+    },
+    "alternateCodes": [
+      {
+        "codeType": "RKST",
+        "code": "ARMEN30P"
+      },
+      {
+        "codeType": "RKTS",
+        "code": "MEN30"
+      },
+      {
+        "codeType": "GEOID",
+        "code": "8486895257834"
+      },
+      {
+        "codeType": "HSUD NUMBER",
+        "code": "100012179"
+      },
+      {
+        "codeType": "HSUD CODE",
+        "code": "ARMDZMARP"
+      }
+    ],
+    "openingHours": [
+      {
+        "day": "Friday",
+        "openTimeHours": "07",
+        "openTimeMinutes": "00",
+        "closeTimeHours": "19",
+        "closeTimeMinutes": "00"
+      },
+      {
+        "day": "Monday",
+        "openTimeHours": "07",
+        "openTimeMinutes": "00",
+        "closeTimeHours": "19",
+        "closeTimeMinutes": "00"
+      },
+      {
+        "day": "Thursday",
+        "openTimeHours": "07",
+        "openTimeMinutes": "00",
+        "closeTimeHours": "19",
+        "closeTimeMinutes": "00"
+      },
+      {
+        "day": "Tuesday",
+        "openTimeHours": "07",
+        "openTimeMinutes": "00",
+        "closeTimeHours": "19",
+        "closeTimeMinutes": "00"
+      },
+      {
+        "day": "Wednesday",
+        "openTimeHours": "07",
+        "openTimeMinutes": "00",
+        "closeTimeHours": "19",
+        "closeTimeMinutes": "00"
+      }
+    ],
+    "transportModes": null,
+    "facilityServices": [
+      {
+        "serviceName": "Empty Drop Off",
+        "serviceCode": "CNTH",
+        "serviceDescription": " - Empty Drop Off",
+        "validThroughDate": "2099-12-31"
+      },
+      {
+        "serviceName": "Empty Pick up",
+        "serviceCode": "CNTH",
+        "serviceDescription": " - Empty Pick up",
+        "validThroughDate": "2099-12-31"
+      },
+      {
+        "serviceName": "Intermodal services available: Clearance on wheels",
+        "serviceCode": "INTM",
+        "serviceDescription": " - Intermodal services available: Clearance on wheels",
+        "validThroughDate": "2099-12-31"
+      },
+      {
+        "serviceName": "Intermodal services available: Truck",
+        "serviceCode": "INTM",
+        "serviceDescription": " - Intermodal services available: Truck",
+        "validThroughDate": "2099-12-31"
+      },
+      {
+        "serviceName": "Lift on/Lift off facilities",
+        "serviceCode": "CNTH",
+        "serviceDescription": " - Lift on/Lift off facilities",
+        "validThroughDate": "2099-12-31"
+      }
+    ],
+    "fences": null,
+    "bdas": [
+      {
+        "name": "ARMEN",
+        "type": "Business Defined Area",
+        "bdaType": "POOL",
+        "alternateCodes": [
+          {
+            "codeType": "BDA CODE",
+            "code": "ARMEN"
+          },
+          {
+            "codeType": "GEOID",
+            "code": "CQUTSZMMPSALR"
+          }
+        ]
+      }
+    ],
+    "contactDetails": null
+  }
+}

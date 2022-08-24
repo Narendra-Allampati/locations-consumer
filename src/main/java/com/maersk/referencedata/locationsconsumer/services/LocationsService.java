@@ -42,7 +42,6 @@ public class LocationsService {
 
     private final AlternateCodeRepository alternateCodeRepository;
     private final AlternateNameRepository alternateNameRepository;
-    private final CountryRepository countryRepository;
     private final GeographyRepository geographyRepository;
 
     @EventListener(ApplicationStartedEvent.class)
@@ -52,6 +51,7 @@ public class LocationsService {
                 .name("geo events")
                 .tag("source", "kafka")
                 .metrics()
+                .take(1, true)
                 .doOnError(error -> log.warn("Error receiving Geography record, exception -> {}, retry will be attempted",
                         error.getLocalizedMessage(), error))
                 .retryWhen(Retry.indefinitely()
@@ -59,6 +59,7 @@ public class LocationsService {
                 .doOnError(error -> log.warn("Error thrown whilst processing geography records, error isn't a " +
                         "known retriable error, will attempt to retry processing records , exception -> {}", error.getLocalizedMessage(), error))
                 .retryWhen(Retry.fixedDelay(100, Duration.ofMinutes(1)))
+                .doOnNext(event -> log.info("Payload {}", event.value()))
                 .concatMap(this::handleLocationEvent)
                 .subscribe(result -> result.receiverOffset()
                                            .acknowledge());

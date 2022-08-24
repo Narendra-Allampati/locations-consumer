@@ -1,0 +1,46 @@
+{
+  "geography": {
+    "geoId": "ONREE2V5EAPWS",
+    "geoType": "Continent",
+    "name": "Australia",
+    "status": "Active",
+    "validFrom": "1900-01-01",
+    "validTo": "9999-12-31",
+    "longitude": null,
+    "latitude": null,
+    "timeZone": null,
+    "daylightSavingTime": null,
+    "utcOffsetMinutes": null,
+    "daylightSavingStart": null,
+    "daylightSavingEnd": null,
+    "daylightSavingShiftMinutes": null,
+    "description": null,
+    "workaroundReason": null,
+    "restricted": null,
+    "postalCodeMandatory": null,
+    "stateProvinceMandatory": null,
+    "dialingCode": null,
+    "dialingCodeDescription": null,
+    "portFlag": false,
+    "olsonTimezone": null,
+    "bdaType": null,
+    "hsudName": null,
+    "isMaerskCity": false,
+    "alternateNames": null,
+    "alternateCodes": [
+      {
+        "codeType": "GEOID",
+        "code": "ONREE2V5EAPWS"
+      },
+      {
+        "codeType": "CONTINENT CODE",
+        "code": "AUS"
+      }
+    ],
+    "country": null,
+    "parents": null,
+    "subCityParents": null,
+    "bdas": null,
+    "bdaLocations": null
+  }
+}

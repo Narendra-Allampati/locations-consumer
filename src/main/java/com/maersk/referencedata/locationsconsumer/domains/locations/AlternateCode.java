@@ -2,6 +2,7 @@ package com.maersk.referencedata.locationsconsumer.domains.locations;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.annotation.Transient;
@@ -16,6 +17,7 @@ import java.util.UUID;
 
 @Builder
 @AllArgsConstructor
+@Getter
 @Table(value = "ALTERNATE_CODES")
 public class AlternateCode implements Persistable<UUID> {
 

@@ -17,6 +17,7 @@
         <avro.version>1.11.0</avro.version>
         <io-grpc-netty.version>1.48.1</io-grpc-netty.version>
         <jacoco.version>0.8.8</jacoco.version>
+        <json-to-avro-converter.version>0.2.15</json-to-avro-converter.version>
         <java.version>17</java.version>
         <kafka-utils.version>2.0.1</kafka-utils.version>
         <logstash-logback-encoder.version>7.2</logstash-logback-encoder.version>
@@ -154,6 +155,13 @@
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Json to Avro converter utility dependency -->
+        <dependency>
+            <groupId>tech.allegro.schema.json2avro</groupId>
+            <artifactId>converter</artifactId>
+            <version>${json-to-avro-converter.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
